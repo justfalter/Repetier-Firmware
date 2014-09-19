@@ -998,7 +998,8 @@ void BEEPER_TIMER_VECTOR () {
 
     TC_GetStatus(BEEPER_TIMER, BEEPER_TIMER_CHANNEL);
 
-    WRITE(tone_pin, toggle);
+    //WRITE(tone_pin, toggle);
+    WRITE(BEEPER_PIN, toggle);
     toggle = !toggle;
 }
 
