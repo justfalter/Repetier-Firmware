@@ -2134,7 +2134,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
 #endif
     if(mtype==3) action = pgm_read_word(&(men->id));
     else action=activeAction;
-    int8_t increment = next;
+    int8_t increment = -next;
     switch(action)
     {
     case UI_ACTION_FANSPEED:
