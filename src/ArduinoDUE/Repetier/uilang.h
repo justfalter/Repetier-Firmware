@@ -109,6 +109,7 @@
 #define UI_TEXT_PREHEAT_PLA      "Preheat PLA"
 #define UI_TEXT_PREHEAT_ABS      "Preheat ABS"
 #define UI_TEXT_LIGHTS_ONOFF     "Lights :%lo"
+#define UI_TEXT_POWER_SAVE    	 "Powersave:%Ps"
 #define UI_TEXT_COOLDOWN         "Cooldown"
 #define UI_TEXT_SET_TO_ORIGIN    "Set to Origin"
 #define UI_TEXT_DISABLE_STEPPER  "Disable stepper"

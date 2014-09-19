@@ -39,6 +39,21 @@ extern const int8_t encoder_table[16] PROGMEM ;
 long ui_autoreturn_time=0;
 #endif
 
+#if UI_AUTOLIGHTOFF_AFTER!=0
+millis_t ui_autolightoff_time=-1;
+#endif
+
+#if CASE_LIGHT_DEFAULT_ON
+bool buselight=true; 
+#else
+bool buselight=false; 
+#endif
+
+#if UI_AUTOLIGHTOFF_AFTER !=0
+long timepowersaving=1000 * 60 * 30; //30 min
+#else
+long timepowersaving=0; 
+#endif
 
 void beep(uint8_t duration,uint8_t count)
 {
@@ -1350,6 +1365,15 @@ void UIDisplay::parse(char *txt,bool ram)
             break;
         case 'P':
             if(c2=='N') addStringP(PSTR(UI_PRINTER_NAME));
+            #if UI_AUTOLIGHTOFF_AFTER > 0
+			else if(c2=='s') 
+			if(timepowersaving==0) addStringP(ui_text_off);        // powersave off
+			else if (timepowersaving==(1000 * 60)) addStringP("1min");//1mn
+			else if (timepowersaving==(1000 * 60 *5)) addStringP("5min");//5 min
+			else if (timepowersaving==(1000 * 60 * 15)) addStringP("15min");//15 min
+			else if (timepowersaving==(1000 * 60 * 30)) addStringP("30min");//30 min
+			else addStringP(ui_text_on);//if not defined
+      	    #endif 
             break;
         case 'U':
             if(c2=='t')   // Printing time
@@ -1546,6 +1570,11 @@ void UIDisplay::refreshPage()
     // Reset timeout on menu back when user active on menu
     if (uid.encoderLast != encoderStartScreen)
         ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
+#endif
+#if UI_AUTOLIGHTOFF_AFTER!=0
+	//reset timeout for power saving
+	if (uid.encoderLast != encoderStartScreen)
+        ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
 #endif
     encoderStartScreen = uid.encoderLast;
 
@@ -2470,6 +2499,10 @@ void UIDisplay::nextPreviousAction(int8_t next)
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
     ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
+#if UI_AUTOLIGHTOFF_AFTER!=0
+    ui_autolightoff_time==HAL::timeInMilliseconds()+timepowersaving;
+#endif
+
 #endif
 }
 
@@ -2482,6 +2515,21 @@ void UIDisplay::executeAction(int action)
 {
 #if UI_HAS_KEYS==1
     bool skipBeep = false;
+#if UI_AUTOLIGHTOFF_AFTER!=0
+    if (timepowersaving>0)
+	{
+	ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+	#if CASE_LIGHTS_PIN > 0
+	if (!(READ(CASE_LIGHTS_PIN)) && buselight)
+		{
+		TOGGLE(CASE_LIGHTS_PIN);
+		}
+	#endif
+	#if defined(UI_BACKLIGHT_PIN)
+    WRITE(UI_BACKLIGHT_PIN, HIGH);
+	#endif
+	}
+#endif
     if(action & UI_ACTION_TOPMENU)   // Go to start menu
     {
         action -= UI_ACTION_TOPMENU;
@@ -2573,9 +2621,24 @@ void UIDisplay::executeAction(int action)
             TOGGLE(PS_ON_PIN);
 #endif
             break;
+#if UI_AUTOLIGHTOFF_AFTER >0
+	case UI_ACTION_TOGGLE_POWERSAVE:
+		if (timepowersaving==0) timepowersaving = 1000*60;// move to 1 min
+		else if (timepowersaving==(1000 * 60) )timepowersaving = 1000*60*5;// move to 5 min
+		else if (timepowersaving==(1000 * 60 * 5)) timepowersaving = 1000*60*15;// move to 15 min
+		else if (timepowersaving==(1000 * 60 * 15)) timepowersaving = 1000*60*30;// move to 30 min
+		else timepowersaving = 0;// move to off
+		if (timepowersaving>0)ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+        UI_STATUS(UI_TEXT_POWER_SAVE);
+	break;
+#endif
 #if CASE_LIGHTS_PIN > 0
         case UI_ACTION_LIGHTS_ONOFF:
             TOGGLE(CASE_LIGHTS_PIN);
+			if (READ(CASE_LIGHTS_PIN))
+			buselight=true;
+			else
+			buselight=false;
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif
@@ -2956,6 +3019,9 @@ void UIDisplay::executeAction(int action)
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
         ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
+#if UI_AUTOLIGHTOFF_AFTER!=0
+        ui_autolightoff_time==HAL::timeInMilliseconds()+timepowersaving;
+#endif
 #endif
 }
 void UIDisplay::mediumAction()
@@ -3061,6 +3127,22 @@ void UIDisplay::slowAction()
         menuLevel=0;
         activeAction = 0;
     }
+#endif
+
+#if UI_AUTOLIGHTOFF_AFTER!=0
+if (ui_autolightoff_time==-1) ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+if ((ui_autolightoff_time<time) && (timepowersaving>0))
+    {
+	#if CASE_LIGHTS_PIN > 0
+	if ((READ(CASE_LIGHTS_PIN)) && buselight)
+		{
+		TOGGLE(CASE_LIGHTS_PIN);
+		}
+	#endif
+	#if defined(UI_BACKLIGHT_PIN)
+    WRITE(UI_BACKLIGHT_PIN, LOW);
+	#endif
+	}
 #endif
     if(menuLevel==0 && time>4000)
     {
