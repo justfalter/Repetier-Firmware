@@ -344,7 +344,7 @@ void lcdWriteByte(uint8_t c,uint8_t rs)
 }
 void initializeLCD()
 {
-    HAL::delayMilliseconds(235);
+    HAL::delayMilliseconds(400);
     lcdStartWrite();
     HAL::i2cWrite(uid.outputMask & 255);
 #if UI_DISPLAY_I2C_CHIPTYPE==1
