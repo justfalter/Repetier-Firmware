@@ -1020,6 +1020,7 @@ void Printer::homeYAxis()
 void Printer::homeXAxis()
 {
     long steps;
+	Extruder::selectExtruderById(0);
     if ((MIN_HARDWARE_ENDSTOP_X && X_MIN_PIN > -1 && X_HOME_DIR==-1) || (MAX_HARDWARE_ENDSTOP_X && X_MAX_PIN > -1 && X_HOME_DIR==1))
     {
         long offX = 0;
@@ -1052,6 +1053,7 @@ void Printer::homeXAxis()
 void Printer::homeYAxis()
 {
     long steps;
+	Extruder::selectExtruderById(0);
     if ((MIN_HARDWARE_ENDSTOP_Y && Y_MIN_PIN > -1 && Y_HOME_DIR==-1) || (MAX_HARDWARE_ENDSTOP_Y && Y_MAX_PIN > -1 && Y_HOME_DIR==1))
     {
         long offY = 0;

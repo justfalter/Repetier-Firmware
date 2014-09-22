@@ -36,7 +36,7 @@
 
 */
 
-#define NUM_EXTRUDER 1
+#define NUM_EXTRUDER 2
 #define MOTHERBOARD 999
 
 #include "pins.h"
@@ -69,7 +69,11 @@
 #define EXT0_HEATER_PIN HEATER_0_PIN
 #define EXT0_STEP_PIN ORIG_E0_STEP_PIN
 #define EXT0_DIR_PIN ORIG_E0_DIR_PIN
+#if NUM_EXTRUDER==1
 #define EXT0_INVERSE 0
+#else
+#define EXT0_INVERSE 1
+#endif
 #define EXT0_ENABLE_PIN E0_ENABLE_PIN
 #define EXT0_ENABLE_ON 0
 #define EXT0_MAX_FEEDRATE 50
@@ -92,6 +96,37 @@
 #define EXT0_DESELECT_COMMANDS ""
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT0_EXTRUDER_COOLER_SPEED 255
+#define EXT1_X_OFFSET -2852
+#define EXT1_Y_OFFSET 12
+#define EXT1_STEPS_PER_MM 96
+#define EXT1_TEMPSENSOR_TYPE 5
+#define EXT1_TEMPSENSOR_PIN TEMP_2_PIN
+#define EXT1_HEATER_PIN HEATER_2_PIN
+#define EXT1_STEP_PIN ORIG_E1_STEP_PIN
+#define EXT1_DIR_PIN ORIG_E1_DIR_PIN
+#define EXT1_INVERSE 0
+#define EXT1_ENABLE_PIN ORIG_E1_ENABLE_PIN
+#define EXT1_ENABLE_ON 0
+#define EXT1_MAX_FEEDRATE 50
+#define EXT1_MAX_START_FEEDRATE 20
+#define EXT1_MAX_ACCELERATION 5000
+#define EXT1_HEAT_MANAGER 3
+#define EXT1_WATCHPERIOD 1
+#define EXT1_PID_INTEGRAL_DRIVE_MAX 230
+#define EXT1_PID_INTEGRAL_DRIVE_MIN 40
+#define EXT1_PID_P 7
+#define EXT1_PID_I 2
+#define EXT1_PID_D 40
+#define EXT1_PID_MAX 255
+#define EXT1_ADVANCE_K 0
+#define EXT1_ADVANCE_L 0
+#define EXT1_ADVANCE_BACKLASH_STEPS 0
+#define EXT1_WAIT_RETRACT_TEMP 150
+#define EXT1_WAIT_RETRACT_UNITS 0
+#define EXT1_SELECT_COMMANDS ""
+#define EXT1_DESELECT_COMMANDS ""
+#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define EXT1_EXTRUDER_COOLER_SPEED 255
 #define RETRACT_DURING_HEATUP true
 #define PID_CONTROL_RANGE 20
 #define SKIP_M109_IF_WITHIN 2
@@ -313,8 +348,8 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_FAN_CONTROL 0
 #define FEATURE_CONTROLLER 1
 #define UI_LANGUAGE 0
-#define UI_PRINTER_NAME "Da Vinci 1.0"
-#define UI_PRINTER_COMPANY "XYZ Printing"
+#define UI_PRINTER_NAME "Da Vinci 2.0"
+#define UI_PRINTER_COMPANY "^_^"
 #define UI_PAGES_DURATION 4000
 #define UI_ANIMATION 0
 #define UI_SPEEDDEPENDENT_POSITIONING 0
@@ -407,6 +442,46 @@ Values must be in range 1..255
                 "step": "ORIG_E0_STEP_PIN",
                 "dir": "ORIG_E0_DIR_PIN",
                 "enable": "E0_ENABLE_PIN"
+            },
+            "advanceBacklashSteps": 0
+        },
+        {
+            "id": 1,
+            "heatManager": 3,
+            "pidDriveMin": 40,
+            "pidDriveMax": 230,
+            "pidMax": 255,
+            "sensorType": 5,
+            "sensorPin": "TEMP_2_PIN",
+            "heaterPin": "HEATER_2_PIN",
+            "maxFeedrate": 50,
+            "startFeedrate": 20,
+            "invert": "0",
+            "invertEnable": "0",
+            "acceleration": 5000,
+            "watchPeriod": 1,
+            "pidP": 7,
+            "pidI": 2,
+            "pidD": 40,
+            "advanceK": 0,
+            "advanceL": 0,
+            "waitRetractTemp": 150,
+            "waitRetractUnits": 0,
+            "waitRetract": 0,
+            "stepsPerMM": 96,
+            "coolerPin": "ORIG_FAN_PIN",
+            "coolerSpeed": 255,
+            "selectCommands": "",
+            "deselectCommands": "",
+            "xOffset": 36,
+            "yOffset": 0,
+            "xOffsetSteps": 2800,
+            "yOffsetSteps": 0,
+            "stepper": {
+                "name": "Extruder 1",
+                "step": "ORIG_E1_STEP_PIN",
+                "dir": "ORIG_E1_DIR_PIN",
+                "enable": "ORIG_E1_ENABLE_PIN"
             },
             "advanceBacklashSteps": 0
         }
@@ -543,8 +618,8 @@ Values must be in range 1..255
     "extrudeMaxLength": 160,
     "homeOrder": "HOME_ORDER_XYZ",
     "featureController": 1,
-    "uiPrinterName": "Da Vinci 1.0",
-    "uiPrinterCompany": "XYZ Printing",
+    "uiPrinterName": "Da Vinci 2.0",
+    "uiPrinterCompany": "^_^",
     "uiPagesDuration": 4000,
     "uiAnimation": "0",
     "uiDisablePageswitch": "1",
@@ -914,7 +989,7 @@ Values must be in range 1..255
     "hasUser0": true,
     "hasUser1": true,
     "hasUser2": false,
-    "numExtruder": 1,
+    "numExtruder": 2,
     "version": 91.7
 }
 ========== End configuration string ==========
