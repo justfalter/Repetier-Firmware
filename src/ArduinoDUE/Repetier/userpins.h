@@ -48,6 +48,7 @@
 #define LED_PIN			129
 #define PS_ON_PIN		-1
 #define ORIG_FAN_PIN		25
+#define ORIG_FAN2_PIN		4	
 
 #define SDSS			55
 #define MOSI_PIN		43

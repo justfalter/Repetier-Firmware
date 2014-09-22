@@ -37,6 +37,7 @@
 */
 
 #define NUM_EXTRUDER 2
+#define NUM_FAN 2 //Some Davinci have 2 extruders and 1 fan
 #define MOTHERBOARD 999
 
 #include "pins.h"
@@ -125,7 +126,11 @@
 #define EXT1_WAIT_RETRACT_UNITS 0
 #define EXT1_SELECT_COMMANDS ""
 #define EXT1_DESELECT_COMMANDS ""
+#if NUM_FAN==1 
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#else
+#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+#endif
 #define EXT1_EXTRUDER_COOLER_SPEED 255
 #define RETRACT_DURING_HEATUP true
 #define PID_CONTROL_RANGE 20
