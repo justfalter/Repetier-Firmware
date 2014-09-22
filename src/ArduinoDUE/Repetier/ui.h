@@ -159,6 +159,7 @@
 #define UI_ACTION_Z_BABYSTEPS           1111
 #define UI_ACTION_MAX_INACTIVE          1112
 #define UI_ACTION_TOGGLE_POWERSAVE		1113
+#define UI_ACTION_CLEAN_NOZZLE          1114
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

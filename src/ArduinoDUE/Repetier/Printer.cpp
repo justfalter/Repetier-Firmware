@@ -154,7 +154,54 @@ char Printer::motorY;
 int debugWaitLoop = 0;
 #endif
 
-
+#if ENABLE_CLEAN_NOZZLE 
+void Printer::cleanNozzle()
+	{
+	//we save current configuration and position
+	uint8_t tmp_extruderid=Extruder::current->id;
+	float tmp_x = currentPosition[X_AXIS];
+	float tmp_y = currentPosition[Y_AXIS];
+	float tmp_z = currentPosition[Z_AXIS];
+	
+	//ensure homing is done and select E0
+	if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
+        else Extruder::selectExtruderById(0); //just select E0
+     
+	UI_STATUS_UPD_RAM(UI_TEXT_CLEAN_NOZZLE);
+        // move Z to zMin + 15 if under this position to be sure nozzle do not touch metal holder
+        if (currentPosition[Z_AXIS] < zMin+15) moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,zMin+15,IGNORE_COORDINATE,homingFeedrate[0]);
+        Commands::waitUntilEndOfAllMoves();
+	//first step
+	moveToReal(xMin + CLEAN_X,yMin + CLEAN_Y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//second step
+	moveToReal(xMin,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//third step
+	moveToReal(xMin+CLEAN_X,yMin+CLEAN_Y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//fourth step
+	moveToReal(xMin,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	#if NUM_EXTRUDER ==2
+	//move out to be sure first drop go to purge box
+        moveToReal(xLength-2,yMin+CLEAN_Y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        moveToReal(xLength-2,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        Commands::waitUntilEndOfAllMoves();
+        //first step
+        moveToReal(xLength-20,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        //second step
+        moveToReal(xLength,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        //third step
+        moveToReal(xLength-20,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+         //fourth step
+        moveToReal(xLength,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	#endif
+        Commands::waitUntilEndOfAllMoves();
+	//back to original position and original extruder
+        //X,Y first then Z
+	moveToReal(tmp_x,tmp_y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,tmp_z,IGNORE_COORDINATE,homingFeedrate[0]);
+        Commands::waitUntilEndOfAllMoves();
+	Extruder::selectExtruderById(tmp_extruderid);
+	}
+#endif
 
 void Printer::constrainDestinationCoords()
 {

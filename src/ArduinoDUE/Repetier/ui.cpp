@@ -2642,6 +2642,11 @@ void UIDisplay::executeAction(int action)
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif
+#if ENABLE_CLEAN_NOZZLE==1
+	case UI_ACTION_CLEAN_NOZZLE:
+	     Printer::cleanNozzle();
+         break;
+#endif			
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);

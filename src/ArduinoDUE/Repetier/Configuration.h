@@ -218,7 +218,11 @@
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
+#if NUM_EXTRUDER == 1 //Bed size is different between DaVinci 1.0 and 2.0
 #define X_MAX_LENGTH 235
+#else
+#define X_MAX_LENGTH 199
+#endif
 #define Y_MAX_LENGTH 217
 #define Z_MAX_LENGTH 202
 #define X_MIN_POS 0
@@ -356,6 +360,16 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define UI_DISABLE_AUTO_PAGESWITCH 1
 #define UI_AUTORETURN_TO_MENU_AFTER 30000
 #define UI_AUTOLIGHTOFF_AFTER 1
+#define ENABLE_CLEAN_NOZZLE 1
+#if ENABLE_CLEAN_NOZZLE
+  #if NUM_EXTRUDER==1 //cleaner of Davinci 1.0 is not in same position of 2.0
+    #define CLEAN_X 30
+    #define CLEAN_Y 0
+ #else
+    #define CLEAN_X 0
+    #define CLEAN_Y 30
+ #endif
+#endif
 #define FEATURE_UI_KEYS 0
 #define UI_ENCODER_SPEED 1
 #define UI_KEY_BOUNCETIME 10

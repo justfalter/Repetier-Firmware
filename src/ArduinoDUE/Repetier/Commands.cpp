@@ -925,6 +925,11 @@ void Commands::executeGCode(GCode *com)
                 }
             }
             break;
+#if ENABLE_CLEAN_NOZZLE 
+		case 100:
+			Printer::cleanNozzle();
+			break;
+#endif
         case 104: // M104
 #if NUM_EXTRUDER>0
             if(reportTempsensorError()) break;

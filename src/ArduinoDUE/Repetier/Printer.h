@@ -625,6 +625,9 @@ public:
     static void moveTo(float x,float y,float z,float e,float f);
     static void moveToReal(float x,float y,float z,float e,float f);
     static void homeAxis(bool xaxis,bool yaxis,bool zaxis); /// Home axis
+	#if ENABLE_CLEAN_NOZZLE 
+	static void cleanNozzle();
+	#endif
     static void setOrigin(float xOff,float yOff,float zOff);
     static bool isPositionAllowed(float x,float y,float z);
     static inline int getFanSpeed() {
