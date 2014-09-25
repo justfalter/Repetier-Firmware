@@ -2548,6 +2548,7 @@ void UIDisplay::executeAction(int action)
             break;
         case UI_ACTION_BACK:
             if(menuLevel>0) menuLevel--;
+			else menuPos[0]=0;
             Printer::setAutomount(false);
             activeAction = 0;
             break;
@@ -2562,6 +2563,7 @@ void UIDisplay::executeAction(int action)
             break;
         case UI_ACTION_TOP_MENU:
             menuLevel = 0;
+			menuPos[0]=0;
             break;
         case UI_ACTION_EMERGENCY_STOP:
             Commands::emergencyStop();
