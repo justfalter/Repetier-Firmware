@@ -34,6 +34,7 @@
 
 #define UI_ACTION_NEXT 1
 #define UI_ACTION_PREVIOUS 2
+#define UI_ACTION_RIGHT_KEY 3
 
 #define UI_ACTION_X_UP                 100
 #define UI_ACTION_X_DOWN               101

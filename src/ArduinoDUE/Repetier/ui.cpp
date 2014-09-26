@@ -2542,6 +2542,7 @@ void UIDisplay::executeAction(int action)
     else
         switch(action)
         {
+		case UI_ACTION_RIGHT_KEY:
         case UI_ACTION_OK:
             okAction();
             skipBeep=true; // Prevent double beep

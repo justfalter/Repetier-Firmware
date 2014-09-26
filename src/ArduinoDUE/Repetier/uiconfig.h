@@ -360,7 +360,7 @@ void ui_check_keys(int &action) {
  UI_KEYS_BUTTON_LOW(10,UI_ACTION_NEXT); // push button, connects gnd to pin
  UI_KEYS_BUTTON_LOW(44,UI_ACTION_PREVIOUS); // push button, connects gnd to pin
  UI_KEYS_BUTTON_LOW(75,UI_ACTION_BACK); // push button, connects gnd to pin
- UI_KEYS_BUTTON_LOW(72,UI_ACTION_OK); // push button, connects gnd to pin
+ UI_KEYS_BUTTON_LOW(72,UI_ACTION_RIGHT_KEY); // push button, connects gnd to pin
  UI_KEYS_BUTTON_LOW(77,UI_ACTION_TOP_MENU); // push button, connects gnd to pin
 //  UI_KEYS_CLICKENCODER_LOW_REV(47,45); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
 //  UI_KEYS_BUTTON_LOW(43,UI_ACTION_OK); // push button, connects gnd to pin
