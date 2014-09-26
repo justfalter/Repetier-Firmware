@@ -2526,7 +2526,7 @@ void UIDisplay::executeAction(int action)
 		}
 	#endif
 	#if defined(UI_BACKLIGHT_PIN)
-    WRITE(UI_BACKLIGHT_PIN, HIGH);
+    if (!(READ(UI_BACKLIGHT_PIN)))WRITE(UI_BACKLIGHT_PIN, HIGH);
 	#endif
 	}
 #endif
