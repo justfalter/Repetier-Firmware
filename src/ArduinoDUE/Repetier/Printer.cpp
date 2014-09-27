@@ -155,7 +155,7 @@ int debugWaitLoop = 0;
 #endif
 
 #if ENABLE_CLEAN_NOZZLE 
-void Printer::cleanNozzle()
+void Printer::cleanNozzle(bool restoreposition)
 	{
 	//we save current configuration and position
 	uint8_t tmp_extruderid=Extruder::current->id;
@@ -182,7 +182,7 @@ void Printer::cleanNozzle()
 	#if NUM_EXTRUDER ==2
 	//move out to be sure first drop go to purge box
         moveToReal(xLength-2,yMin+CLEAN_Y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-        moveToReal(xLength-2,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        moveToReal(xLength-2,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
         Commands::waitUntilEndOfAllMoves();
         //first step
         moveToReal(xLength-20,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
@@ -196,10 +196,13 @@ void Printer::cleanNozzle()
         Commands::waitUntilEndOfAllMoves();
 	//back to original position and original extruder
         //X,Y first then Z
-	moveToReal(tmp_x,tmp_y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,tmp_z,IGNORE_COORDINATE,homingFeedrate[0]);
-        Commands::waitUntilEndOfAllMoves();
-	Extruder::selectExtruderById(tmp_extruderid);
+	if (restoreposition)
+		{
+		moveToReal(tmp_x,tmp_y,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+		moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,tmp_z,IGNORE_COORDINATE,homingFeedrate[0]);
+		Commands::waitUntilEndOfAllMoves();
+		Extruder::selectExtruderById(tmp_extruderid);
+		}
 	}
 #endif
 

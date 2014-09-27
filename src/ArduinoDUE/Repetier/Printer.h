@@ -626,7 +626,7 @@ public:
     static void moveToReal(float x,float y,float z,float e,float f);
     static void homeAxis(bool xaxis,bool yaxis,bool zaxis); /// Home axis
 	#if ENABLE_CLEAN_NOZZLE 
-	static void cleanNozzle();
+	static void cleanNozzle(bool restoreposition=true);
 	#endif
     static void setOrigin(float xOff,float yOff,float zOff);
     static bool isPositionAllowed(float x,float y,float z);
