@@ -224,12 +224,12 @@
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
 #if NUM_EXTRUDER == 1 //Bed size is different between DaVinci 1.0 and 2.0
-#define X_MAX_LENGTH 235
+#define X_MAX_LENGTH 235 - ENDSTOP_X_BACK_ON_HOME
 #else
-#define X_MAX_LENGTH 199
+#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
 #endif
-#define Y_MAX_LENGTH 217
-#define Z_MAX_LENGTH 202
+#define Y_MAX_LENGTH 217- ENDSTOP_Y_BACK_ON_HOME
+#define Z_MAX_LENGTH 202 - ENDSTOP_Z_BACK_ON_HOME
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
