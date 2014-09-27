@@ -25,7 +25,7 @@ extern const int8_t encoder_table[16] PROGMEM ;
 #include <ctype.h>
 
 
-
+UIPageDialogst uipagedialog;
 
 #if BEEPER_TYPE==2 && defined(UI_HAS_I2C_KEYS) && UI_I2C_KEY_ADDRESS!=BEEPER_ADDRESS
 #error Beeper address and i2c key address must be identical
@@ -1089,7 +1089,24 @@ void UIDisplay::parse(char *txt,bool ram)
             else if(c2=='J') addFloat(Printer::maxZJerk,3,1);
 #endif
             break;
-
+	case 'C':
+	    if(c2=='1')
+			{
+			addStringP(uipagedialog.textline1);
+			}
+	    else if(c2=='2')
+			{
+			addStringP(uipagedialog.textline2);
+			}
+	    else if(c2=='3')
+			{
+			addStringP(uipagedialog.textline3);
+			}
+	    else if(c2=='4')
+			{
+			addStringP(uipagedialog.textline4);
+			}
+	    break;
         case 'd':
             if(c2=='o') addStringP(Printer::debugEcho()?ui_text_on:ui_text_off);
             else if(c2=='i') addStringP(Printer::debugInfo()?ui_text_on:ui_text_off);
@@ -2509,12 +2526,87 @@ void UIDisplay::nextPreviousAction(int8_t next)
 void UIDisplay::finishAction(int action)
 {
 }
+
+bool UIDisplay::confirmationDialog(char * title,char * line1,char * line2)
+{
+bool response=false;
+bool process_it=true;
+int previousaction=0;
+//init dialog strings
+uipagedialog.textline1= title ;
+uipagedialog.textline2= line1;
+uipagedialog.textline3= line2;
+uipagedialog.textline4= UI_TEXT_NO_SELECTED; //default for response=false
+//push dialog
+pushMenu((void*)&ui_menu_confirmation,true);
+//ensure last button pressed is not OK to have the dialog closing too fast
+while(lastButtonAction==UI_ACTION_OK){
+	Commands::checkForPeriodicalActions();
+	}
+delay(500);
+//main loop
+while (process_it)
+	{
+	//be sure not auto return
+	#if UI_AUTORETURN_TO_MENU_AFTER!=0
+    ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
+	#endif
+	//process critical actions
+	Commands::checkForPeriodicalActions();
+	//be sure button is pressed and not same one 
+	if (lastButtonAction!=previousaction)
+		{
+		 previousaction=lastButtonAction;
+		 //wake up light if power saving has been launched
+		#if UI_AUTOLIGHTOFF_AFTER!=0
+		if (timepowersaving>0)
+			{
+			ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+			#if CASE_LIGHTS_PIN > 0
+			if (!(READ(CASE_LIGHTS_PIN)) && buselight)
+				{
+				TOGGLE(CASE_LIGHTS_PIN);
+				}
+			#endif
+			#if defined(UI_BACKLIGHT_PIN)
+			if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+			#endif
+			}
+		#endif
+		//if button ok we are done
+		if (lastButtonAction==UI_ACTION_OK)
+			{
+			process_it=false;
+			}
+		//if left key then select Yes
+		 else if (lastButtonAction==UI_ACTION_BACK)
+			{
+			uipagedialog.textline4= UI_TEXT_YES_SELECTED;
+			response=true;
+			}
+		//if right key then select No
+		else if (lastButtonAction==UI_ACTION_RIGHT_KEY)
+			{
+			uipagedialog.textline4= UI_TEXT_NO_SELECTED;
+			response=false;
+			}
+		if(previousaction!=0)BEEP_SHORT;
+		refreshPage();
+		}
+	}//end while
+return response;
+}
 // Actions are events from user input. Depending on the current state, each
 // action can behave differently. Other actions do always the same like home, disable extruder etc.
 void UIDisplay::executeAction(int action)
 {
 #if UI_HAS_KEYS==1
     bool skipBeep = false;
+	bool process_it=false;
+	int previousaction=0;
+	millis_t printedTime;
+    millis_t currentTime;
+	int step =0;
 #if UI_AUTOLIGHTOFF_AFTER!=0
     if (timepowersaving>0)
 	{
@@ -2647,8 +2739,112 @@ void UIDisplay::executeAction(int action)
 #endif
 #if ENABLE_CLEAN_NOZZLE==1
 	case UI_ACTION_CLEAN_NOZZLE:
-	     Printer::cleanNozzle();
-         break;
+	    //be sure no issue
+		if(reportTempsensorError() or Printer::debugDryrun()) break;
+		pushMenu((void*)&ui_menu_clean_nozzle_page,true);
+		process_it=true;
+		printedTime = HAL::timeInMilliseconds();
+		step=STEP_HEATING;
+		while (process_it)
+		{
+		Commands::checkForPeriodicalActions();
+		currentTime = HAL::timeInMilliseconds();
+        if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
+            {
+            Commands::printTemperatures();
+            printedTime = currentTime;
+           }
+		 //be sure not auto return
+		#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
+		#endif
+		 switch(step)
+		 {
+		 case  STEP_HEATING:
+            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+			#if NUM_EXTRUDER>1
+            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+			#endif
+			step =  STEP_WAIT_FOR_TEMPERATURE;
+		 break;
+		 case STEP_WAIT_FOR_TEMPERATURE:
+
+			UI_STATUS(UI_TEXT_HEATING);
+			//no need to be extremly accurate so no need stable temperature 
+			if(abs(extruder[0].tempControl.currentTemperatureC- extruder[0].tempControl.targetTemperatureC)<2)
+				{
+				step = STEP_CLEAN_NOOZLE;
+				}
+			#if NUM_EXTRUDER==2
+			if(!((abs(extruder[1].tempControl.currentTemperatureC- extruder[1].tempControl.targetTemperatureC)<2) && (step == STEP_CLEAN_NOOZLE)))
+				{
+				step = STEP_WAIT_FOR_TEMPERATURE;
+				}
+			#endif
+		 break;
+		 case STEP_CLEAN_NOOZLE:
+			//clean
+			Printer::cleanNozzle(false);
+			//move to a position to let user to clean manually
+			Printer::moveToReal(Printer::xLength/2,Printer::yLength-20,150,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+			Commands::waitUntilEndOfAllMoves();
+			step =STEP_WAIT_FOR_OK;
+		 break;
+		 case STEP_WAIT_FOR_OK:
+		 UI_STATUS(UI_TEXT_WAIT_FOR_OK);
+		 //just need to wait for key to be pressed
+		 break;
+		 }
+		 //check what key is pressed
+		 if (previousaction!=lastButtonAction)
+			{
+			previousaction=lastButtonAction;
+			if(previousaction!=0)BEEP_SHORT;
+			 if ((lastButtonAction==UI_ACTION_OK) &&(step==STEP_WAIT_FOR_OK))
+				{//we are done
+				process_it=false;
+				UI_STATUS(UI_TEXT_COOLDOWN);
+				}
+			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
+				{
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEAN_NOZZLE))
+					{
+					UI_STATUS(UI_TEXT_CANCELED);
+					process_it=false;
+					}
+				else
+					{//we continue as before
+					menuLevel--;
+					pushMenu((void*)&ui_menu_clean_nozzle_page,true);
+					}
+				delay(100);
+				}
+			 //wake up light if power saving has been launched
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			if (timepowersaving>0)
+				{
+				ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+				#if CASE_LIGHTS_PIN > 0
+				if (!(READ(CASE_LIGHTS_PIN)) && buselight)
+					{
+					TOGGLE(CASE_LIGHTS_PIN);
+					}
+				#endif
+				#if defined(UI_BACKLIGHT_PIN)
+				if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+				#endif
+				}
+			#endif
+			}
+		}
+		//cool down
+		Extruder::setTemperatureForExtruder(0,0);
+		#if NUM_EXTRUDER>1
+        Extruder::setTemperatureForExtruder(0,1);
+		#endif
+		menuLevel=0;
+		refreshPage();
+        break;
 #endif			
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
