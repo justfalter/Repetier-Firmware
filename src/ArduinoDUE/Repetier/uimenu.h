@@ -391,6 +391,16 @@ UI_MENU_ACTIONCOMMAND(ui_menu_clean_nozzle,UI_TEXT_CLEAN_NOZZLE,UI_ACTION_CLEAN_
 #define UI_CLEAN_NOZZLE_ENTRY 
 #define UI_CLEAN_NOZZLE_COUNT 0
 #endif 
+
+#if FEATURE_BEEPER
+UI_MENU_ACTIONCOMMAND(ui_menu_sound,UI_TEXT_SOUND_ONOF,UI_ACTION_SOUND);
+#define UI_SOUND_ENTRY ,&ui_menu_sound
+#define UI_SOUND_COUNT 1
+#else
+#define UI_SOUND_ENTRY 
+#define UI_SOUND_COUNT 0
+#endif 
+
 UI_MENU_ACTION4C(ui_menu_confirmation,UI_ACTION_DUMMY,UI_TEXT_CONFIRMATION);
 #if NUM_EXTRUDER == 1
 #define UI_PAGE_CLEAN_NOZZLE "\005%ec/%Ec\002\007","Z:%x2","","%os"
@@ -434,8 +444,8 @@ UI_MENU_ACTIONCOMMAND(ui_menu_quick_debug,"Write Debug",UI_ACTION_WRITE_DEBUG);
 #define DEBUG_PRINT_COUNT 0
 #define DEBUG_PRINT_EXTRA
 #endif
-#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_POWER_SAVE_ENTRY UI_CLEAN_NOZZLE_ENTRY,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
-UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_CLEAN_NOZZLE_COUNT + UI_POWER_SAVE_COUNT);
+#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_POWER_SAVE_ENTRY UI_CLEAN_NOZZLE_ENTRY,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
+UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_SOUND_COUNT + UI_CLEAN_NOZZLE_COUNT + UI_POWER_SAVE_COUNT);
 
 // **** Fan menu
 

@@ -39,6 +39,10 @@ UIPageDialogst uipagedialog;
 long ui_autoreturn_time=0;
 #endif
 
+#if FEATURE_BEEPER
+bool enablesound = true;
+#endif
+
 #if UI_AUTOLIGHTOFF_AFTER!=0
 millis_t ui_autolightoff_time=-1;
 #endif
@@ -58,6 +62,7 @@ long timepowersaving=0;
 void beep(uint8_t duration,uint8_t count)
 {
 #if FEATURE_BEEPER
+if (!enablesound)return;
 #if BEEPER_TYPE!=0
 #if BEEPER_TYPE==1 && defined(BEEPER_PIN) && BEEPER_PIN>=0
     SET_OUTPUT(BEEPER_PIN);
@@ -1334,7 +1339,10 @@ void UIDisplay::parse(char *txt,bool ram)
             }
 #endif
             break;
-        case 's': // Endstop positions
+        case 's': // Endstop positions and sound
+			#if FEATURE_BEEPER
+		    if(c2=='o')addStringP(enablesound?ui_text_on:ui_text_off);        // Lights on/off
+			#endif
             if(c2=='x')
             {
 #if (X_MIN_PIN > -1) && MIN_HARDWARE_ENDSTOP_X
@@ -2716,6 +2724,12 @@ void UIDisplay::executeAction(int action)
             TOGGLE(PS_ON_PIN);
 #endif
             break;
+	#if FEATURE_BEEPER
+	case UI_ACTION_SOUND:
+	enablesound=!enablesound;
+	UI_STATUS(UI_TEXT_SOUND_ONOF);
+	break;
+	#endif
 #if UI_AUTOLIGHTOFF_AFTER >0
 	case UI_ACTION_TOGGLE_POWERSAVE:
 		if (timepowersaving==0) timepowersaving = 1000*60;// move to 1 min

@@ -37,6 +37,10 @@
 #include "pins.h"
 #include "Print.h"
 
+#if FEATURE_BEEPER
+extern bool enablesound;
+#endif
+
 // Hack to make 84 MHz Due clock work without changes to pre-existing code
 // which would otherwise have problems with int overflow.
 #define F_CPU       21000000        // should be factor of F_CPU_TRUE
@@ -286,6 +290,9 @@ public:
     static inline void tone(uint8_t pin,int frequency) {
         // set up timer counter 1 channel 0 to generate interrupts for
         // toggling output pin.  
+		#if FEATURE_BEEPER
+		if (!enablesound)return;
+		#endif
         SET_OUTPUT(pin);
         tone_pin = pin;
         pmc_set_writeprotect(false);

@@ -109,6 +109,7 @@
 #define UI_TEXT_PREHEAT_PLA      "Preheat PLA"
 #define UI_TEXT_PREHEAT_ABS      "Preheat ABS"
 #define UI_TEXT_LIGHTS_ONOFF     "Lights :%lo"
+#define UI_TEXT_SOUND_ONOF		 "Sound :%so"
 #define UI_TEXT_CONFIRMATION     "Please Confirm","%C2","%C3","%C4"
 #define UI_TEXT_YES_SELECTED     "  [Yes]    No"
 #define UI_TEXT_NO_SELECTED     "   Yes    [No]"
