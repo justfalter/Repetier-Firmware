@@ -58,6 +58,10 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     uint8_t version = EEPROM_PROTOCOL_VERSION;
     baudrate = BAUDRATE;
     maxInactiveTime = MAX_INACTIVE_TIME*1000L;
+    Printer::buselight = bool(CASE_LIGHT_DEFAULT_ON);
+	#if CASE_LIGHTS_PIN>=0
+        WRITE(CASE_LIGHTS_PIN, byte(Printer::buselight));
+	#endif // CASE_LIGHTS_PIN
     stepperInactiveTime = STEPPER_INACTIVE_TIME*1000L;
     Printer::axisStepsPerMM[X_AXIS] = XAXIS_STEPS_PER_MM;
     Printer::axisStepsPerMM[Y_AXIS] = YAXIS_STEPS_PER_MM;
@@ -353,6 +357,7 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     HAL::eprSetFloat(EPR_X_LENGTH,Printer::xLength);
     HAL::eprSetFloat(EPR_Y_LENGTH,Printer::yLength);
     HAL::eprSetFloat(EPR_Z_LENGTH,Printer::zLength);
+    HAL::eprSetByte(EPR_LIGHT_ON,Printer::buselight);
 #if ENABLE_BACKLASH_COMPENSATION
     HAL::eprSetFloat(EPR_BACKLASH_X,Printer::backlashX);
     HAL::eprSetFloat(EPR_BACKLASH_Y,Printer::backlashY);
@@ -504,6 +509,10 @@ void EEPROM::readDataFromEEPROM()
     Printer::xLength = HAL::eprGetFloat(EPR_X_LENGTH);
     Printer::yLength = HAL::eprGetFloat(EPR_Y_LENGTH);
     Printer::zLength = HAL::eprGetFloat(EPR_Z_LENGTH);
+    Printer::buselight=HAL::eprGetByte(EPR_LIGHT_ON);
+	#if CASE_LIGHTS_PIN>=0
+        WRITE(CASE_LIGHTS_PIN, byte(Printer::buselight));
+	#endif // CASE_LIGHTS_PIN
 #if ENABLE_BACKLASH_COMPENSATION
     Printer::backlashX = HAL::eprGetFloat(EPR_BACKLASH_X);
     Printer::backlashY = HAL::eprGetFloat(EPR_BACKLASH_Y);
@@ -709,6 +718,7 @@ void EEPROM::writeSettings()
     writeFloat(EPR_X_LENGTH,Com::tEPRXMaxLength);
     writeFloat(EPR_Y_LENGTH,Com::tEPRYMaxLength);
     writeFloat(EPR_Z_LENGTH,Com::tEPRZMaxLength);
+    writeByte(EPR_LIGHT_ON,Com::tLightOn);
 #if ENABLE_BACKLASH_COMPENSATION
     writeFloat(EPR_BACKLASH_X,Com::tEPRXBacklash);
     writeFloat(EPR_BACKLASH_Y,Com::tEPRYBacklash);

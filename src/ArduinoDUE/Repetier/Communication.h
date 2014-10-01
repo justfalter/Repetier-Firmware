@@ -25,6 +25,7 @@
 class Com
 {
     public:
+FSTRINGVAR(tLightOn)
 FSTRINGVAR(tDebug)
 FSTRINGVAR(tFirmware)
 FSTRINGVAR(tOk)

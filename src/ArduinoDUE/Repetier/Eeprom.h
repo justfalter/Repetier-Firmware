@@ -106,6 +106,8 @@ have problems with other modules using the eeprom */
 #define EPR_DELTA_DIAGONAL_CORR_A 933
 #define EPR_DELTA_DIAGONAL_CORR_B 937
 #define EPR_DELTA_DIAGONAL_CORR_C 941
+//946 -> 946 +195 - should be available
+#define EPR_LIGHT_ON 946
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development
