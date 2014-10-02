@@ -358,6 +358,9 @@ extern const int8_t encoder_table[16] PROGMEM ;
 
 class UIDisplay {
   public:
+#if UI_AUTOLIGHTOFF_AFTER!=0
+	static millis_t ui_autolightoff_time;
+#endif
     volatile uint8_t flags; // 1 = fast key action, 2 = slow key action, 4 = slow action running, 8 = key test running
     uint8_t col; // current col for buffer prefill
     uint8_t menuLevel; // current menu level, 0 = info, 1 = group, 2 = groupdata select, 3 = value change

@@ -57,6 +57,10 @@ HAL::~HAL()
 
 #define SDEEPROM_SIZE 2048 // Minimum size used by Eeprom.cpp
 
+#if FEATURE_BEEPER
+bool HAL::enablesound = true;
+#endif
+	
 char HAL::sdEepromImage[SDEEPROM_SIZE] = { 0, };
 uint32_t HAL::sdEepromLastChanged = 0; // 0 = never.
 

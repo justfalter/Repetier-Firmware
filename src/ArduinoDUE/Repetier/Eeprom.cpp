@@ -23,7 +23,6 @@
 
 #include "Repetier.h"
 
-
 void EEPROM::update(GCode *com)
 {
 #if EEPROM_MODE!=0
@@ -58,9 +57,9 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     uint8_t version = EEPROM_PROTOCOL_VERSION;
     baudrate = BAUDRATE;
     maxInactiveTime = MAX_INACTIVE_TIME*1000L;
-    Printer::buselight = bool(CASE_LIGHT_DEFAULT_ON);
+    EEPROM::buselight = bool(CASE_LIGHT_DEFAULT_ON);
 	#if CASE_LIGHTS_PIN>=0
-        WRITE(CASE_LIGHTS_PIN, byte(Printer::buselight));
+        WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
     stepperInactiveTime = STEPPER_INACTIVE_TIME*1000L;
     Printer::axisStepsPerMM[X_AXIS] = XAXIS_STEPS_PER_MM;
@@ -302,7 +301,13 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
 #endif
 
 }
+bool EEPROM::buselight=false;
 
+#if UI_AUTOLIGHTOFF_AFTER !=0
+millis_t EEPROM::timepowersaving=1000 * 60 * 30; //30 min
+#else
+millis_t EEPROM::timepowersaving=0; 
+#endif
 void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
 {
 #if EEPROM_MODE!=0
@@ -357,7 +362,13 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     HAL::eprSetFloat(EPR_X_LENGTH,Printer::xLength);
     HAL::eprSetFloat(EPR_Y_LENGTH,Printer::yLength);
     HAL::eprSetFloat(EPR_Z_LENGTH,Printer::zLength);
-    HAL::eprSetByte(EPR_LIGHT_ON,Printer::buselight);
+    HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+#if FEATURE_BEEPER
+	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
+#endif
+#if UI_AUTOLIGHTOFF_AFTER !=0
+	HAL::eprSetInt32(EPR_POWERSAVE_AFTER_TIME,EEPROM::timepowersaving);
+#endif
 #if ENABLE_BACKLASH_COMPENSATION
     HAL::eprSetFloat(EPR_BACKLASH_X,Printer::backlashX);
     HAL::eprSetFloat(EPR_BACKLASH_Y,Printer::backlashY);
@@ -509,10 +520,18 @@ void EEPROM::readDataFromEEPROM()
     Printer::xLength = HAL::eprGetFloat(EPR_X_LENGTH);
     Printer::yLength = HAL::eprGetFloat(EPR_Y_LENGTH);
     Printer::zLength = HAL::eprGetFloat(EPR_Z_LENGTH);
-    Printer::buselight=HAL::eprGetByte(EPR_LIGHT_ON);
+	EEPROM::buselight=HAL::eprGetByte(EPR_LIGHT_ON);
 	#if CASE_LIGHTS_PIN>=0
-        WRITE(CASE_LIGHTS_PIN, byte(Printer::buselight));
+        WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
+#if FEATURE_BEEPER
+	HAL::enablesound=HAL::eprGetByte(EPR_SOUND_ON);
+#endif
+#if UI_AUTOLIGHTOFF_AFTER >0
+	EEPROM::timepowersaving = HAL::eprGetInt32(EPR_POWERSAVE_AFTER_TIME);
+	//new value do reset time
+	UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+#endif	
 #if ENABLE_BACKLASH_COMPENSATION
     Printer::backlashX = HAL::eprGetFloat(EPR_BACKLASH_X);
     Printer::backlashY = HAL::eprGetFloat(EPR_BACKLASH_Y);
@@ -719,6 +738,12 @@ void EEPROM::writeSettings()
     writeFloat(EPR_Y_LENGTH,Com::tEPRYMaxLength);
     writeFloat(EPR_Z_LENGTH,Com::tEPRZMaxLength);
     writeByte(EPR_LIGHT_ON,Com::tLightOn);
+#if FEATURE_BEEPER
+    writeByte(EPR_SOUND_ON,Com::tSoundOn);
+#endif
+#if UI_AUTOLIGHTOFF_AFTER !=0
+	writeLong(EPR_POWERSAVE_AFTER_TIME,Com::tPowerSave);
+#endif
 #if ENABLE_BACKLASH_COMPENSATION
     writeFloat(EPR_BACKLASH_X,Com::tEPRXBacklash);
     writeFloat(EPR_BACKLASH_Y,Com::tEPRYBacklash);

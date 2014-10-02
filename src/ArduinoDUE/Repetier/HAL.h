@@ -37,9 +37,6 @@
 #include "pins.h"
 #include "Print.h"
 
-#if FEATURE_BEEPER
-extern bool enablesound;
-#endif
 
 // Hack to make 84 MHz Due clock work without changes to pre-existing code
 // which would otherwise have problems with int overflow.
@@ -220,7 +217,9 @@ class HAL
 public:
     HAL();
     virtual ~HAL();
-
+#if FEATURE_BEEPER
+    static bool enablesound;
+#endif
     // do any hardware-specific initialization here
     static inline void hwSetup(void)
     {

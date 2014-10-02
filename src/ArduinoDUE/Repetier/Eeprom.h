@@ -108,6 +108,8 @@ have problems with other modules using the eeprom */
 #define EPR_DELTA_DIAGONAL_CORR_C 941
 //946 -> 946 +195 - should be available
 #define EPR_LIGHT_ON 946
+#define EPR_SOUND_ON 947
+#define EPR_POWERSAVE_AFTER_TIME 948
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development
@@ -153,6 +155,8 @@ public:
 
     static void init();
     static void initBaudrate();
+    static bool buselight; 
+    static millis_t timepowersaving;
     static void storeDataIntoEEPROM(uint8_t corrupted=0);
     static void readDataFromEEPROM();
     static void restoreEEPROMSettingsFromConfiguration();

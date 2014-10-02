@@ -44,20 +44,14 @@ bool enablesound = true;
 #endif
 
 #if UI_AUTOLIGHTOFF_AFTER!=0
-millis_t ui_autolightoff_time=-1;
+millis_t UIDisplay::ui_autolightoff_time=-1;
 #endif
 
-
-#if UI_AUTOLIGHTOFF_AFTER !=0
-long timepowersaving=1000 * 60 * 30; //30 min
-#else
-long timepowersaving=0; 
-#endif
 
 void beep(uint8_t duration,uint8_t count)
 {
 #if FEATURE_BEEPER
-if (!enablesound)return;
+if (!HAL::enablesound)return;
 #if BEEPER_TYPE!=0
 #if BEEPER_TYPE==1 && defined(BEEPER_PIN) && BEEPER_PIN>=0
     SET_OUTPUT(BEEPER_PIN);
@@ -1336,7 +1330,7 @@ void UIDisplay::parse(char *txt,bool ram)
             break;
         case 's': // Endstop positions and sound
 			#if FEATURE_BEEPER
-		    if(c2=='o')addStringP(enablesound?ui_text_on:ui_text_off);        // Lights on/off
+		    if(c2=='o')addStringP(HAL::enablesound?ui_text_on:ui_text_off);        // Lights on/off
 			#endif
             if(c2=='x')
             {
@@ -1387,11 +1381,11 @@ void UIDisplay::parse(char *txt,bool ram)
             if(c2=='N') addStringP(PSTR(UI_PRINTER_NAME));
             #if UI_AUTOLIGHTOFF_AFTER > 0
 			else if(c2=='s') 
-			if(timepowersaving==0) addStringP(ui_text_off);        // powersave off
-			else if (timepowersaving==(1000 * 60)) addStringP("1min");//1mn
-			else if (timepowersaving==(1000 * 60 *5)) addStringP("5min");//5 min
-			else if (timepowersaving==(1000 * 60 * 15)) addStringP("15min");//15 min
-			else if (timepowersaving==(1000 * 60 * 30)) addStringP("30min");//30 min
+			if(EEPROM::timepowersaving==0) addStringP(ui_text_off);        // powersave off
+			else if (EEPROM::timepowersaving==(1000 * 60)) addStringP("1min");//1mn
+			else if (EEPROM::timepowersaving==(1000 * 60 *5)) addStringP("5min");//5 min
+			else if (EEPROM::timepowersaving==(1000 * 60 * 15)) addStringP("15min");//15 min
+			else if (EEPROM::timepowersaving==(1000 * 60 * 30)) addStringP("30min");//30 min
 			else addStringP(ui_text_on);//if not defined
       	    #endif 
             break;
@@ -1594,7 +1588,7 @@ void UIDisplay::refreshPage()
 #if UI_AUTOLIGHTOFF_AFTER!=0
 	//reset timeout for power saving
 	if (uid.encoderLast != encoderStartScreen)
-        ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+        UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif
     encoderStartScreen = uid.encoderLast;
 
@@ -2520,7 +2514,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
     ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
 #if UI_AUTOLIGHTOFF_AFTER!=0
-    ui_autolightoff_time==HAL::timeInMilliseconds()+timepowersaving;
+    UIDisplay::ui_autolightoff_time==HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif
 
 #endif
@@ -2562,11 +2556,11 @@ while (process_it)
 		 previousaction=lastButtonAction;
 		 //wake up light if power saving has been launched
 		#if UI_AUTOLIGHTOFF_AFTER!=0
-		if (timepowersaving>0)
+		if (EEPROM::timepowersaving>0)
 			{
-			ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+			UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 			#if CASE_LIGHTS_PIN > 0
-			if (!(READ(CASE_LIGHTS_PIN)) && Printer::buselight)
+			if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
 				{
 				TOGGLE(CASE_LIGHTS_PIN);
 				}
@@ -2611,11 +2605,11 @@ void UIDisplay::executeAction(int action)
     millis_t currentTime;
 	int step =0;
 #if UI_AUTOLIGHTOFF_AFTER!=0
-    if (timepowersaving>0)
+    if (EEPROM::timepowersaving>0)
 	{
-	ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+	UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 	#if CASE_LIGHTS_PIN > 0
-	if (!(READ(CASE_LIGHTS_PIN)) && Printer::buselight)
+	if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
 		{
 		TOGGLE(CASE_LIGHTS_PIN);
 		}
@@ -2721,18 +2715,18 @@ void UIDisplay::executeAction(int action)
             break;
 	#if FEATURE_BEEPER
 	case UI_ACTION_SOUND:
-	enablesound=!enablesound;
+	HAL::enablesound=!HAL::enablesound;
 	UI_STATUS(UI_TEXT_SOUND_ONOF);
 	break;
 	#endif
 #if UI_AUTOLIGHTOFF_AFTER >0
 	case UI_ACTION_TOGGLE_POWERSAVE:
-		if (timepowersaving==0) timepowersaving = 1000*60;// move to 1 min
-		else if (timepowersaving==(1000 * 60) )timepowersaving = 1000*60*5;// move to 5 min
-		else if (timepowersaving==(1000 * 60 * 5)) timepowersaving = 1000*60*15;// move to 15 min
-		else if (timepowersaving==(1000 * 60 * 15)) timepowersaving = 1000*60*30;// move to 30 min
-		else timepowersaving = 0;// move to off
-		if (timepowersaving>0)ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+		if (EEPROM::timepowersaving==0) EEPROM::timepowersaving = 1000*60;// move to 1 min
+		else if (EEPROM::timepowersaving==(1000 * 60) )EEPROM::timepowersaving = 1000*60*5;// move to 5 min
+		else if (EEPROM::timepowersaving==(1000 * 60 * 5)) EEPROM::timepowersaving = 1000*60*15;// move to 15 min
+		else if (EEPROM::timepowersaving==(1000 * 60 * 15)) EEPROM::timepowersaving = 1000*60*30;// move to 30 min
+		else EEPROM::timepowersaving = 0;// move to off
+		if (EEPROM::timepowersaving>0)UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
         UI_STATUS(UI_TEXT_POWER_SAVE);
 	break;
 #endif
@@ -2740,9 +2734,9 @@ void UIDisplay::executeAction(int action)
         case UI_ACTION_LIGHTS_ONOFF:
             TOGGLE(CASE_LIGHTS_PIN);
 			if (READ(CASE_LIGHTS_PIN))
-			Printer::buselight=true;
+			EEPROM::buselight=true;
 			else
-			Printer::buselight=false;
+			EEPROM::buselight=false;
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif
@@ -2830,11 +2824,11 @@ void UIDisplay::executeAction(int action)
 				}
 			 //wake up light if power saving has been launched
 			#if UI_AUTOLIGHTOFF_AFTER!=0
-			if (timepowersaving>0)
+			if (EEPROM::timepowersaving>0)
 				{
-				ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
+				UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 				#if CASE_LIGHTS_PIN > 0
-				if (!(READ(CASE_LIGHTS_PIN)) && Printer::buselight)
+				if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
 					{
 					TOGGLE(CASE_LIGHTS_PIN);
 					}
@@ -3233,7 +3227,7 @@ void UIDisplay::executeAction(int action)
         ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
 #if UI_AUTOLIGHTOFF_AFTER!=0
-        ui_autolightoff_time==HAL::timeInMilliseconds()+timepowersaving;
+        UIDisplay::ui_autolightoff_time==HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif
 #endif
 }
@@ -3343,11 +3337,11 @@ void UIDisplay::slowAction()
 #endif
 
 #if UI_AUTOLIGHTOFF_AFTER!=0
-if (ui_autolightoff_time==-1) ui_autolightoff_time=HAL::timeInMilliseconds()+timepowersaving;
-if ((ui_autolightoff_time<time) && (timepowersaving>0))
+if (ui_autolightoff_time==-1) ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+if ((ui_autolightoff_time<time) && (EEPROM::timepowersaving>0))
     {
 	#if CASE_LIGHTS_PIN > 0
-	if ((READ(CASE_LIGHTS_PIN)) && Printer::buselight)
+	if ((READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
 		{
 		TOGGLE(CASE_LIGHTS_PIN);
 		}
