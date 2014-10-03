@@ -1,122 +1,125 @@
-# Repetier-Firmware - the fast and user friendly firmware
+##DaVinci FW based on Repetier
+============================
 
-## Installation
+This fw is based on repetier fw and modified to work with DaVinci 1.0, 2.0 single fan and 2.0.   
+It works with host software like [repetier host](http://repetier.com), or as stand alone if you use a WIFI SD Card.
 
-Please use your new at [http://www.repetier.com/firmware/v091](http://www.repetier.com/firmware/v091)
-for easy and fast configuration. You get the complete sources you need to compile back.
-This system also allows it to upload configurations created with this tool and modify
-the configuration.
+You can see more on [Voltivo forum](http://voltivo.com/forum/davinci-firmware).
 
-## Version 0.91 released 2013-12-30
+Current firmware is based on version of  modified [repetier FW](https://github.com/repetier/Repetier-Firmware) 0.91 : [bgm370 Da Vinci 1.0 FW](https://github.com/bgm370/Repetier-Firmware) 
 
-Improvements over old code:
-* Works with CodeBlocks for Arduino http://www.arduinodev.com/codeblocks/#download
-  which can replace the ArduinoIDE with a much better one on windows systems. Load the
-  Repetier.cdb project file for this.
-* Better readable code.
-* Long filename support (from Glenn Kreisel).
-* Animated menu changes.
-* Separation of logic and hardware access to allow different processor architectures
-  by changing the hardware related files.
-* z-leveling support.
-* Mirroring of x,y and z motor.
-* Ditto printing.
-* Faster and better delta printing.
-* New heat manager (dead time control).
-* Removed OPS handling.
-* Full graphic display support.
-* Many bug fixes.
-* many other changes.
+It gets rid off Da Vinci software and filament restrictions: it allows to use clear ABS because it do not use sensor, as well as others brand name filaments because it does not use cartridge chip, it allows any slicer or third-party host software usage in normal way. 
 
-## Documentation
+##Installation
+Use arduino IDE supporting arduino DUE, [version 1.5.8+](http://arduino.cc/en/Main/Software#toc3), variant.cpp need to be updated in arduino directory, the ino file is the repetier.ino located in src\ArduinoDUE\Repetier directory.
+For upgrade from stock FW and revert to, please check DaVinci forum.
 
-For documentation please visit [http://www.repetier.com/documentation/repetier-firmware/](http://www.repetier.com/documentation/repetier-firmware/)
+Do not forget to modify the configuration.h to match the targeted Da Vinci 1.0, 2.0 SF or 2.0. (number of extruders and fans)
 
-## Developer
+***
+##TODO
+This is the plan of missing features to be done in addition of bugs fixes:  
+* UI improvement: Menu looks/feel
+* Add Clean Box function from menu
+* Add Load/unload filament from menu
+* Add Stop print any time from menu
+* Add Pause print any time from menu allowing
+	* Change filament
+	* Clean nozzle
+	* TBD..
+* Add some fancy sounds for specific actions like:
+	* temperature reached for heating function
+	* when user action is requested like for clean nozzle
+	* when printer is power on, some welcoming ``"TADA"`` 
+	* when printing is done , some audio sound
 
-The sources are managed by the Hot-World GmbH & Co. KG
-It was initially based on the Sprinter firmware from Kliment, but the code has run
-through many changes since them.
-Other developers:
-- Glenn Kreisel (long filename support)
-- Martin Croome (first delta implementation)
-- John Silvia (Arduino Due port)
-- sdavi (first u8glib code implementation)
-- plus several small contributions from other users.
+***
+##Known Issues
+* Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), 
+	
+***
+## Current LCD Menu	for Da Vinci 2.0 duo
+* Keys:
+	`/\`	`Home`
+`<` `Ok` `>`
+    `\/`
 
-## Introduction
+	*Down
+	
+* Main Screen
+```
+	* Page 1 - sum up of temperatures, Z pos and speed
+	! 34/250!34/250
+	H 34/ 90Mul:100%
+	Z:   0.00
+	Printer ready.
+```
 
-Repetier-Firmware is a firmware for RepRap like 3d-printer powered with
-an arduino compatible controller.
-This firmware is a nearly complete rewrite of the sprinter firmware by kliment
-which based on Tonokip RepRap firmware rewrite based off of Hydra-mmm firmware.
-Some ideas were also taken from Teacup, Grbl and Marlin.
+	* Page 2 - position
+```
+	X:   0.00mm
+	Y:   0.00mm
+	Z:   0.00mm
+	Printer ready.
+```
 
-Supported boards:
+	* Page 3 - temperatures
+```
+	E1: 34/250'C->100
+	E2: 34/250'C->100
+	B: 34/ 90'C->100%
+	Printer ready.
+```
+	* Page 4 - Printing time
+```
+	Printing time
+	    0 days  0:00
+	Filament printed
+	      0.0m
+```
 
-The following boards are supported by setting the proper motherboard type.Other boards
-require a matching pin definition.
+* Menu (when Ok key is pressed)
+```
+	[Quick Settings](#quick-settings)
+	[Print file](#print-file)
+	[Position](#position)
+	[Extruder](#extruder)
+	[SD Card](#sd-card)
+	[Debugging](#debugging)
+	[Configuration](#configuration)  
+```
+---
+###Quick Settings
+```
+	Home All
+	Z Babystepping
+	Speed Mul.:100%
+	Flow Mul.:100%
+	Lights :On
+	Sound :On
+	Powersave:30min
+	Cleaning Nozzle
+	Preheat PLA
+	Preheat ABS
+	Cooldown
+	Set to Origin
+	Disable stepper
+```
+---
+###Print file
 
-* MEGA/RAMPS up to 1.2       = 3
-* RAMPS 1.3/RAMPS 1.4        = 33
-* Azteeg X3                  = 34
-* Gen6                       = 5 
-* Gen6 deluxe                = 51
-* Sanguinololu up to 1.1     = 6
-* Sanguinololu 1.2 and above = 62
-* Melzi board                = 63
-* Gen7 1.1 till 1.3.x        = 7
-* Gen7 1.4.1 and later       = 71
-* Teensylu (at90usb)         = 8 // requires Teensyduino
-* Printrboard (at90usb)      = 9 // requires Teensyduino
-* Foltyn 3D Master           = 12
-* MegaTronics                = 70
-* Megatronics 2.0            = 701
-* RUMBA                      = 80  // Get it from reprapdiscount
-* Rambo                      = 301
+---
+###Position
 
-## Features
+---
+###Extruder
 
-- RAMP acceleration support.
-- Path planning for higher print speeds.
-- Trajectory smoothing for smoother lines.
-- Ooze prevention system for faster anti ooze then slicer can do,
-- Nozzle pressure control for improved print quality with RAMPS.
-- Fast - 40000 Hz and more stepper frequency is possible with a 16 MHz AVR. 
-- Multiple extruder supported (max. 6 extruder).
-- Standard ASCII and improved binary (Repetier protocol) communication.
-- Autodetect the command protocol, so it will work with any host software.
-- Continuous monitoring of one temperature.
-- Important parameters are stored in EEPROM and can easily be modified without
-  recompilation of the firmware.
-- Stepper control is handled in an interrupt routine, leaving time for
-  filling caches for next move.
-- PID control for extruder/heated bed temperature.
-- Interrupt based sending buffer (Arduino library normally waits for the
-  recipient to receive written data)
-- Small RAM memory print, resulting in large caches.
-- Supports SD-cards.
-- mm and inches can be used for G0/G1
-- Arc support
-- Works with Skeinforge 41, all unknown commands are ignored.
-- Dry run : Execute yout GCode without using the extruder. This way you can
-  test for non-extruder related failures without actually printing.
+---
+###SD Card
 
-## Controlling firmware
+---
+###Debugging
 
-Also you can control the firmware with any reprap compatible host, you will only get
-the full benefits with the following products, which have special code for this
-firmware:
+---
+###Configuration
 
-* [Repetier-Host for Windos/Linux](http://www.repetier.com/download/)
-* [Repetier-Host for Mac](http://www.repetier.com/download/)
-* [Repetier-Server](http://www.repetier.com/repetier-server-download/)
-
-## Installation
-
-For documentation and installation please visit 
-[http://www.repetier.com/documentation/repetier-firmware/](http://www.repetier.com/documentation/repetier-firmware/).
-
-## Changelog
-
-See changelog.txt
