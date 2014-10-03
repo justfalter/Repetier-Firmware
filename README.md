@@ -40,15 +40,14 @@ This is the plan of missing features to be done in addition of bugs fixes:
 ***
 ## Current LCD Menu	for Da Vinci 2.0 duo
 * Keys:
-	`/\`	`Home`
-`<` `Ok` `>`
-    `\/`
+	`/\`	`Home`  
+`<` `Ok` `>`   
+    `\/`   
 
-	*Down
 	
 * Main Screen
-```
 	* Page 1 - sum up of temperatures, Z pos and speed
+```
 	! 34/250!34/250
 	H 34/ 90Mul:100%
 	Z:   0.00
@@ -79,7 +78,6 @@ This is the plan of missing features to be done in addition of bugs fixes:
 ```
 
 * Menu (when Ok key is pressed)
-```
 	[Quick Settings](#quick-settings)
 	[Print file](#print-file)
 	[Position](#position)
@@ -87,7 +85,6 @@ This is the plan of missing features to be done in addition of bugs fixes:
 	[SD Card](#sd-card)
 	[Debugging](#debugging)
 	[Configuration](#configuration)  
-```
 ---
 ###Quick Settings
 ```
