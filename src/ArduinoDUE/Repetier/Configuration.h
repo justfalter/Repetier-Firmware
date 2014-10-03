@@ -36,16 +36,19 @@
 
 */
 
+// ################## EDIT THESE SETTINGS MANUALLY ################
+
 #define NUM_EXTRUDER 2
 #define NUM_FAN 2 //Some Davinci have 2 extruders and 1 fan
+#define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 1 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
 #define MOTHERBOARD 999
+
+
+// ################ END MANUAL SETTINGS ##########################
+
 
 #include "pins.h"
 
-// ################## EDIT THESE SETTINGS MANUALLY ################
-// ################ END MANUAL SETTINGS ##########################
-
-#define FAN_PIN -1
 #define FAN_BOARD_PIN -1
 #define X_MAX_PIN -1
 #define Y_MAX_PIN -1
@@ -56,6 +59,29 @@
 // If it is incompatible you will get compiler errors about write functions not beeing compatible!
 //#define COMPAT_PRE1
 
+//This is the logic that controls the cooling fan pin assignments.
+#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1
+  #define FAN_PIN ORIG_FAN_PIN
+  #define FEATURE_FAN_CONTROL 1
+  
+  #if NUM_FAN==1 
+    #define EXT0_EXTRUDER_COOLER_PIN -1
+    #define EXT1_EXTRUDER_COOLER_PIN -1
+  #else
+    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+    #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+  #endif
+#else
+  #define FAN_PIN -1
+  #define FEATURE_FAN_CONTROL 0
+  #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+  
+  #if NUM_FAN==1 
+    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+  #else
+    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+  #endif
+#endif
 
 #define DRIVE_SYSTEM 0
 #define XAXIS_STEPS_PER_MM 80
@@ -95,7 +121,6 @@
 #define EXT0_WAIT_RETRACT_UNITS 0
 #define EXT0_SELECT_COMMANDS ""
 #define EXT0_DESELECT_COMMANDS ""
-#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT0_EXTRUDER_COOLER_SPEED 255
 #define EXT1_X_OFFSET -2852
 #define EXT1_Y_OFFSET 12
@@ -126,11 +151,6 @@
 #define EXT1_WAIT_RETRACT_UNITS 0
 #define EXT1_SELECT_COMMANDS ""
 #define EXT1_DESELECT_COMMANDS ""
-#if NUM_FAN==1 
-#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
-#else
-#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
-#endif
 #define EXT1_EXTRUDER_COOLER_SPEED 255
 #define RETRACT_DURING_HEATUP true
 #define PID_CONTROL_RANGE 20
@@ -354,7 +374,6 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define ARC_SUPPORT 1
 #define FEATURE_MEMORY_POSITION 1
 #define FEATURE_CHECKSUM_FORCED 0
-#define FEATURE_FAN_CONTROL 0
 #define FEATURE_CONTROLLER 1
 #define UI_LANGUAGE 0
 #define UI_PRINTER_NAME "Da Vinci 2.0"
