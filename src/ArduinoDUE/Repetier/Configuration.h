@@ -387,7 +387,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define ENABLE_CLEAN_NOZZLE 1
 #if ENABLE_CLEAN_NOZZLE
   #if NUM_EXTRUDER==1 //cleaner of Davinci 1.0 is not in same position of 2.0
-    #define CLEAN_X 30
+    #define CLEAN_X 20
     #define CLEAN_Y 0
  #else
     #define CLEAN_X 0

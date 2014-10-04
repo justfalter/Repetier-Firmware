@@ -403,7 +403,7 @@ UI_MENU_ACTIONCOMMAND(ui_menu_sound,UI_TEXT_SOUND_ONOF,UI_ACTION_SOUND);
 
 UI_MENU_ACTION4C(ui_menu_confirmation,UI_ACTION_DUMMY,UI_TEXT_CONFIRMATION);
 #if NUM_EXTRUDER == 1
-#define UI_PAGE_CLEAN_NOZZLE "\005%ec/%Ec\002\007","Z:%x2","","%os"
+#define UI_PAGE_CLEAN_NOZZLE "\005%ec/%Ec\002","Z:%x2","","%os"
 #else
 #define UI_PAGE_CLEAN_NOZZLE "\005%e0/%E0\002","\005%e1/%E1\002","Z:%x2","%os"
 #endif
