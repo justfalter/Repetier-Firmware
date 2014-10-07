@@ -32,6 +32,16 @@ This is the plan of missing features to be done in addition of bugs fixes:
 	* when user action is requested like for clean nozzle
 	* when printer is power on, some welcoming ``"TADA"`` 
 	* when printing is done , some audio sound
+	
+***
+##Implemented
+* Standard GCODE commands
+* Dual extruders support
+* Single Fan / Dual fans support according printer configuration
+* Repurpose of second fan usage to be controlled by M106/M107 commands on Da Vinci 2.0
+* Sound and Light management, including powersaving function
+* Cleaning Nozzle(s) by menu and by command
+* Load / Unload filament by menu
 
 ***
 ##Known Issues
@@ -40,45 +50,46 @@ This is the plan of missing features to be done in addition of bugs fixes:
 ***
 ## Current LCD Menu	for Da Vinci 2.0 duo
 * Keys:   
-	`/\`	`Home`  
-`<` `Ok` `>`   
-    `\/`   
+&nbsp;&nbsp;&nbsp;&nbsp;`[/\]`	`[Home]`    
+`[<]` `[Ok]` `[>]`   
+&nbsp;&nbsp;&nbsp;&nbsp;`[\/]`   
 
 	
 * Main Screen
    
-	* Page 1 - sum up of temperatures, Z pos and speed
-```
-	! 34/250!34/250
-	H 34/ 90Mul:100%
-	Z:   0.00
-	Printer ready.
-```
+	* Page 1 - sum up of temperatures, Z pos and speed   
+	
+<table><tr><td>!&nbsp;34/250!&nbsp;34/250<br>
+H&nbsp;34/&nbsp;90Mul:100%<br>   
+Z:&nbsp;&nbsp;&nbsp;0.00<br>       
+Printer ready.</td></tr></table>
 
-	* Page 2 - position
-```
-	X:   0.00mm
-	Y:   0.00mm
-	Z:   0.00mm
-	Printer ready.
-```
+      
+	* Page 2 - position   
 
-	* Page 3 - temperatures
-```
-	E1: 34/250'C->100
-	E2: 34/250'C->100
-	B: 34/ 90'C->100%
-	Printer ready.
-```
-	* Page 4 - Printing time
-```
-	Printing time
-	    0 days  0:00
-	Filament printed
-	      0.0m
-```
+<table><tr><td>X:&nbsp;&nbsp;&nbsp;0.00mm&nbsp;&nbsp;&nbsp;<br>   
+Y:&nbsp;&nbsp;&nbsp;0.00mm<br>   
+Z:&nbsp;&nbsp;&nbsp;0.00mm<br>   
+Printer ready.</td></tr></table> 
 
-* Menu (when Ok key is pressed)
+   
+	* Page 3 - temperatures   
+
+<table><tr><td>E1: 34/250'C->100<br> 
+E2: 34/250'C->100<br>
+B: 34/ 90'C->100%<br>
+Printer ready.</td></tr></table>
+
+   
+	* Page 4 - Printing time   
+
+<table><tr><td>Printing time&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0 days  0:00<br>  
+Filament printed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0m.</td></tr></table>   
+
+
+* Menu (when Ok key is pressed)   
 	[Quick Settings](#quick-settings)   
 	[Print file](#print-file)   
 	[Position](#position)   
@@ -89,7 +100,7 @@ This is the plan of missing features to be done in addition of bugs fixes:
 	
 ---
 ###Quick Settings
-```
+
 	Home All
 	Z Babystepping
 	Speed Mul.:100%
@@ -103,7 +114,7 @@ This is the plan of missing features to be done in addition of bugs fixes:
 	Cooldown
 	Set to Origin
 	Disable stepper
-```
+	
 ---
 ###Print file
 

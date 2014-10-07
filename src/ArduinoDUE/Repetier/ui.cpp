@@ -47,6 +47,15 @@ bool enablesound = true;
 millis_t UIDisplay::ui_autolightoff_time=-1;
 #endif
 
+void playsound(int tone,int duration)
+{
+if (!HAL::enablesound)return;
+#if FEATURE_BEEPER
+HAL::tone(BEEPER_PIN, tone);
+HAL::delayMilliseconds(duration);
+HAL::noTone(BEEPER_PIN);
+#endif
+}
 
 void beep(uint8_t duration,uint8_t count)
 {
@@ -2524,16 +2533,17 @@ void UIDisplay::finishAction(int action)
 {
 }
 
-bool UIDisplay::confirmationDialog(char * title,char * line1,char * line2)
+bool UIDisplay::confirmationDialog(char * title,char * line1,char * line2,int type, bool defaultresponse)
 {
-bool response=false;
+bool response=defaultresponse;
 bool process_it=true;
 int previousaction=0;
 //init dialog strings
 uipagedialog.textline1= title ;
 uipagedialog.textline2= line1;
 uipagedialog.textline3= line2;
-uipagedialog.textline4= UI_TEXT_NO_SELECTED; //default for response=false
+if (response) uipagedialog.textline4= UI_TEXT_YES_SELECTED; //default for response=false
+else uipagedialog.textline4= UI_TEXT_NO_SELECTED; //default for response=false
 //push dialog
 pushMenu((void*)&ui_menu_confirmation,true);
 //ensure last button pressed is not OK to have the dialog closing too fast
@@ -2603,6 +2613,9 @@ void UIDisplay::executeAction(int action)
 	int previousaction=0;
 	millis_t printedTime;
     millis_t currentTime;
+	int load_dir=1;
+	int extruderid=0;
+	int tmpextruderid=0;
 	int step =0;
 #if UI_AUTOLIGHTOFF_AFTER!=0
     if (EEPROM::timepowersaving>0)
@@ -2773,7 +2786,7 @@ void UIDisplay::executeAction(int action)
 		 case STEP_WAIT_FOR_TEMPERATURE:
 
 			UI_STATUS(UI_TEXT_HEATING);
-			//no need to be extremly accurate so no need stable temperature 
+			//no need to be extremely accurate so no need stable temperature 
 			if(abs(extruder[0].tempControl.currentTemperatureC- extruder[0].tempControl.targetTemperatureC)<2)
 				{
 				step = STEP_CLEAN_NOOZLE;
@@ -2849,6 +2862,162 @@ void UIDisplay::executeAction(int action)
 		refreshPage();
         break;
 #endif			
+case UI_ACTION_LOAD_EXTRUDER_0:
+case UI_ACTION_UNLOAD_EXTRUDER_0:
+#if NUM_EXTRUDER > 1
+case UI_ACTION_LOAD_EXTRUDER_1:
+case UI_ACTION_UNLOAD_EXTRUDER_1:
+#endif
+		if (action== UI_ACTION_LOAD_EXTRUDER_0)
+			{
+			load_dir=1;
+			extruderid=0;
+			}
+		else if (action== UI_ACTION_UNLOAD_EXTRUDER_0)
+			{
+			load_dir=-1;
+			extruderid=0;
+			}
+		#if NUM_EXTRUDER > 1
+		else if (action== UI_ACTION_LOAD_EXTRUDER_1)
+			{
+			load_dir=1;
+			extruderid=1;
+			}
+		else if (action== UI_ACTION_UNLOAD_EXTRUDER_1)
+			{
+			load_dir=-1;
+			extruderid=1;
+			}
+		#endif
+		tmpextruderid=Extruder::current->id;
+		Extruder::selectExtruderById(extruderid,false);
+	    //be sure no issue
+		if(reportTempsensorError() or Printer::debugDryrun()) break;
+		UI_STATUS(UI_TEXT_HEATING);
+		pushMenu((void*)&ui_menu_heatextruder_page,true);
+		process_it=true;
+		printedTime = HAL::timeInMilliseconds();
+		step=STEP_EXT_HEATING;
+		while (process_it)
+		{
+		Commands::checkForPeriodicalActions();
+		currentTime = HAL::timeInMilliseconds();
+        if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
+            {
+            Commands::printTemperatures();
+            printedTime = currentTime;
+           }
+		 //be sure not auto return
+		#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
+		#endif
+		 switch(step)
+		 {
+		 case STEP_EXT_HEATING:
+            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,extruderid);
+			step =  STEP_EXT_WAIT_FOR_TEMPERATURE;
+		 break;
+		 case STEP_EXT_WAIT_FOR_TEMPERATURE:
+			UI_STATUS(UI_TEXT_HEATING);
+			//no need to be extremely accurate so no need stable temperature 
+			if(abs(extruder[extruderid].tempControl.currentTemperatureC- extruder[extruderid].tempControl.targetTemperatureC)<2)
+				{
+				step = STEP_EXT_ASK_FOR_FILAMENT;
+				playsound(3000,240);
+				playsound(4000,240);
+				playsound(5000,240);
+				UI_STATUS(UI_TEXT_WAIT_FILAMENT);
+				}
+		 break;
+		 case STEP_EXT_ASK_FOR_FILAMENT:
+		 if (load_dir==-1) //no need to ask
+			{
+			step=STEP_EXT_LOAD_UNLOAD;
+			}
+
+		 break;
+		 case STEP_EXT_LOAD_UNLOAD:
+			//load or unload
+			if (load_dir==-1)
+				{
+				UI_STATUS(UI_TEXT_UNLOADING_FILAMENT);
+				PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * 60 * Printer::axisStepsPerMM[E_AXIS],4,false,false);
+				}
+			else
+				{
+				UI_STATUS(UI_TEXT_LOADING_FILAMENT);
+				PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * 60 * Printer::axisStepsPerMM[E_AXIS],2,false,false);
+				}
+			Commands::waitUntilEndOfAllMoves();
+			//ask to redo or stop
+			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
+					{
+					menuLevel--;
+					pushMenu((void*)&ui_menu_heatextruder_page,true);
+					}
+				else
+					{//we end
+					UI_STATUS(UI_TEXT_COOLDOWN);
+					process_it=false;
+					menuLevel--;
+					}
+				delay(100);
+				
+		 break;
+		 }
+		 //check what key is pressed
+		 if (previousaction!=lastButtonAction)
+			{
+			previousaction=lastButtonAction;
+			if(previousaction!=0)BEEP_SHORT;
+			if ((lastButtonAction==UI_ACTION_OK) &&(step==STEP_EXT_ASK_FOR_FILAMENT))
+				{//we can continue
+				step=STEP_EXT_LOAD_UNLOAD;
+				playsound(5000,240);
+				playsound(3000,240);
+				UI_STATUS(UI_TEXT_PUSH_FILAMENT);
+				}
+			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
+				{
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_LOADUNLOAD_FILAMENT))
+					{
+					UI_STATUS(UI_TEXT_CANCELED);
+					menuLevel--;
+					process_it=false;
+					}
+				else
+					{//we continue as before
+					menuLevel--;
+					pushMenu((void*)&ui_menu_heatextruder_page,true);
+					}
+				delay(100);
+				}
+			 //wake up light if power saving has been launched
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			if (EEPROM::timepowersaving>0)
+				{
+				UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+				#if CASE_LIGHTS_PIN > 0
+				if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+					{
+					TOGGLE(CASE_LIGHTS_PIN);
+					}
+				#endif
+				#if defined(UI_BACKLIGHT_PIN)
+				if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+				#endif
+				}
+			#endif
+			}
+		}
+		//cool down
+		Extruder::setTemperatureForExtruder(0,extruderid);
+		Extruder::selectExtruderById(tmpextruderid,false);
+		menuLevel--;
+		refreshPage();
+        break;
+		
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);

@@ -30,6 +30,7 @@
 // Add UI_ACTION_TOPMENU to show a menu as top menu
 // ----------------------------------------------------------------------------
 
+#define UI_CONFIRMATION_TYPE_YES_NO 1
 #define UI_ACTION_TOPMENU 8192
 
 #define UI_ACTION_NEXT 1
@@ -162,6 +163,12 @@
 #define UI_ACTION_TOGGLE_POWERSAVE		1113
 #define UI_ACTION_CLEAN_NOZZLE          1114
 #define UI_ACTION_SOUND					1115
+#define UI_ACTION_LOAD_EXTRUDER_0		1116
+#define UI_ACTION_UNLOAD_EXTRUDER_0		1117
+#if NUM_EXTRUDER > 1
+	#define UI_ACTION_LOAD_EXTRUDER_1		1118
+	#define UI_ACTION_UNLOAD_EXTRUDER_1		1119
+#endif
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001
@@ -403,7 +410,7 @@ class UIDisplay {
     void refreshPage();
     void executeAction(int action);
     void finishAction(int action);
-	bool confirmationDialog(char * title,char * line1,char * line2);
+	bool confirmationDialog(char * title,char * line1,char * line2,int type=UI_CONFIRMATION_TYPE_YES_NO, bool defaultresponse=false);
     void slowAction();
     void fastAction();
     void mediumAction();
@@ -1215,6 +1222,6 @@ void ui_check_slow_keys(int &action) {}
 
 
 extern void beep(uint8_t duration,uint8_t count);
-
+extern void playsound(int tone,int duration);
 #endif
 

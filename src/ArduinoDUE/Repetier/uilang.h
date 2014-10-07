@@ -115,10 +115,13 @@
 #define UI_TEXT_NO_SELECTED     "   Yes    [No]"
 #define UI_TEXT_PLEASE_CONFIRM     "  Please confirm"
 #define UI_TEXT_CANCEL_ACTION     "Cancel :"
+#define UI_TEXT_CONTINUE_ACTION     "Continue :"
 #define UI_TEXT_CANCELED     "Action canceled!"
 #define UI_TEXT_CONFIRMED     "Action confirmed!"
 #define UI_TEXT_POWER_SAVE    	 "Powersave:%Ps"
 #define UI_TEXT_CLEAN_NOZZLE 	 "Cleaning Nozzle"
+#define UI_TEXT_PUSH_FILAMENT 	 "Push Filament"
+#define UI_TEXT_WAIT_FILAMENT 	 "Push Ok to start"
 #define UI_TEXT_COOLDOWN         "Cooldown"
 #define UI_TEXT_SET_TO_ORIGIN    "Set to Origin"
 #define UI_TEXT_DISABLE_STEPPER  "Disable stepper"
@@ -267,7 +270,18 @@
 #define UI_TEXT_STRING_HM_SLOWBANG     "SlowBang"
 #define UI_TEXT_STOP_PRINT "Stop Print"
 #define UI_TEXT_Z_BABYSTEPPING "Z Babystepping"
-
+#if NUM_EXTRUDER == 1
+	#define UI_TEXT_LOAD_FILAMENT "Load Filament"
+	#define UI_TEXT_UNLOAD_FILAMENT "Unload Filament"
+#else
+	#define UI_TEXT_LOAD_RIGHT_FILAMENT "Load Right \005"
+	#define UI_TEXT_UNLOAD_RIGHT_FILAMENT "Unload Right \005"
+	#define UI_TEXT_LOAD_LEFT_FILAMENT "Load Left \005"
+	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Unload Left \005"
+#endif
+#define UI_TEXT_LOADING_FILAMENT "Loading \005"
+#define UI_TEXT_UNLOADING_FILAMENT "Unloading \005"
+#define UI_TEXT_LOADUNLOAD_FILAMENT "Load / Unload \005"
 // *************** German translation ****************
 
 #if UI_LANGUAGE==1

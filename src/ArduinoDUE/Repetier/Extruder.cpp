@@ -330,7 +330,7 @@ void TemperatureController::updateTempControlVars()
 
 This function changes and initalizes a new extruder. This is also called, after the eeprom values are changed.
 */
-void Extruder::selectExtruderById(uint8_t extruderId)
+void Extruder::selectExtruderById(uint8_t extruderId, bool changepos)
 {
     if(extruderId>=NUM_EXTRUDER)
         extruderId = 0;
@@ -379,7 +379,7 @@ void Extruder::selectExtruderById(uint8_t extruderId)
     float oldfeedrate = Printer::feedrate;
     Printer::offsetX = -Extruder::current->xOffset*Printer::invAxisStepsPerMM[X_AXIS];
     Printer::offsetY = -Extruder::current->yOffset*Printer::invAxisStepsPerMM[Y_AXIS];
-    if(Printer::isHomed())
+    if(Printer::isHomed() && changepos)
         Printer::moveToReal(cx,cy,cz,IGNORE_COORDINATE,Printer::homingFeedrate[X_AXIS]);
     Printer::feedrate = oldfeedrate;
     Printer::updateCurrentPosition();

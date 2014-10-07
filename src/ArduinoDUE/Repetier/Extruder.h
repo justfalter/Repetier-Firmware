@@ -285,7 +285,7 @@ class Extruder   // Size: 12*1 Byte+12*4 Byte+4*2Byte = 68 Byte
     static void manageTemperatures();
     static void disableCurrentExtruderMotor();
     static void disableAllExtruderMotors();
-    static void selectExtruderById(uint8_t extruderId);
+    static void selectExtruderById(uint8_t extruderId, bool changepos=true);
     static void disableAllHeater();
     static void initExtruder();
     static void initHeatedBed();
