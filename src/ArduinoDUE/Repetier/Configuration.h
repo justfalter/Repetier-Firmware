@@ -40,7 +40,7 @@
 
 #define NUM_EXTRUDER 2
 #define NUM_FAN 2 //Some Davinci have 2 extruders and 1 fan
-#define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 1 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
+#define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 0 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
 #define MOTHERBOARD 999
 
 
