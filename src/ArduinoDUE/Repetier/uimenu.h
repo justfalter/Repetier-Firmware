@@ -179,7 +179,7 @@ for 2 row displays. You can add additional pages or change the default pages lik
  #endif
   UI_PAGE4(ui_page2,"X:%x0 mm","Y:%x1 mm","Z:%x2 mm","%os");
 //UI_PAGE4(ui_page2,"dX:%y0 mm %sX","dY:%y1 mm %sY","dZ:%y2 mm %sZ","%os");
-   UI_PAGE4(ui_page3,UI_TEXT_PAGE_EXTRUDER1,
+ /*  UI_PAGE4(ui_page3,UI_TEXT_PAGE_EXTRUDER1,
  #if NUM_EXTRUDER>1
    UI_TEXT_PAGE_EXTRUDER2
  #else
@@ -190,7 +190,7 @@ for 2 row displays. You can add additional pages or change the default pages lik
  #else
   ,""
  #endif
- ,"%os");
+ ,"%os");*/
  #if EEPROM_MODE!=0
   UI_PAGE4(ui_page4,UI_TEXT_PRINT_TIME,"%Ut",UI_TEXT_PRINT_FILAMENT,"%Uf m");
   #define UI_PRINTTIME_PAGES ,&ui_page4
@@ -203,9 +203,9 @@ for 2 row displays. You can add additional pages or change the default pages lik
 Merge pages together. Use the following pattern:
 #define UI_PAGES {&name1,&name2,&name3}
 */
- #define UI_PAGES {&ui_page1,&ui_page2,&ui_page3 UI_PRINTTIME_PAGES}
+ #define UI_PAGES {&ui_page1,&ui_page2 UI_PRINTTIME_PAGES}
 // How many pages do you want to have. Minimum is 1.
- #define UI_NUM_PAGES 3+UI_PRINTTIME_COUNT
+ #define UI_NUM_PAGES 2+UI_PRINTTIME_COUNT
 #else
 #if HAVE_HEATED_BED==true
 UI_PAGE2(ui_page1,UI_TEXT_PAGE_EXTRUDER,UI_TEXT_PAGE_BED);
