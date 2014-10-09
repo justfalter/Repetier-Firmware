@@ -21,7 +21,6 @@ Do not forget to modify the configuration.h to match the targeted Da Vinci 1.0, 
 This is the plan of missing features to be done in addition of bugs fixes:  
 * UI improvement: Menu looks/feel
 * Add Clean Box function from menu
-* Add Load/unload filament from menu
 * Add Stop print any time from menu
 * Add Pause print any time from menu allowing
 	* Change filament
@@ -73,15 +72,7 @@ Z:&nbsp;&nbsp;&nbsp;0.00mm<br>
 Printer ready.</td></tr></table> 
 
    
-	* Page 3 - temperatures   
-
-<table><tr><td>E1: 34/250'C->100<br> 
-E2: 34/250'C->100<br>
-B: 34/ 90'C->100%<br>
-Printer ready.</td></tr></table>
-
-   
-	* Page 4 - Printing time   
+	* Page 3 - Printing time   
 
 <table><tr><td>Printing time&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0 days  0:00<br>  
@@ -123,6 +114,19 @@ Filament printed<br>
 
 ---
 ###Extruder
+	Load Left !
+	Unload Left !
+	Load Right !
+	Unload Right !
+	Bed Temp. :  0'C
+	Temp. 0 : 0'C
+	Temp. 1 : 0'C
+	Extruder 0 Off
+	Extruder 1 Off
+	* Select Extruder 0
+	- Select Extruder 1
+	Extr. Position ->
+	Set Origin
 
 ---
 ###SD Card

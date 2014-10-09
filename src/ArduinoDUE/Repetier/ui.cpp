@@ -2617,6 +2617,7 @@ void UIDisplay::executeAction(int action)
 	int extruderid=0;
 	int tmpextruderid=0;
 	int step =0;
+	int counter;
 #if UI_AUTOLIGHTOFF_AFTER!=0
     if (EEPROM::timepowersaving>0)
 	{
@@ -2929,41 +2930,52 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				playsound(5000,240);
 				UI_STATUS(UI_TEXT_WAIT_FILAMENT);
 				}
+			counter=0;
 		 break;
 		 case STEP_EXT_ASK_FOR_FILAMENT:
 		 if (load_dir==-1) //no need to ask
 			{
 			step=STEP_EXT_LOAD_UNLOAD;
 			}
-
+		//ok key is managed in key section so if wait for press ok - just do nothing
 		 break;
 		 case STEP_EXT_LOAD_UNLOAD:
-			//load or unload
-			if (load_dir==-1)
-				{
-				UI_STATUS(UI_TEXT_UNLOADING_FILAMENT);
-				PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * 60 * Printer::axisStepsPerMM[E_AXIS],4,false,false);
-				}
-			else
-				{
-				UI_STATUS(UI_TEXT_LOADING_FILAMENT);
-				PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * 60 * Printer::axisStepsPerMM[E_AXIS],2,false,false);
-				}
-			Commands::waitUntilEndOfAllMoves();
-			//ask to redo or stop
-			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
+			if(!PrintLine::hasLines())
+			{
+				//load or unload
+				counter++;
+				if (load_dir==-1)
 					{
-					menuLevel--;
-					pushMenu((void*)&ui_menu_heatextruder_page,true);
+					UI_STATUS(UI_TEXT_UNLOADING_FILAMENT);
+					PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * Printer::axisStepsPerMM[E_AXIS],4,false,false);
 					}
 				else
-					{//we end
-					UI_STATUS(UI_TEXT_COOLDOWN);
-					process_it=false;
-					menuLevel--;
+					{
+					UI_STATUS(UI_TEXT_LOADING_FILAMENT);
+					PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * Printer::axisStepsPerMM[E_AXIS],2,false,false);
 					}
-				delay(100);
-				
+				if (counter>=60)step = STEP_EXT_ASK_CONTINUE;
+			}	
+			break;
+		 case STEP_EXT_ASK_CONTINUE:
+			if(!PrintLine::hasLines())
+			{
+				//ask to redo or stop
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
+						{
+						menuLevel--;
+						pushMenu((void*)&ui_menu_heatextruder_page,true);
+						counter=0;
+						step =STEP_EXT_LOAD_UNLOAD;
+						}
+					else
+						{//we end
+						UI_STATUS(UI_TEXT_COOLDOWN);
+						process_it=false;
+						menuLevel--;
+						}
+					delay(100);
+			}	
 		 break;
 		 }
 		 //check what key is pressed
