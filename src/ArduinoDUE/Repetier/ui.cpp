@@ -49,8 +49,8 @@ millis_t UIDisplay::ui_autolightoff_time=-1;
 
 void playsound(int tone,int duration)
 {
-if (!HAL::enablesound)return;
 #if FEATURE_BEEPER
+if (!HAL::enablesound)return;
 HAL::tone(BEEPER_PIN, tone);
 HAL::delayMilliseconds(duration);
 HAL::noTone(BEEPER_PIN);
