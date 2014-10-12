@@ -1074,7 +1074,7 @@ void Commands::executeGCode(GCode *com)
             break;
 #endif
 
-#if defined(BEEPER_PIN) && BEEPER_PIN>=0
+#if defined(BEEPER_PIN) && BEEPER_PIN>=0 && FEATURE_BEEPER
         case 300:
         {
             int beepS = 1;
