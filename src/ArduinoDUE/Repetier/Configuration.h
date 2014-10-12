@@ -358,12 +358,23 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_START_SCRIPT ""
 #define Z_PROBE_FINISHED_SCRIPT ""
 #define FEATURE_AUTOLEVEL 1
-#define Z_PROBE_X1 25
-#define Z_PROBE_Y1 6
-#define Z_PROBE_X2 25
-#define Z_PROBE_Y2 215
-#define Z_PROBE_X3 211
-#define Z_PROBE_Y3 215
+
+#if NUM_EXTRUDER == 1
+#define Z_PROBE_X1 21 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y1 9 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X2 21 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y2 215 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X3 206 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y3 215 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+
+#else
+#define Z_PROBE_X1 36+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y1 2+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X2 36+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y2 210+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X3 171+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y3 210+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#endif
 
 #ifndef SDSUPPORT  // Some boards have sd support on board. These define the values already in pins.h
 #define SDSUPPORT 1
