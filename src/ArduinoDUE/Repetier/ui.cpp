@@ -1058,7 +1058,7 @@ UI_STRING(ui_selected,UI_TEXT_SEL);
 UI_STRING(ui_unselected,UI_TEXT_NOSEL);
 UI_STRING(ui_action,UI_TEXT_STRING_ACTION);
 
-void UIDisplay::parse(char *txt,bool ram)
+void UIDisplay::parse(const char *txt,bool ram)
 {
     int ivalue=0;
     float fvalue=0;
@@ -1445,7 +1445,7 @@ void UIDisplay::setStatusP(PGM_P txt,bool error)
     if(error)
         Printer::setUIErrorMessage(true);
 }
-void UIDisplay::setStatus(char *txt,bool error)
+void UIDisplay::setStatus(const char *txt,bool error)
 {
     if(!error && Printer::isUIErrorMessage()) return;
     uint8_t i=0;
@@ -1480,7 +1480,7 @@ void UIDisplay::updateSDFileCount()
 #endif
 }
 
-void getSDFilenameAt(byte filePos,char *filename)
+void getSDFilenameAt(uint16_t filePos,char *filename)
 {
 #if SDSUPPORT
     dir_t* p;
@@ -1659,7 +1659,7 @@ void UIDisplay::refreshPage()
         }
     }
 #if SDSUPPORT
-    if(mtype==1)
+    if(mtype == UI_MENU_TYPE_FILE_SELECTOR)
     {
         sdrefresh(r,cache);
     }
@@ -1700,8 +1700,15 @@ void UIDisplay::refreshPage()
     }
     for(y=0; y<UI_ROWS; y++)
     {
-        uint8_t len = strlen(displayCache[y]);
-        off[y] = len>UI_COLS ? RMath::min(len-UI_COLS,off0) : 0;
+        uint8_t len = strlen(displayCache[y]); // length of line content
+        off[y] = len > UI_COLS ? RMath::min(len - UI_COLS,off0) : 0;
+        if(len > UI_COLS) {
+           off[y] = RMath::min(len - UI_COLS,off0);
+           if(transition == 0 && (mtype == UI_MENU_TYPE_FILE_SELECTOR || mtype == UI_MENU_TYPE_SUBMENU)) {// Copy first char to front
+            //displayCache[y][off[y]] = displayCache[y][0];
+            cache[y][off[y]] = cache[y][0];
+           }
+        } else off[y] = 0;
 #if UI_ANIMATION
         if(transition == 3)
         {
@@ -1935,7 +1942,8 @@ void UIDisplay::refreshPage()
     oldMenuLevel = menuLevel;
 #endif
 }
-void UIDisplay::pushMenu(void *men,bool refresh)
+
+void UIDisplay::pushMenu(const UIMenu *men,bool refresh)
 {
     if(men==menu[menuLevel])
     {
@@ -1964,8 +1972,9 @@ void UIDisplay::okAction()
     if(menuLevel==0)   // Enter menu
     {
         menuLevel = 1;
-        menuTop[1] = menuPos[1] = 0;
-        menu[1] = (void*)&ui_menu_main;
+        menuTop[1] = 0;
+        menuPos[1] =  UI_MENU_BACKCNT; // if top entry is back, default to next useful item
+        menu[1] = &ui_menu_main;
         BEEP_SHORT
         return;
     }
@@ -1995,7 +2004,7 @@ void UIDisplay::okAction()
         return;
     }
 #if SDSUPPORT
-    if(mtype==1)
+    if(mtype == UI_MENU_TYPE_FILE_SELECTOR)
     {
         if(menuPos[menuLevel]==0)   // Selected back instead of file
         {
@@ -2019,19 +2028,19 @@ void UIDisplay::okAction()
             return;
         }
 
-        int16_t action;
+        int16_t shortAction; // renamed to avoid scope confusion
         if (Printer::isAutomount())
-            action = UI_ACTION_SD_PRINT;
+            shortAction = UI_ACTION_SD_PRINT;
         else
         {
-            men = (UIMenu*)menu[menuLevel-1];
+            men = menu[menuLevel-1];
             entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
             ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel-1]]));
-            action = pgm_read_word(&(ent->action));
+            shortAction = pgm_read_word(&(ent->action));
         }
         sd.file.close();
         sd.fat.chdir(cwd);
-        switch(action)
+        switch(shortAction)
         {
         case UI_ACTION_SD_PRINT:
             if (sd.selectFile(filename, false))
@@ -2085,7 +2094,7 @@ void UIDisplay::okAction()
     }
     if(entType==2)   // Enter submenu
     {
-        pushMenu((void*)action,false);
+        pushMenu((UIMenu*)action,false);
         BEEP_SHORT
         return;
     }
@@ -2178,7 +2187,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
     UIMenuEntry *testEnt;
     uint8_t entType = HAL::readFlashByte((const prog_char*)&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command
     int action = pgm_read_word(&(ent->action));
-    if(mtype==2 && activeAction==0)   // browse through menu items
+    if(mtype == UI_MENU_TYPE_SUBMENU && activeAction == 0)   // browse through menu items
     {
         if((UI_INVERT_MENU_DIRECTION && next<0) || (!UI_INVERT_MENU_DIRECTION && next>0))
         {
@@ -2204,7 +2213,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
         return;
     }
 #if SDSUPPORT
-    if(mtype==1)   // SD listing
+    if(mtype == UI_MENU_TYPE_FILE_SELECTOR)   // SD listing
     {
         if((UI_INVERT_MENU_DIRECTION && next<0) || (!UI_INVERT_MENU_DIRECTION && next>0))
         {
@@ -2219,8 +2228,8 @@ void UIDisplay::nextPreviousAction(int8_t next)
         return;
     }
 #endif
-    if(mtype==3) action = pgm_read_word(&(men->id));
-    else action=activeAction;
+    if(mtype == UI_MENU_TYPE_MODIFICATION_MENU) action = pgm_read_word(&(men->id));
+    else action = activeAction;
     int8_t increment = -next;
     switch(action)
     {
@@ -2567,7 +2576,7 @@ uipagedialog.textline3= line2;
 if (response) uipagedialog.textline4= UI_TEXT_YES_SELECTED; //default for response=false
 else uipagedialog.textline4= UI_TEXT_NO_SELECTED; //default for response=false
 //push dialog
-pushMenu((void*)&ui_menu_confirmation,true);
+pushMenu(&ui_menu_confirmation,true);
 //ensure last button pressed is not OK to have the dialog closing too fast
 while(lastButtonAction==UI_ACTION_OK){
 	Commands::checkForPeriodicalActions();
@@ -2780,7 +2789,7 @@ void UIDisplay::executeAction(int action)
 	case UI_ACTION_CLEAN_NOZZLE:
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
-		pushMenu((void*)&ui_menu_clean_nozzle_page,true);
+		pushMenu(&ui_menu_clean_nozzle_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
 		step=STEP_HEATING;
@@ -2854,7 +2863,7 @@ void UIDisplay::executeAction(int action)
 				else
 					{//we continue as before
 					menuLevel--;
-					pushMenu((void*)&ui_menu_clean_nozzle_page,true);
+					pushMenu(&ui_menu_clean_nozzle_page,true);
 					}
 				delay(100);
 				}
@@ -2918,7 +2927,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
 		UI_STATUS(UI_TEXT_HEATING);
-		pushMenu((void*)&ui_menu_heatextruder_page,true);
+		pushMenu(&ui_menu_heatextruder_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
 		step=STEP_EXT_HEATING;
@@ -2986,7 +2995,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
 						{
 						menuLevel--;
-						pushMenu((void*)&ui_menu_heatextruder_page,true);
+						pushMenu(&ui_menu_heatextruder_page,true);
 						counter=0;
 						step =STEP_EXT_LOAD_UNLOAD;
 						}
@@ -3023,7 +3032,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				else
 					{//we continue as before
 					menuLevel--;
-					pushMenu((void*)&ui_menu_heatextruder_page,true);
+					pushMenu(&ui_menu_heatextruder_page,true);
 					}
 				delay(100);
 				}
@@ -3134,14 +3143,14 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 #if EEPROM_MODE!=0
         case UI_ACTION_STORE_EEPROM:
             EEPROM::storeDataIntoEEPROM(false);
-            pushMenu((void*)&ui_menu_eeprom_saved,false);
+            pushMenu(&ui_menu_eeprom_saved,false);
             BEEP_LONG;
             skipBeep = true;
             break;
         case UI_ACTION_LOAD_EEPROM:
             EEPROM::readDataFromEEPROM();
             Extruder::selectExtruderById(Extruder::current->id);
-            pushMenu((void*)&ui_menu_eeprom_loaded,false);
+            pushMenu(&ui_menu_eeprom_loaded,false);
             BEEP_LONG;
             skipBeep = true;
             break;
@@ -3150,7 +3159,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
         case UI_ACTION_SD_DELETE:
             if(sd.sdactive)
             {
-                pushMenu((void*)&ui_menu_sd_fileselector,false);
+                pushMenu(&ui_menu_sd_fileselector,false);
             }
             else
             {
@@ -3160,7 +3169,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
         case UI_ACTION_SD_PRINT:
             if(sd.sdactive)
             {
-                pushMenu((void*)&ui_menu_sd_fileselector,false);
+                pushMenu(&ui_menu_sd_fileselector,false);
             }
             break;
         case UI_ACTION_SD_PAUSE:
@@ -3179,7 +3188,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             sd.mount();
             break;
         case UI_ACTION_MENU_SDCARD:
-            pushMenu((void*)&ui_menu_sd,false);
+            pushMenu(&ui_menu_sd,false);
             break;
 #endif
 #if FAN_PIN>-1
@@ -3200,80 +3209,80 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             break;
 #endif
         case UI_ACTION_MENU_XPOS:
-            pushMenu((void*)&ui_menu_xpos,false);
+            pushMenu(&ui_menu_xpos,false);
             break;
         case UI_ACTION_MENU_YPOS:
-            pushMenu((void*)&ui_menu_ypos,false);
+            pushMenu(&ui_menu_ypos,false);
             break;
         case UI_ACTION_MENU_ZPOS:
-            pushMenu((void*)&ui_menu_zpos,false);
+            pushMenu(&ui_menu_zpos,false);
             break;
         case UI_ACTION_MENU_XPOSFAST:
-            pushMenu((void*)&ui_menu_xpos_fast,false);
+            pushMenu(&ui_menu_xpos_fast,false);
             break;
         case UI_ACTION_MENU_YPOSFAST:
-            pushMenu((void*)&ui_menu_ypos_fast,false);
+            pushMenu(&ui_menu_ypos_fast,false);
             break;
         case UI_ACTION_MENU_ZPOSFAST:
-            pushMenu((void*)&ui_menu_zpos_fast,false);
+            pushMenu(&ui_menu_zpos_fast,false);
             break;
         case UI_ACTION_MENU_QUICKSETTINGS:
-            pushMenu((void*)&ui_menu_quick,false);
+            pushMenu(&ui_menu_quick,false);
             break;
         case UI_ACTION_MENU_EXTRUDER:
-            pushMenu((void*)&ui_menu_extruder,false);
+            pushMenu(&ui_menu_extruder,false);
             break;
         case UI_ACTION_MENU_POSITIONS:
-            pushMenu((void*)&ui_menu_positions,false);
+            pushMenu(&ui_menu_positions,false);
             break;
 #ifdef UI_USERMENU1
         case UI_ACTION_SHOW_USERMENU1:
-            pushMenu((void*)&UI_USERMENU1,false);
+            pushMenu(&UI_USERMENU1,false);
             break;
 #endif
 #ifdef UI_USERMENU2
         case UI_ACTION_SHOW_USERMENU2:
-            pushMenu((void*)&UI_USERMENU2,false);
+            pushMenu(&UI_USERMENU2,false);
             break;
 #endif
 #ifdef UI_USERMENU3
         case UI_ACTION_SHOW_USERMENU3:
-            pushMenu((void*)&UI_USERMENU3,false);
+            pushMenu(&UI_USERMENU3,false);
             break;
 #endif
 #ifdef UI_USERMENU4
         case UI_ACTION_SHOW_USERMENU4:
-            pushMenu((void*)&UI_USERMENU4,false);
+            pushMenu(&UI_USERMENU4,false);
             break;
 #endif
 #ifdef UI_USERMENU5
         case UI_ACTION_SHOW_USERMENU5:
-            pushMenu((void*)&UI_USERMENU5,false);
+            pushMenu(&UI_USERMENU5,false);
             break;
 #endif
 #ifdef UI_USERMENU6
         case UI_ACTION_SHOW_USERMENU6:
-            pushMenu((void*)&UI_USERMENU6,false);
+            pushMenu(&UI_USERMENU6,false);
             break;
 #endif
 #ifdef UI_USERMENU7
         case UI_ACTION_SHOW_USERMENU7:
-            pushMenu((void*)&UI_USERMENU7,false);
+            pushMenu(&UI_USERMENU7,false);
             break;
 #endif
 #ifdef UI_USERMENU8
         case UI_ACTION_SHOW_USERMENU8:
-            pushMenu((void*)&UI_USERMENU8,false);
+            pushMenu(&UI_USERMENU8,false);
             break;
 #endif
 #ifdef UI_USERMENU9
         case UI_ACTION_SHOW_USERMENU9:
-            pushMenu((void*)&UI_USERMENU9,false);
+            pushMenu(&UI_USERMENU9,false);
             break;
 #endif
 #ifdef UI_USERMENU10
         case UI_ACTION_SHOW_USERMENU10:
-            pushMenu((void*)&UI_USERMENU10,false);
+            pushMenu(&UI_USERMENU10,false);
             break;
 #endif
         case UI_ACTION_X_UP:

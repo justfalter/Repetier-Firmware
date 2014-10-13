@@ -216,6 +216,18 @@ typedef struct {
   bool showEntry() const;
 } const UIMenuEntry;
 
+typedef struct UIMenu_struct {
+  // 0 = info page
+  // 1 = file selector
+  // 2 = submenu
+  // 3 = modififaction menu
+  uint8_t menuType;
+  int id; // Type of modification
+  int numEntries;
+  const UIMenuEntry * const * entries;
+} const UIMenu;
+extern const int8_t encoder_table[16] PROGMEM ;
+
 //structure to store the 4 lines of the screen for dialog 
 typedef struct {
  char *textline1; // Menu text line 1
@@ -223,19 +235,6 @@ typedef struct {
  char *textline3; // Menu text line 3
  char *textline4; // Menu text line 4
 } UIPageDialogst;
-
- 
-typedef struct {
-  // 0 = info page
-  // 1 = file selector
-  // 2 = submenu
-  // 3 = modififaction menu
-  unsigned char menuType;
-  int id; // Type of modification
-  int numEntries;
-  const UIMenuEntry * const * entries;
-} const UIMenu;
-extern const int8_t encoder_table[16] PROGMEM ;
 
 //#ifdef COMPILE_I2C_DRIVER
 
@@ -368,6 +367,7 @@ extern const int8_t encoder_table[16] PROGMEM ;
 // Maximum size of a row - if row is larger, text gets scrolled
 #define MAX_COLS 28
 
+#define UI_MENU_MAXLEVEL 5
 class UIDisplay {
   public:
 #if UI_AUTOLIGHTOFF_AFTER!=0
@@ -376,9 +376,9 @@ class UIDisplay {
     volatile uint8_t flags; // 1 = fast key action, 2 = slow key action, 4 = slow action running, 8 = key test running
     uint8_t col; // current col for buffer prefill
     uint8_t menuLevel; // current menu level, 0 = info, 1 = group, 2 = groupdata select, 3 = value change
-    uint8_t menuPos[5]; // Positions in menu
-    void *menu[5]; // Menus active
-    uint8_t menuTop[5]; // Top row in menu
+    uint16_t menuPos[UI_MENU_MAXLEVEL]; // Positions in menu
+    const UIMenu *menu[UI_MENU_MAXLEVEL]; // Menus active
+    uint16_t menuTop[UI_MENU_MAXLEVEL]; // Top row in menu
     int8_t shift; // Display shift for scrolling text
     int pageDelay; // Counter. If 0 page is refreshed if menuLevel is 0.
     void *errorMsg;
@@ -411,7 +411,7 @@ class UIDisplay {
     void waitForKey();
     void printRow(uint8_t r,char *txt,char *txt2,uint8_t changeAtCol); // Print row on display
     void printRowP(uint8_t r,PGM_P txt);
-    void parse(char *txt,bool ram); /// Parse output and write to printCols;
+    void parse(const char *txt,bool ram); /// Parse output and write to printCols;
     void refreshPage();
     void executeAction(int action);
     void finishAction(int action);
@@ -419,10 +419,10 @@ class UIDisplay {
     void slowAction();
     void fastAction();
     void mediumAction();
-    void pushMenu(void *men,bool refresh);
+    void pushMenu(const UIMenu *men,bool refresh);
     void adjustMenuPos();
     void setStatusP(PGM_P txt,bool error = false);
-    void setStatus(char *txt,bool error = false);
+    void setStatus(const char *txt,bool error = false);
     inline void setOutputMaskBits(unsigned int bits) {outputMask|=bits;}
     inline void unsetOutputMaskBits(unsigned int bits) {outputMask&=~bits;}
     void updateSDFileCount();
