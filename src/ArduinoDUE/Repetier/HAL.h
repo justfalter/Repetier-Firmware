@@ -277,14 +277,27 @@ public:
     static long CPUDivU2(speed_t divisor) {
       return F_CPU/divisor;
     }
-    static inline void delayMicroseconds(unsigned int delayUs)
+ static inline void delayMicroseconds(uint32_t usec)
     {
-        microsecondsWait(delayUs);
+        uint32_t n = usec * (F_CPU_TRUE / 3000000);
+        asm volatile(
+            "L2_%=_delayMicroseconds:"       "\n\t"
+            "subs   %0, #1"                 "\n\t"
+            "bge    L2_%=_delayMicroseconds" "\n"
+            : "+r" (n) :  
+        );
     }
     static inline void delayMilliseconds(unsigned int delayMs)
     {
-        //Wait(delayMs);
-        delay(delayMs);
+        unsigned int del;
+        while(delayMs > 0) {
+            del = delayMs > 100 ? 100 : delayMs;
+            delay(del);
+            delayMs -= del;
+#if FEATURE_WATCHDOG
+            HAL::pingWatchdog();
+#endif
+        }
     }
     static inline void tone(uint8_t pin,int frequency) {
         // set up timer counter 1 channel 0 to generate interrupts for
