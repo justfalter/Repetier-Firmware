@@ -1972,10 +1972,10 @@ void UIDisplay::okAction()
     UIMenu *men = (UIMenu*)menu[menuLevel];
     //uint8_t nr = pgm_read_word_near(&(menu->numEntries));
     uint8_t mtype = pgm_read_byte(&(men->menuType));
-    UIMenuEntry **entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
-    UIMenuEntry *ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
-    unsigned char entType = pgm_read_byte(&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action
-    int action = pgm_read_word(&(ent->action));
+    UIMenuEntry **entries;
+    UIMenuEntry *ent;
+    unsigned char entType;
+    int action;
     if(mtype==3)   // action menu
     {
         action = pgm_read_word(&(men->id));
@@ -2061,6 +2061,28 @@ void UIDisplay::okAction()
         return;
     }
 #endif
+    entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
+    ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
+    entType = pgm_read_byte(&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action
+    action = pgm_read_word(&(ent->action));
+    if(mtype == UI_MENU_TYPE_MODIFICATION_MENU)   // action menu
+    {
+        action = pgm_read_word(&(men->id));
+        finishAction(action);
+        executeAction(UI_ACTION_BACK);
+        return;
+    }
+    if(mtype == UI_MENU_TYPE_SUBMENU && entType == 4)   // Modify action
+    {
+        if(activeAction)   // finish action
+        {
+            finishAction(action);
+            activeAction = 0;
+        }
+        else
+            activeAction = action;
+        return;
+    }
     if(entType==2)   // Enter submenu
     {
         pushMenu((void*)action,false);

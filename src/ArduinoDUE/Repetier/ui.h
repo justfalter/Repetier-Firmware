@@ -202,6 +202,11 @@
 // Load basic language definition to make sure all values are defined
 #include "uilang.h"
 
+#define UI_MENU_TYPE_INFO 0
+#define UI_MENU_TYPE_FILE_SELECTOR 1
+#define UI_MENU_TYPE_SUBMENU 2
+#define UI_MENU_TYPE_MODIFICATION_MENU 3
+
 typedef struct {
   const char *text; // Menu text
   uint8_t menuType; // 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action command
