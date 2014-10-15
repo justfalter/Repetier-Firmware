@@ -228,14 +228,6 @@ typedef struct UIMenu_struct {
 } const UIMenu;
 extern const int8_t encoder_table[16] PROGMEM ;
 
-//structure to store the 4 lines of the screen for dialog 
-typedef struct {
- char *textline1; // Menu text line 1
- char *textline2; // Menu text line 2
- char *textline3; // Menu text line 3
- char *textline4; // Menu text line 4
-} UIPageDialogst;
-
 //#ifdef COMPILE_I2C_DRIVER
 
 /*************************************************************************

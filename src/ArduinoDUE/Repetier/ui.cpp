@@ -25,7 +25,7 @@ extern const int8_t encoder_table[16] PROGMEM ;
 #include <ctype.h>
 
 
-UIPageDialogst uipagedialog;
+char uipagedialog[4][MAX_COLS+1];;
 
 #if BEEPER_TYPE==2 && defined(UI_HAS_I2C_KEYS) && UI_I2C_KEY_ADDRESS!=BEEPER_ADDRESS
 #error Beeper address and i2c key address must be identical
@@ -1095,19 +1095,19 @@ void UIDisplay::parse(const char *txt,bool ram)
 	case 'C':
 	    if(c2=='1')
 			{
-			addStringP(uipagedialog.textline1);
+			addStringP(uipagedialog[0]);
 			}
 	    else if(c2=='2')
 			{
-			addStringP(uipagedialog.textline2);
+			addStringP(uipagedialog[1]);
 			}
 	    else if(c2=='3')
 			{
-			addStringP(uipagedialog.textline3);
+			addStringP(uipagedialog[2]);
 			}
 	    else if(c2=='4')
 			{
-			addStringP(uipagedialog.textline4);
+			addStringP(uipagedialog[3]);
 			}
 	    break;
         case 'd':
@@ -2570,11 +2570,17 @@ bool response=defaultresponse;
 bool process_it=true;
 int previousaction=0;
 //init dialog strings
-uipagedialog.textline1= title ;
-uipagedialog.textline2= line1;
-uipagedialog.textline3= line2;
-if (response) uipagedialog.textline4= UI_TEXT_YES_SELECTED; //default for response=false
-else uipagedialog.textline4= UI_TEXT_NO_SELECTED; //default for response=false
+col=0;
+parse(title,false);
+strcpy(uipagedialog[0], printCols);
+col=0;
+parse(line1,true);
+strcpy(uipagedialog[1], printCols);
+col=0;
+parse(line2,true);
+strcpy(uipagedialog[2], printCols);
+if (response) strcpy(uipagedialog[3],UI_TEXT_YES_SELECTED); //default for response=true
+else strcpy(uipagedialog[3],UI_TEXT_NO_SELECTED); //default for response=false
 //push dialog
 pushMenu(&ui_menu_confirmation,true);
 //ensure last button pressed is not OK to have the dialog closing too fast
@@ -2619,13 +2625,13 @@ while (process_it)
 		//if left key then select Yes
 		 else if (lastButtonAction==UI_ACTION_BACK)
 			{
-			uipagedialog.textline4= UI_TEXT_YES_SELECTED;
+			strcpy(uipagedialog[3],UI_TEXT_YES_SELECTED);
 			response=true;
 			}
 		//if right key then select No
 		else if (lastButtonAction==UI_ACTION_RIGHT_KEY)
 			{
-			uipagedialog.textline4= UI_TEXT_NO_SELECTED;
+			strcpy(uipagedialog[3],UI_TEXT_NO_SELECTED);
 			response=false;
 			}
 		if(previousaction!=0)BEEP_SHORT;
