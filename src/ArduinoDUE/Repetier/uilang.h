@@ -282,6 +282,17 @@
 #define UI_TEXT_LOADING_FILAMENT "Loading \005"
 #define UI_TEXT_UNLOADING_FILAMENT "Unloading \005"
 #define UI_TEXT_LOADUNLOAD_FILAMENT "Load / Unload \005"
+#define UI_TEXT_AUTOLEVEL "Auto level bed"
+#define UI_TEXT_Z_PROBE_FAILED "Z-probe failed"
+#define UI_TEXT_SAVE "Save to EEPROM ?"
+#define UI_TEXT_ZMIN "zMin : %zm"
+#define UI_TEXT_ZPROBING "Probing..."
+#define UI_TEXT_ZPOSITION "Go position..."
+#define UI_TEXT_DO_YOU "Do you want to:"
+#define UI_TEXT_CLEAN1 "Clean nozzle and"
+#define UI_TEXT_CLEAN2 "plates first ?"
+
+
 // *************** German translation ****************
 
 #if UI_LANGUAGE==1

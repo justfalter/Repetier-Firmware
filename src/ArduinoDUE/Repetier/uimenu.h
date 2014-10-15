@@ -107,6 +107,7 @@ List of placeholder:
 %Xf : Extruder max. start feedrate
 %XF : Extruder max. feedrate
 %XA : Extruder max. acceleration
+%zm : zMin
 */
 
 
@@ -626,6 +627,27 @@ UI_MENU_CHANGEACTION(ui_menu_cext_yoffset,UI_TEXT_EXTR_YOFF,UI_ACTION_Y_OFFSET);
 UI_MENU(ui_menu_cextr,UI_MENU_CEXTR,7+UI_MENU_BACKCNT+UI_MENU_PIDCNT+UI_MENU_CONFEXTCNT+UI_MENU_ADV_CNT);
 
 // **** Configuration menu
+#if FEATURE_AUTOLEVEL
+#define UI_MENU_AUTOLEVEL_CNT 1
+UI_MENU_ACTIONCOMMAND(ui_menu_autolevel,UI_TEXT_AUTOLEVEL,UI_ACTION_AUTOLEVEL);
+#define UI_MENU_AUTOLEVEL &ui_menu_autolevel,
+#if NUM_EXTRUDER == 1
+	#define UI_PAGE_AUTOLEVEL "\005%ec/%Ec\002","\007%eB/%Eb\002"","Z:%x2","%os" 
+#else
+	#define UI_PAGE_AUTOLEVEL"\005%e0/%E0\005%e1/%E1","\007%eB/%Eb","Z:%x2","%os"
+#endif
+UI_MENU_ACTION4C(ui_menu_autolevel_page,UI_ACTION_DUMMY,UI_PAGE_AUTOLEVEL);
+#define STEP_AUTOLEVEL_HEATING 1
+#define STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE 2
+#define STEP_ZPROBE_SCRIPT 3
+#define STEP_AUTOLEVEL_START 4
+#define STEP_AUTOLEVEL_MOVE 5
+#define STEP_AUTOLEVEL_DO_ZPROB 6
+#define STEP_AUTOLEVEL_RESULTS 7
+#else
+#define UI_MENU_AUTOLEVEL 
+#define UI_MENU_AUTOLEVEL_CNT 0
+#endif
 UI_MENU_SUBMENU(ui_menu_conf_general, UI_TEXT_GENERAL,      ui_menu_general);
 UI_MENU_SUBMENU(ui_menu_conf_accel,   UI_TEXT_ACCELERATION, ui_menu_accel);
 UI_MENU_SUBMENU(ui_menu_conf_feed,    UI_TEXT_FEEDRATE,     ui_menu_feedrate);
@@ -657,8 +679,8 @@ UI_MENU_SUBMENU(ui_menu_conf_delta, UI_TEXT_ZCALIB, ui_menu_delta);
 #define UI_MENU_DELTA_COND
 #define UI_MENU_DELTA_CNT 0
 #endif
-#define UI_MENU_CONFIGURATION {UI_MENU_ADDCONDBACK &ui_menu_conf_general,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
-UI_MENU(ui_menu_configuration,UI_MENU_CONFIGURATION,UI_MENU_BACKCNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+4);
+#define UI_MENU_CONFIGURATION {UI_MENU_ADDCONDBACK UI_MENU_AUTOLEVEL &ui_menu_conf_general,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
+UI_MENU(ui_menu_configuration,UI_MENU_CONFIGURATION,UI_MENU_BACKCNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+4 +UI_MENU_AUTOLEVEL_CNT);
 // Main menu
 UI_MENU_SUBMENU(ui_menu_main1, UI_TEXT_QUICK_SETTINGS,ui_menu_quick);
 UI_MENU_SUBMENU(ui_menu_main2, UI_TEXT_POSITION,ui_menu_positions);

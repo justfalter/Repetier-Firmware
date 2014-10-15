@@ -31,6 +31,10 @@
 // ----------------------------------------------------------------------------
 
 #define UI_CONFIRMATION_TYPE_YES_NO 1
+#define STATUS_OK	1
+#define STATUS_CANCEL	2
+#define STATUS_FAIL	3
+
 #define UI_ACTION_TOPMENU 8192
 
 #define UI_ACTION_NEXT 1
@@ -169,6 +173,7 @@
 	#define UI_ACTION_LOAD_EXTRUDER_1		1118
 	#define UI_ACTION_UNLOAD_EXTRUDER_1		1119
 #endif
+#define UI_ACTION_AUTOLEVEL				1120
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

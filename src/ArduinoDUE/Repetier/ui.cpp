@@ -1398,6 +1398,12 @@ void UIDisplay::parse(const char *txt,bool ram)
 			else addStringP(ui_text_on);//if not defined
       	    #endif 
             break;
+		case 'z':
+			if(c2=='m')
+			 {
+			 addFloat(Printer::zMin,4,2);
+			 }
+		
         case 'U':
             if(c2=='t')   // Printing time
             {
@@ -2638,6 +2644,7 @@ while (process_it)
 		refreshPage();
 		}
 	}//end while
+menuLevel--;
 return response;
 }
 // Actions are events from user input. Depending on the current state, each
@@ -2868,7 +2875,6 @@ void UIDisplay::executeAction(int action)
 					}
 				else
 					{//we continue as before
-					menuLevel--;
 					pushMenu(&ui_menu_clean_nozzle_page,true);
 					}
 				delay(100);
@@ -3000,7 +3006,6 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				//ask to redo or stop
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
 						{
-						menuLevel--;
 						pushMenu(&ui_menu_heatextruder_page,true);
 						counter=0;
 						step =STEP_EXT_LOAD_UNLOAD;
@@ -3009,7 +3014,6 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 						{//we end
 						UI_STATUS(UI_TEXT_COOLDOWN);
 						process_it=false;
-						menuLevel--;
 						}
 					delay(100);
 			}	
@@ -3032,12 +3036,10 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_LOADUNLOAD_FILAMENT))
 					{
 					UI_STATUS(UI_TEXT_CANCELED);
-					menuLevel--;
 					process_it=false;
 					}
 				else
 					{//we continue as before
-					menuLevel--;
 					pushMenu(&ui_menu_heatextruder_page,true);
 					}
 				delay(100);
@@ -3066,6 +3068,262 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 		menuLevel--;
 		refreshPage();
         break;
+		
+		case UI_ACTION_AUTOLEVEL:
+		{
+	    //be sure no issue
+		if(reportTempsensorError() or Printer::debugDryrun()) break;
+		#if ENABLE_CLEAN_NOZZLE==1
+		//ask for user if he wants to clean nozzle and plate
+			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_CLEAN1,UI_TEXT_CLEAN2))
+					{
+					executeAction(UI_ACTION_CLEAN_NOZZLE);
+					}
+			
+		 #endif
+		 pushMenu(&ui_menu_autolevel_page,true);
+		//Home first
+		Printer::homeAxis(true,true,true);
+		//then put bed +10mm
+		Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+10,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+        Commands::waitUntilEndOfAllMoves();
+		UI_STATUS(UI_TEXT_HEATING);
+		process_it=true;
+		printedTime = HAL::timeInMilliseconds();
+		step=STEP_AUTOLEVEL_HEATING;
+        float h1,h2,h3;
+		float oldFeedrate = Printer::feedrate;
+		int xypoint=1;
+		float z = 0;
+		int32_t sum ,probeDepth;
+		int32_t lastCorrection; 
+		float distance;
+		int status=STATUS_OK;
+		float currentzMin = Printer::zMin;
+		while (process_it)
+		{
+		Commands::checkForPeriodicalActions();
+		currentTime = HAL::timeInMilliseconds();
+        if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
+            {
+            Commands::printTemperatures();
+            printedTime = currentTime;
+           }
+		 //be sure not auto return
+		#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
+		#endif
+		 switch(step)
+		 {
+		 case STEP_AUTOLEVEL_HEATING:
+           Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+		   #if NUM_EXTRUDER>1
+            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+		   #endif
+		   #if HAVE_HEATED_BED==true
+            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
+		   #endif
+		   step =  STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE;
+		 break;
+		 case STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE:
+			UI_STATUS(UI_TEXT_HEATING);
+			//no need to be extremely accurate so no need stable temperature 
+			if(abs(extruder[0].tempControl.currentTemperatureC- extruder[0].tempControl.targetTemperatureC)<2)
+				{
+				step = STEP_ZPROBE_SCRIPT;
+				}
+			#if NUM_EXTRUDER==2
+			if(!((abs(extruder[1].tempControl.currentTemperatureC- extruder[1].tempControl.targetTemperatureC)<2) && (step == STEP_ZPROBE_SCRIPT)))
+				{
+				step = STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE;
+				}
+			#endif
+			#if HAVE_HEATED_BED==true
+			if(!((abs(heatedBedController.currentTemperatureC-heatedBedController.targetTemperatureC)<2) && (step == STEP_ZPROBE_SCRIPT)))
+				{
+				step = STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE;
+				}
+			#endif
+		 break;
+		 case STEP_ZPROBE_SCRIPT:
+		 	//Startup script
+			GCode::executeFString(Com::tZProbeStartScript);
+			step = STEP_AUTOLEVEL_START;
+			break;
+		 case STEP_AUTOLEVEL_START:
+			Printer::coordinateOffset[0] = Printer::coordinateOffset[1] = Printer::coordinateOffset[2] = 0;
+			Printer::setAutolevelActive(false); // iterate
+			step = STEP_AUTOLEVEL_MOVE;
+			break;
+			
+		case STEP_AUTOLEVEL_MOVE:
+			UI_STATUS(UI_TEXT_ZPOSITION);
+			if (xypoint==1)Printer::moveTo(EEPROM::zProbeX1(),EEPROM::zProbeY1(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
+
+			else if (xypoint==2) Printer::moveTo(EEPROM::zProbeX2(),EEPROM::zProbeY2(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
+			else Printer::moveTo(EEPROM::zProbeX3(),EEPROM::zProbeY3(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
+			step = STEP_AUTOLEVEL_DO_ZPROB;
+			break;	
+		case STEP_AUTOLEVEL_DO_ZPROB:
+			{
+			UI_STATUS(UI_TEXT_ZPROBING);
+			sum = 0;
+			probeDepth = (int32_t)((float)Z_PROBE_SWITCHING_DISTANCE*Printer::axisStepsPerMM[Z_AXIS]);
+			lastCorrection = Printer::currentPositionSteps[Z_AXIS];
+			#if NONLINEAR_SYSTEM
+				Printer::realDeltaPositionSteps[Z_AXIS] = Printer::currentDeltaPositionSteps[Z_AXIS]; // update real
+			#endif	
+			probeDepth = 2 * (Printer::zMaxSteps - Printer::zMinSteps);
+			Printer::stepsRemainingAtZHit = -1;
+			Printer::setZProbingActive(true);
+			PrintLine::moveRelativeDistanceInSteps(0,0,-probeDepth,0,EEPROM::zProbeSpeed(),true,true);
+			if(Printer::stepsRemainingAtZHit<0)
+				{
+				Com::printErrorFLN(Com::tZProbeFailed);
+				UI_STATUS(UI_TEXT_Z_PROBE_FAILED);
+                process_it=false;
+				Printer::setZProbingActive(false);
+				PrintLine::moveRelativeDistanceInSteps(0,0,10*Printer::axisStepsPerMM[Z_AXIS],0,Printer::homingFeedrate[0],true,false);
+				status=STATUS_FAIL;
+				playsound(3000,240);
+				playsound(5000,240);
+				playsound(3000,240);
+				break;
+				}
+			Printer::setZProbingActive(false);
+			Printer::currentPositionSteps[Z_AXIS] += Printer::stepsRemainingAtZHit; // now current position is correct
+			sum += lastCorrection - Printer::currentPositionSteps[Z_AXIS];
+			distance = (float)sum * Printer::invAxisStepsPerMM[Z_AXIS] / (float)1.00 + EEPROM::zProbeHeight();
+			Com::printF(Com::tZProbe,distance);
+			Com::printF(Com::tSpaceXColon,Printer::realXPosition());
+			Com::printFLN(Com::tSpaceYColon,Printer::realYPosition());
+			uid.setStatusP(Com::tHitZProbe);
+			uid.refreshPage();
+			// Go back to start position
+			PrintLine::moveRelativeDistanceInSteps(0,0,lastCorrection-Printer::currentPositionSteps[Z_AXIS],0,EEPROM::zProbeSpeed(),true,false);
+			if(xypoint==1)
+				{
+				xypoint++;
+				step = STEP_AUTOLEVEL_MOVE;
+				h1=distance;
+				}
+			else if(xypoint==2)
+				{
+				xypoint++;
+				step = STEP_AUTOLEVEL_MOVE;
+				h2=distance;
+				}
+			else{
+				h3=distance;
+				Printer::buildTransformationMatrix(h1,h2,h3);
+				z = -((Printer::autolevelTransformation[0]*Printer::autolevelTransformation[5]-
+                         Printer::autolevelTransformation[2]*Printer::autolevelTransformation[3])*
+                        (float)Printer::currentPositionSteps[Y_AXIS]*Printer::invAxisStepsPerMM[Y_AXIS]+
+                        (Printer::autolevelTransformation[2]*Printer::autolevelTransformation[4]-
+                         Printer::autolevelTransformation[1]*Printer::autolevelTransformation[5])*
+                        (float)Printer::currentPositionSteps[X_AXIS]*Printer::invAxisStepsPerMM[X_AXIS])/
+                      (Printer::autolevelTransformation[1]*Printer::autolevelTransformation[3]-Printer::autolevelTransformation[0]*Printer::autolevelTransformation[4]);
+#ifdef ZPROBE_ADJUST_ZMIN
+				Com::printFLN("Old zMin:", Printer::zMin);
+				Com::printFLN("Z : ", z);
+				Com::printFLN("h3 : ", h3);
+				Com::printFLN("bed : ", (float)EEPROM::zProbeBedDistance());
+				Printer::zMin = z + h3 - EEPROM::zProbeBedDistance();
+				Com::printFLN("New zMin:", Printer::zMin);
+#else
+				Printer::zMin = 0;
+#endif
+				step = STEP_AUTOLEVEL_RESULTS;
+				}
+			break;
+			}
+					
+		 case STEP_AUTOLEVEL_RESULTS:
+				playsound(3000,240);
+				playsound(4000,240);
+				playsound(5000,240);
+			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_SAVE,UI_TEXT_ZMIN))
+				{
+				EEPROM::storeDataIntoEEPROM();
+				}
+			else{
+				//back to original value
+				Printer::zMin=currentzMin;
+				}
+			process_it=false;	
+			break;
+		 }
+		 //check what key is pressed
+		 if (previousaction!=lastButtonAction)
+			{
+			previousaction=lastButtonAction;
+			if(previousaction!=0)BEEP_SHORT;
+			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
+				{
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_AUTOLEVEL))
+					{
+					Printer::setZProbingActive(false);
+					status=STATUS_CANCEL;
+					PrintLine::moveRelativeDistanceInSteps(0,0,10*Printer::axisStepsPerMM[Z_AXIS],0,Printer::homingFeedrate[0],true,false);
+					UI_STATUS(UI_TEXT_CANCELED);
+					process_it=false;
+					}
+				else
+					{//we continue as before
+					pushMenu(&ui_menu_autolevel_page,true);
+					}
+				delay(100);
+				}
+			 //wake up light if power saving has been launched
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			if (EEPROM::timepowersaving>0)
+				{
+				UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+				#if CASE_LIGHTS_PIN > 0
+				if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+					{
+					TOGGLE(CASE_LIGHTS_PIN);
+					}
+				#endif
+				#if defined(UI_BACKLIGHT_PIN)
+				if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+				#endif
+				}
+			#endif
+			}
+			
+		}
+		//cool down
+		Extruder::setTemperatureForExtruder(0,0);
+		#if NUM_EXTRUDER>1
+        Extruder::setTemperatureForExtruder(0,1);
+		#endif
+		#if HAVE_HEATED_BED==true
+          Extruder::setHeatedBedTemperature(0);
+		#endif
+		Printer::setAutolevelActive(true);
+		Printer::updateDerivedParameter();
+        Printer::updateCurrentPosition(true);
+		//home again
+		Printer::homeAxis(true,true,true);
+		Printer::feedrate = oldFeedrate;
+		if(status==STATUS_OK)
+			{
+			menuLevel--;
+			}
+		else if (status==STATUS_FAIL)
+			{
+			UI_STATUS(UI_TEXT_Z_PROBE_FAILED);
+			menuLevel=0;
+			}
+		else if (status==STATUS_CANCEL)
+			{
+			UI_STATUS(UI_TEXT_CANCELED);
+			menuLevel=0;
+			}
+		refreshPage();
+        break;
+		}
 		
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
