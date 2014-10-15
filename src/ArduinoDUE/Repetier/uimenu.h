@@ -632,7 +632,7 @@ UI_MENU(ui_menu_cextr,UI_MENU_CEXTR,7+UI_MENU_BACKCNT+UI_MENU_PIDCNT+UI_MENU_CON
 UI_MENU_ACTIONCOMMAND(ui_menu_autolevel,UI_TEXT_AUTOLEVEL,UI_ACTION_AUTOLEVEL);
 #define UI_MENU_AUTOLEVEL &ui_menu_autolevel,
 #if NUM_EXTRUDER == 1
-	#define UI_PAGE_AUTOLEVEL "\005%ec/%Ec\002","\007%eB/%Eb\002"","Z:%x2","%os" 
+	#define UI_PAGE_AUTOLEVEL "\005%ec/%Ec\002","\007%eB/%Eb\002","Z:%x2","%os" 
 #else
 	#define UI_PAGE_AUTOLEVEL"\005%e0/%E0\005%e1/%E1","\007%eB/%Eb","Z:%x2","%os"
 #endif
