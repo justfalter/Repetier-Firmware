@@ -83,6 +83,8 @@
   #endif
 #endif
 
+#define HIDE_BINARY_ON_SD 1
+
 #define DRIVE_SYSTEM 0
 #define XAXIS_STEPS_PER_MM 80
 #define YAXIS_STEPS_PER_MM 80

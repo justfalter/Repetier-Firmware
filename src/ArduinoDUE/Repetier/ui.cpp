@@ -1473,12 +1473,16 @@ void UIDisplay::updateSDFileCount()
 
     root->rewind();
     nFilesOnCard = 0;
-    while ((p = root->getLongFilename(p, NULL, 0, NULL)))
+    while ((p = root->getLongFilename(p, tempLongFilename, 0, NULL)))
     {
         if (! (DIR_IS_FILE(p) || DIR_IS_SUBDIR(p)))
             continue;
         if (folderLevel>=SD_MAX_FOLDER_DEPTH && DIR_IS_SUBDIR(p) && !(p->name[0]=='.' && p->name[1]=='.'))
             continue;
+ #if HIDE_BINARY_ON_SD
+      	//hide unwished files
+		if (!SDCard::showFilename(p,tempLongFilename))continue;
+#endif
         nFilesOnCard++;
         if (nFilesOnCard==254)
             return;
@@ -1499,6 +1503,10 @@ void getSDFilenameAt(uint16_t filePos,char *filename)
         HAL::pingWatchdog();
         if (!DIR_IS_FILE(p) && !DIR_IS_SUBDIR(p)) continue;
         if(uid.folderLevel>=SD_MAX_FOLDER_DEPTH && DIR_IS_SUBDIR(p) && !(p->name[0]=='.' && p->name[1]=='.')) continue;
+ #if HIDE_BINARY_ON_SD
+        //hide unwished files
+		if (!SDCard::showFilename(p,tempLongFilename))continue;
+#endif
         if (filePos--)
             continue;
         strcpy(filename, tempLongFilename);
@@ -1566,6 +1574,10 @@ void sdrefresh(uint8_t &r,char cache[UI_ROWS][MAX_COLS+1])
         {
             if(uid.folderLevel >= SD_MAX_FOLDER_DEPTH && DIR_IS_SUBDIR(p) && !(p->name[0]=='.' && p->name[1]=='.'))
                 continue;
+ #if HIDE_BINARY_ON_SD
+			//hide unwished files
+			if (!SDCard::showFilename(p,tempLongFilename))continue;
+ #endif
             if(skip>0)
             {
                 skip--;

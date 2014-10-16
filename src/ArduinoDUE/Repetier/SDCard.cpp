@@ -344,7 +344,27 @@ bool SDCard::showFilename(const uint8_t *name)
     if (*name == DIR_NAME_DELETED || *name == '.') return false;
     return true;
 }
-
+ #if HIDE_BINARY_ON_SD
+bool SDCard::showFilename(dir_t *p,const char *filename)
+{
+	int slen;
+    char file_extension[4];
+    file_extension[0]=0;
+	if(DIR_IS_FILE(p)&& filename!=NULL)
+            {
+            slen=strlen(filename);
+            if (slen>3)strcpy(file_extension,&filename[slen-3]);
+            else
+              file_extension[0]=0;
+            //check extension 
+			if ((strcasecmp(file_extension,"bin")==0) //all .bin
+			|| (strcasecmp(file_extension,"dat")==0)  //all .dat
+			|| (strcasecmp(file_extension,"hex")==0)  //all .hex
+			||  (strchr(filename,'.')==NULL)) return false; //all file without extension
+			}
+    return true;
+}
+#endif
 int8_t RFstricmp(const char* s1, const char* s2)
 {
     while(*s1 && (tolower(*s1) == tolower(*s2)))

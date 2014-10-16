@@ -458,6 +458,9 @@ public:
   char *createFilename(char *buffer,const dir_t &p);
   void makeDirectory(char *filename);
   bool showFilename(const uint8_t *name);
+ #if HIDE_BINARY_ON_SD
+ static bool showFilename( dir_t*p,const char *filename);
+ #endif
   void automount();
 #ifdef GLENN_DEBUG
   void writeToFile();
