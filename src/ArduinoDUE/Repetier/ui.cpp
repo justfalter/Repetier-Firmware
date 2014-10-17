@@ -2177,7 +2177,7 @@ void UIDisplay::adjustMenuPos()
     while(modified);
     //fix for first items that are hiden by filter - cannot be selected
      uint8_t nr = pgm_read_word_near(&(men->numEntries));
-     while (!((UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]])))->showEntry()) && nr > 0)
+     while (!((UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]])))->showEntry() && (nr > 0))
 			{
 			menuPos[menuLevel]++;
 			nr--;
