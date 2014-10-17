@@ -398,6 +398,8 @@ void Extruder::setTemperatureForExtruder(float temperatureInCelsius,uint8_t extr
     if(temperatureInCelsius>MAXTEMP) temperatureInCelsius = MAXTEMP;
 #endif
     if(temperatureInCelsius<0) temperatureInCelsius=0;
+      //cannot heat during timer but can cooldown
+    if ((temperatureInCelsius > 0)  && (Extruder::disableheat_time >HAL::timeInMilliseconds() )) return;
     TemperatureController *tc = tempController[extr];
     //if(temperatureInCelsius==tc->targetTemperatureC) return;
     tc->setTargetTemperature(temperatureInCelsius);
@@ -430,6 +432,8 @@ void Extruder::setHeatedBedTemperature(float temperatureInCelsius,bool beep)
 #if HAVE_HEATED_BED
     if(temperatureInCelsius>HEATED_BED_MAX_TEMP) temperatureInCelsius = HEATED_BED_MAX_TEMP;
     if(temperatureInCelsius<0) temperatureInCelsius = 0;
+    //cannot heat during timer but can cooldown
+    if ((temperatureInCelsius > 0)  && (Extruder::disableheat_time >HAL::timeInMilliseconds() )) return;
     if(heatedBedController.targetTemperatureC==temperatureInCelsius) return; // don't flood log with messages if killed
     heatedBedController.setTargetTemperature(temperatureInCelsius);
     if(beep && temperatureInCelsius>30) heatedBedController.setAlarm(true);
@@ -1141,7 +1145,7 @@ const char ext4_deselect_cmd[] PROGMEM = EXT4_DESELECT_COMMANDS;
 const char ext5_select_cmd[] PROGMEM = EXT5_SELECT_COMMANDS;
 const char ext5_deselect_cmd[] PROGMEM = EXT5_DESELECT_COMMANDS;
 #endif
-
+millis_t Extruder::disableheat_time =0;
 Extruder extruder[NUM_EXTRUDER] =
 {
 #if NUM_EXTRUDER>0

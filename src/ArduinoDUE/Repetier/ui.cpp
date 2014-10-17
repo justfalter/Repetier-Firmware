@@ -3397,6 +3397,8 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 #if HAVE_HEATED_BED==true
             Extruder::setHeatedBedTemperature(0);
 #endif
+//do not allows to heatjust after cooling to avoid cached commands
+            Extruder::disableheat_time =HAL::timeInMilliseconds() +3000;
             break;
         case UI_ACTION_HEATED_BED_OFF:
 #if HAVE_HEATED_BED==true
@@ -3478,6 +3480,8 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             break;
         case UI_ACTION_SD_STOP:
             sd.stopPrint();
+            Commands::waitUntilEndOfAllMoves();
+           	executeAction(UI_ACTION_COOLDOWN);
             break;
         case UI_ACTION_SD_UNMOUNT:
             sd.unmount();
