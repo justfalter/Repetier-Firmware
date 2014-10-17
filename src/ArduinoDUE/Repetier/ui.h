@@ -365,71 +365,7 @@ extern const int8_t encoder_table[16] PROGMEM ;
 #define MAX_COLS 28
 
 #define UI_MENU_MAXLEVEL 5
-class UIDisplay {
-  public:
-#if UI_AUTOLIGHTOFF_AFTER!=0
-	static millis_t ui_autolightoff_time;
-#endif
-    volatile uint8_t flags; // 1 = fast key action, 2 = slow key action, 4 = slow action running, 8 = key test running
-    uint8_t col; // current col for buffer prefill
-    uint8_t menuLevel; // current menu level, 0 = info, 1 = group, 2 = groupdata select, 3 = value change
-    uint16_t menuPos[UI_MENU_MAXLEVEL]; // Positions in menu
-    const UIMenu *menu[UI_MENU_MAXLEVEL]; // Menus active
-    uint16_t menuTop[UI_MENU_MAXLEVEL]; // Top row in menu
-    int8_t shift; // Display shift for scrolling text
-    int pageDelay; // Counter. If 0 page is refreshed if menuLevel is 0.
-    void *errorMsg;
-    uint16_t activeAction; // action for ok/next/previous
-    uint16_t lastAction;
-    millis_t lastSwitch; // Last time display switched pages
-    millis_t lastRefresh;
-    uint16_t lastButtonAction;
-    millis_t lastButtonStart;
-    millis_t nextRepeat; // Time of next autorepeat
-    millis_t lastNextPrev; // for increasing speed settings
-    float lastNextAccumul; // Accumulated value
-    unsigned int outputMask; // Output mask for backlight, leds etc.
-    int repeatDuration; // Time beween to actions if autorepeat is enabled
-    int8_t oldMenuLevel;
-    uint8_t encoderStartScreen;
-    void addInt(int value,uint8_t digits,char fillChar=' '); // Print int into printCols
-    void addLong(long value,char digits);
-    void addFloat(float number, char fixdigits,uint8_t digits);
-    void addStringP(PGM_P text);
-    void okAction();
-    void nextPreviousAction(int8_t next);
-    char statusMsg[17];
-    int8_t encoderPos;
-    int8_t encoderLast;
-    PGM_P statusText;
-    UIDisplay();
-    void createChar(uint8_t location,const uint8_t charmap[]);
-    void initialize(); // Initialize display and keys
-    void waitForKey();
-    void printRow(uint8_t r,char *txt,char *txt2,uint8_t changeAtCol); // Print row on display
-    void printRowP(uint8_t r,PGM_P txt);
-    void parse(const char *txt,bool ram); /// Parse output and write to printCols;
-    void refreshPage();
-    void executeAction(int action);
-    void finishAction(int action);
-	bool confirmationDialog(char * title,char * line1,char * line2,int type=UI_CONFIRMATION_TYPE_YES_NO, bool defaultresponse=false);
-    void slowAction();
-    void fastAction();
-    void mediumAction();
-    void pushMenu(const UIMenu *men,bool refresh);
-    void adjustMenuPos();
-    void setStatusP(PGM_P txt,bool error = false);
-    void setStatus(const char *txt,bool error = false);
-    inline void setOutputMaskBits(unsigned int bits) {outputMask|=bits;}
-    inline void unsetOutputMaskBits(unsigned int bits) {outputMask&=~bits;}
-    void updateSDFileCount();
-    //void sdrefresh(uint8_t &r,char cache[UI_ROWS][MAX_COLS+1]);
-    void goDir(char *name);
-    bool isDirname(char *name);
-    char cwd[SD_MAX_FOLDER_DEPTH*LONG_FILENAME_LENGTH+2];
-    uint8_t folderLevel;
-};
-extern UIDisplay uid;
+
 
 
 #if FEATURE_CONTROLLER==1
@@ -1222,7 +1158,71 @@ void ui_check_slow_keys(int &action) {}
 #define BEEP_LONG beep(BEEPER_LONG_SEQUENCE);
 #endif
 
-
+class UIDisplay {
+  public:
+#if UI_AUTOLIGHTOFF_AFTER!=0
+	static millis_t ui_autolightoff_time;
+#endif
+    volatile uint8_t flags; // 1 = fast key action, 2 = slow key action, 4 = slow action running, 8 = key test running
+    uint8_t col; // current col for buffer prefill
+    uint8_t menuLevel; // current menu level, 0 = info, 1 = group, 2 = groupdata select, 3 = value change
+    uint16_t menuPos[UI_MENU_MAXLEVEL]; // Positions in menu
+    const UIMenu *menu[UI_MENU_MAXLEVEL]; // Menus active
+    uint16_t menuTop[UI_MENU_MAXLEVEL]; // Top row in menu
+    int8_t shift; // Display shift for scrolling text
+    int pageDelay; // Counter. If 0 page is refreshed if menuLevel is 0.
+    void *errorMsg;
+    uint16_t activeAction; // action for ok/next/previous
+    uint16_t lastAction;
+    millis_t lastSwitch; // Last time display switched pages
+    millis_t lastRefresh;
+    uint16_t lastButtonAction;
+    millis_t lastButtonStart;
+    millis_t nextRepeat; // Time of next autorepeat
+    millis_t lastNextPrev; // for increasing speed settings
+    float lastNextAccumul; // Accumulated value
+    unsigned int outputMask; // Output mask for backlight, leds etc.
+    int repeatDuration; // Time beween to actions if autorepeat is enabled
+    int8_t oldMenuLevel;
+    uint8_t encoderStartScreen;
+    void addInt(int value,uint8_t digits,char fillChar=' '); // Print int into printCols
+    void addLong(long value,char digits);
+    void addFloat(float number, char fixdigits,uint8_t digits);
+    void addStringP(PGM_P text);
+    void okAction();
+    void nextPreviousAction(int8_t next);
+    char statusMsg[17];
+    int8_t encoderPos;
+    int8_t encoderLast;
+    PGM_P statusText;
+    UIDisplay();
+    void createChar(uint8_t location,const uint8_t charmap[]);
+    void initialize(); // Initialize display and keys
+    void waitForKey();
+    void printRow(uint8_t r,char *txt,char *txt2,uint8_t changeAtCol); // Print row on display
+    void printRowP(uint8_t r,PGM_P txt);
+    void parse(const char *txt,bool ram); /// Parse output and write to printCols;
+    void refreshPage();
+    void executeAction(int action);
+    void finishAction(int action);
+	bool confirmationDialog(char * title,char * line1,char * line2,int type=UI_CONFIRMATION_TYPE_YES_NO, bool defaultresponse=false);
+    void slowAction();
+    void fastAction();
+    void mediumAction();
+    void pushMenu(const UIMenu *men,bool refresh);
+    void adjustMenuPos();
+    void setStatusP(PGM_P txt,bool error = false);
+    void setStatus(const char *txt,bool error = false);
+    inline void setOutputMaskBits(unsigned int bits) {outputMask|=bits;}
+    inline void unsetOutputMaskBits(unsigned int bits) {outputMask&=~bits;}
+    void updateSDFileCount();
+    void sdrefresh(uint8_t &r,char cache[UI_ROWS][MAX_COLS+1]);
+    void goDir(char *name);
+    bool isDirname(char *name);
+    char cwd[SD_MAX_FOLDER_DEPTH*LONG_FILENAME_LENGTH+2];
+    uint8_t folderLevel;
+};
+extern UIDisplay uid;
 extern void beep(uint8_t duration,uint8_t count);
 extern void playsound(int tone,int duration);
 #endif

@@ -1550,7 +1550,7 @@ void UIDisplay::goDir(char *name)
     #endif
 }
 
-void sdrefresh(uint8_t &r,char cache[UI_ROWS][MAX_COLS+1])
+void UIDisplay::sdrefresh(uint8_t &r,char cache[UI_ROWS][MAX_COLS+1])
 {
 #if SDSUPPORT
     dir_t* p = NULL;
@@ -1974,9 +1974,24 @@ void UIDisplay::pushMenu(const UIMenu *men,bool refresh)
     menuTop[menuLevel] = menuPos[menuLevel] = 0;
 #if SDSUPPORT
     UIMenu *men2 = (UIMenu*)menu[menuLevel];
-    if(pgm_read_byte(&(men2->menuType))==1) // Open files list
-        updateSDFileCount();
+    if(pgm_read_byte(&(men2->menuType))==1) {
+      // Menu is Open files list
+      updateSDFileCount();
+      // Keep menu positon in file list, more user friendly.
+      // If file list changed, still need to reset position.
+      if (menuPos[menuLevel] > nFilesOnCard) {
+        //This exception can happen if the card was unplugged or modified.
+        menuTop[menuLevel] = 0;
+        menuPos[menuLevel] = UI_MENU_BACKCNT; // if top entry is back, default to next useful item
+      }
+    } else
 #endif
+    {
+      // With or without SDCARD, being here means the menu is not a files list
+      // Reset menu to top
+      menuTop[menuLevel] = 0;
+      menuPos[menuLevel] = UI_MENU_BACKCNT; // if top entry is back, default to next useful item
+   }
     if(refresh)
         refreshPage();
 }
