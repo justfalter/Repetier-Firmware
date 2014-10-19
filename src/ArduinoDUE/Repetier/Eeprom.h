@@ -144,7 +144,6 @@ have problems with other modules using the eeprom */
 class EEPROM
 {
 #if EEPROM_MODE!=0
-    static uint8_t computeChecksum();
     static void writeExtruderPrefix(uint pos);
     static void writeFloat(uint pos,PGM_P text,uint8_t digits=3);
     static void writeLong(uint pos,PGM_P text);
@@ -152,7 +151,9 @@ class EEPROM
     static void writeByte(uint pos,PGM_P text);
 #endif
 public:
-
+	#if EEPROM_MODE!=0
+    static uint8_t computeChecksum();
+#endif
     static void init();
     static void initBaudrate();
     static bool buselight; 

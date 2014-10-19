@@ -2808,6 +2808,9 @@ void UIDisplay::executeAction(int action)
 	#if FEATURE_BEEPER
 	case UI_ACTION_SOUND:
 	HAL::enablesound=!HAL::enablesound;
+	//save directly to eeprom
+	HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+	HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
 	UI_STATUS(UI_TEXT_SOUND_ONOF);
 	break;
 	#endif
@@ -2819,6 +2822,9 @@ void UIDisplay::executeAction(int action)
 		else if (EEPROM::timepowersaving==(1000 * 60 * 15)) EEPROM::timepowersaving = 1000*60*30;// move to 30 min
 		else EEPROM::timepowersaving = 0;// move to off
 		if (EEPROM::timepowersaving>0)UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+		//save directly to eeprom
+		HAL::eprSetInt32(EPR_POWERSAVE_AFTER_TIME,EEPROM::timepowersaving);
+		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
         UI_STATUS(UI_TEXT_POWER_SAVE);
 	break;
 #endif
@@ -2829,6 +2835,9 @@ void UIDisplay::executeAction(int action)
 			EEPROM::buselight=true;
 			else
 			EEPROM::buselight=false;
+			//save directly to eeprom
+			HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+			 HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif
@@ -3278,7 +3287,9 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				playsound(5000,240);
 			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_SAVE,UI_TEXT_ZMIN))
 				{
-				EEPROM::storeDataIntoEEPROM();
+				//save to eeprom
+				HAL::eprSetFloat(EPR_Z_HOME_OFFSET,Printer::zMin);
+				HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
 				}
 			else{
 				//back to original value
