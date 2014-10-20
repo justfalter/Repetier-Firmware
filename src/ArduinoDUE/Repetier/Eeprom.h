@@ -110,6 +110,8 @@ have problems with other modules using the eeprom */
 #define EPR_LIGHT_ON 946
 #define EPR_SOUND_ON 947
 #define EPR_POWERSAVE_AFTER_TIME 948
+#define EPR_DISPLAY_MODE 952
+
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development

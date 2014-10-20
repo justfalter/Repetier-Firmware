@@ -291,6 +291,9 @@
 #define UI_TEXT_DO_YOU "Do you want to:"
 #define UI_TEXT_CLEAN1 "Clean nozzle and"
 #define UI_TEXT_CLEAN2 "plates first ?"
+#define UI_TEXT_DISPLAY_MODE "Mode:%Md"
+#define UI_TEXT_EASY_MODE "Easy"
+#define UI_TEXT_ADVANCED_MODE "Advanced"
 
 
 // *************** German translation ****************

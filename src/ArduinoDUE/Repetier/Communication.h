@@ -28,6 +28,7 @@ class Com
 FSTRINGVAR(tLightOn)
 FSTRINGVAR(tSoundOn)
 FSTRINGVAR(tPowerSave)
+FSTRINGVAR(tDisplayMode)
 FSTRINGVAR(tDebug)
 FSTRINGVAR(tFirmware)
 FSTRINGVAR(tOk)

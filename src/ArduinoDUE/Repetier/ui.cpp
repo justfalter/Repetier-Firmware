@@ -47,6 +47,8 @@ bool enablesound = true;
 millis_t UIDisplay::ui_autolightoff_time=-1;
 #endif
 
+uint8_t UIDisplay::display_mode=ADVANCED_MODE;
+
 void playsound(int tone,int duration)
 {
 #if FEATURE_BEEPER
@@ -125,7 +127,11 @@ if (!HAL::enablesound)return;
 bool UIMenuEntry::showEntry() const
 {
     bool ret = true;
-    uint8_t f,f2;
+    uint8_t f,f2,f3;
+	//check what mode is targeted
+	f3 = HAL::readFlashByte((PGM_P)&display_mode);
+	//if not for current mode not need to continue
+	if (!(f3 & UIDisplay::display_mode) ) return false;
     f = HAL::readFlashByte((PGM_P)&filter);
     if(f!=0)
         ret = (f & Printer::menuMode) != 0;
@@ -1227,6 +1233,12 @@ void UIDisplay::parse(const char *txt,bool ram)
             if(col<MAX_COLS)
                 printCols[col++]='%';
             break;
+        case 'M':
+			if(c2=='d')
+				{
+					addStringP((display_mode&ADVANCED_MODE)?UI_TEXT_ADVANCED_MODE:UI_TEXT_EASY_MODE);
+				}
+			break;
         case 'x':
             if(c2>='0' && c2<='3')
                 if(c2=='0')
@@ -2805,6 +2817,14 @@ void UIDisplay::executeAction(int action)
             TOGGLE(PS_ON_PIN);
 #endif
             break;
+    case UI_ACTION_DISPLAY_MODE:
+		if (display_mode&ADVANCED_MODE)display_mode=EASY_MODE;
+		else display_mode=ADVANCED_MODE;
+		//save directly to eeprom
+		HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
+		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+    break;
+            
 	#if FEATURE_BEEPER
 	case UI_ACTION_SOUND:
 	HAL::enablesound=!HAL::enablesound;
@@ -2837,7 +2857,7 @@ void UIDisplay::executeAction(int action)
 			EEPROM::buselight=false;
 			//save directly to eeprom
 			HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
-			 HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+			HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif

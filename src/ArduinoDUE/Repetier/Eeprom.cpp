@@ -363,6 +363,7 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     HAL::eprSetFloat(EPR_Y_LENGTH,Printer::yLength);
     HAL::eprSetFloat(EPR_Z_LENGTH,Printer::zLength);
     HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+    HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
 #if FEATURE_BEEPER
 	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
 #endif
@@ -521,6 +522,9 @@ void EEPROM::readDataFromEEPROM()
     Printer::yLength = HAL::eprGetFloat(EPR_Y_LENGTH);
     Printer::zLength = HAL::eprGetFloat(EPR_Z_LENGTH);
 	EEPROM::buselight=HAL::eprGetByte(EPR_LIGHT_ON);
+	UIDisplay::display_mode=HAL::eprGetByte(EPR_DISPLAY_MODE);
+	//need to be sure a valid value is set
+	if(!((UIDisplay::display_mode==ADVANCED_MODE)||(UIDisplay::display_mode==EASY_MODE)))UIDisplay::display_mode=ADVANCED_MODE;
 	#if CASE_LIGHTS_PIN>=0
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
@@ -744,6 +748,7 @@ void EEPROM::writeSettings()
 #if UI_AUTOLIGHTOFF_AFTER !=0
 	writeLong(EPR_POWERSAVE_AFTER_TIME,Com::tPowerSave);
 #endif
+	writeByte(EPR_DISPLAY_MODE,Com::tDisplayMode);
 #if ENABLE_BACKLASH_COMPENSATION
     writeFloat(EPR_BACKLASH_X,Com::tEPRXBacklash);
     writeFloat(EPR_BACKLASH_Y,Com::tEPRYBacklash);

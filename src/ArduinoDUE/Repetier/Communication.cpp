@@ -33,6 +33,7 @@ FSTRINGVALUE(Com::tFirmware,"FIRMWARE_NAME:Repetier_" REPETIER_VERSION " FIRMWAR
 FSTRINGVALUE(Com::tLightOn,"Light On:");
 FSTRINGVALUE(Com::tSoundOn,"Sound On:");
 FSTRINGVALUE(Com::tPowerSave,"Powersave after [ms,0=off]:");
+FSTRINGVALUE(Com::tDisplayMode,"Display Mode:");
 FSTRINGVALUE(Com::tDebug,"Debug:");
 FSTRINGVALUE(Com::tOk,"ok")
 FSTRINGVALUE(Com::tNewline,"\r\n")
