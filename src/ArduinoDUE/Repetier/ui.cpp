@@ -1427,7 +1427,7 @@ void UIDisplay::parse(const char *txt,bool ram)
                 long seconds = (alloff ? 0 : (HAL::timeInMilliseconds()-Printer::msecondsPrinting)/1000)+HAL::eprGetInt32(EPR_PRINTING_TIME);
                 long tmp = seconds/86400;
                 seconds-=tmp*86400;
-                addInt(tmp,5);
+                addInt(tmp,2);
                 addStringP(PSTR(UI_TEXT_PRINTTIME_DAYS));
                 tmp=seconds/3600;
                 addInt(tmp,2);
