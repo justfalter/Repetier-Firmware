@@ -2829,7 +2829,7 @@ void UIDisplay::executeAction(int action)
 	case UI_ACTION_SOUND:
 	HAL::enablesound=!HAL::enablesound;
 	//save directly to eeprom
-	HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
 	HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
 	UI_STATUS(UI_TEXT_SOUND_ONOF);
 	break;
