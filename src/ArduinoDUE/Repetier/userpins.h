@@ -34,7 +34,7 @@
 #define TEMP_2_PIN		13//	TEMP_0_PIN  //switch pin value
 #define HEATER_0_PIN            20
 #define TEMP_0_PIN               9 // ADC channel #, not a PIN #
-#define FIL_SENSOR1_PIN          7
+#define FIL_SENSOR1_PIN          129
 #define FIL_SENSOR2_PIN          24
 #define ORIG_E1_ENABLE_PIN	123//ORIG_E0_ENABLE_PIN //switch pin value
 #define ORIG_E1_STEP_PIN	122//ORIG_E0_STEP_PIN   //switch pin value

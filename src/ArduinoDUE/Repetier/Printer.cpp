@@ -659,7 +659,12 @@ void Printer::setup()
     WRITE(Z2_ENABLE_PIN,!Z_ENABLE_ON);
 #endif
 #endif
-
+#if defined(FIL_SENSOR1_PIN)
+SET_INPUT(FIL_SENSOR1_PIN);
+#endif
+#if defined(FIL_SENSOR2_PIN)
+SET_INPUT(FIL_SENSOR2_PIN);
+#endif
     //endstop pullups
 #if MIN_HARDWARE_ENDSTOP_X
 #if X_MIN_PIN>-1

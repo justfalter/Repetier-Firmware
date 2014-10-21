@@ -3043,6 +3043,27 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 			{
 			step=STEP_EXT_LOAD_UNLOAD;
 			}
+		else 
+				{
+				if (extruderid==0)//filament sensor override pushing ok button to start if filament detected, if not user still can push Ok to start 
+					{
+						#if defined(FIL_SENSOR1_PIN)
+							if(!READ(FIL_SENSOR1_PIN))step=STEP_EXT_LOAD_UNLOAD;
+						#endif
+					}
+				else
+					{
+						#if defined(FIL_SENSOR2_PIN)
+							if(!READ(FIL_SENSOR2_PIN))step=STEP_EXT_LOAD_UNLOAD;
+						#endif
+					}
+			    }
+		if((step==STEP_EXT_LOAD_UNLOAD)&&(load_dir==1))
+			{
+				playsound(5000,240);
+				playsound(3000,240);
+				UI_STATUS(UI_TEXT_PUSH_FILAMENT);
+			}
 		//ok key is managed in key section so if wait for press ok - just do nothing
 		 break;
 		 case STEP_EXT_LOAD_UNLOAD:
@@ -3054,6 +3075,26 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 					{
 					UI_STATUS(UI_TEXT_UNLOADING_FILAMENT);
 					PrintLine::moveRelativeDistanceInSteps(0,0,0,load_dir * Printer::axisStepsPerMM[E_AXIS],4,false,false);
+					if (extruderid==0)//filament sensor override to stop earlier
+					{
+						#if defined(FIL_SENSOR1_PIN)
+							if(READ(FIL_SENSOR1_PIN))
+								{
+								process_it=false;
+								UI_STATUS(UI_TEXT_COOLDOWN);
+								}
+						#endif
+					}
+				else
+					{
+						#if defined(FIL_SENSOR2_PIN)
+							if(READ(FIL_SENSOR2_PIN))
+								{
+								process_it=false;
+								UI_STATUS(UI_TEXT_COOLDOWN);
+								}
+						#endif
+					}
 					}
 				else
 					{
