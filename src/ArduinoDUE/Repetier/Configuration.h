@@ -38,14 +38,51 @@
 
 // ################## EDIT THESE SETTINGS MANUALLY ################
 
-#define NUM_EXTRUDER 2
-#define NUM_FAN 2 //Some Davinci have 2 extruders and 1 fan
+#define DAVINCI 2 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FAN
 #define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 0 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
+#define UI_LANGUAGE 7 // 0 English - 7 French (others are not up to date)
 #define MOTHERBOARD 999
 
 
 // ################ END MANUAL SETTINGS ##########################
 
+#define ENDSTOP_X_BACK_ON_HOME 0  //Moved here to be sure to be included in X_MAX_LENGTH
+#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
+#define ENDSTOP_Z_BACK_ON_HOME 0  //Moved here to be sure to be included in Z_MAX_LENGTH
+
+#if DAVINCI==1
+#define NUM_EXTRUDER 1
+#define EXT0_INVERSE 0
+#define NUM_FAN 1
+#define X_MAX_LENGTH 237 - ENDSTOP_X_BACK_ON_HOME
+#define Y_MAX_LENGTH 217- ENDSTOP_Y_BACK_ON_HOME
+#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define UI_PRINTER_NAME    "  Da Vinci 1.0"
+#define UI_PRINTER_COMPANY "  XYZ Printing"
+#endif
+
+#if DAVINCI==2
+#define NUM_EXTRUDER 2
+#define EXT0_INVERSE 1
+#define NUM_FAN 1 
+#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
+#define Y_MAX_LENGTH 211- ENDSTOP_Y_BACK_ON_HOME
+#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define UI_PRINTER_NAME    "  Da Vinci 2.0"
+#define UI_PRINTER_COMPANY "  XYZ Printing"
+#endif
+
+#if DAVINCI==3
+#define NUM_EXTRUDER 2
+#define EXT0_INVERSE 1
+#define NUM_FAN 2 
+#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
+#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+#define UI_PRINTER_NAME    "  Da Vinci 2.0"
+#define UI_PRINTER_COMPANY "  XYZ Printing"
+#endif
 
 #include "pins.h"
 
@@ -60,27 +97,16 @@
 //#define COMPAT_PRE1
 
 //This is the logic that controls the cooling fan pin assignments.
-#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1
+#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1 && DAVINCI>=2
   #define FAN_PIN ORIG_FAN_PIN
-  #define FEATURE_FAN_CONTROL 1
-  
-  #if NUM_FAN==1 
-    #define EXT0_EXTRUDER_COOLER_PIN -1
-    #define EXT1_EXTRUDER_COOLER_PIN -1
-  #else
-    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
-    #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
-  #endif
+  #define FEATURE_FAN_CONTROL 1 
+    #if DAVINCI==2
+      #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+      #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+    #endif
 #else
   #define FAN_PIN -1
-  #define FEATURE_FAN_CONTROL 0
-  #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
-  
-  #if NUM_FAN==1 
-    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
-  #else
-    #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
-  #endif
+  #define FEATURE_FAN_CONTROL 0    
 #endif
 
 #define HIDE_BINARY_ON_SD 1
@@ -98,11 +124,7 @@
 #define EXT0_HEATER_PIN HEATER_0_PIN
 #define EXT0_STEP_PIN ORIG_E0_STEP_PIN
 #define EXT0_DIR_PIN ORIG_E0_DIR_PIN
-#if NUM_EXTRUDER==1
-#define EXT0_INVERSE 0
-#else
-#define EXT0_INVERSE 1
-#endif
+//#define EXT0_INVERSE 0
 #define EXT0_ENABLE_PIN E0_ENABLE_PIN
 #define EXT0_ENABLE_ON 0
 #define EXT0_MAX_FEEDRATE 50
@@ -112,7 +134,7 @@
 #define EXT0_WATCHPERIOD 1
 #define EXT0_PID_INTEGRAL_DRIVE_MAX 230
 #define EXT0_PID_INTEGRAL_DRIVE_MIN 40
-#define EXT0_PID_P 7
+#define EXT0_PID_P 3
 #define EXT0_PID_I 2
 #define EXT0_PID_D 40
 #define EXT0_PID_MAX 255
@@ -124,6 +146,8 @@
 #define EXT0_SELECT_COMMANDS ""
 #define EXT0_DESELECT_COMMANDS ""
 #define EXT0_EXTRUDER_COOLER_SPEED 255
+
+#if NUM_EXTRUDER==2
 #define EXT1_X_OFFSET -2852
 #define EXT1_Y_OFFSET 12
 #define EXT1_STEPS_PER_MM 96
@@ -142,7 +166,7 @@
 #define EXT1_WATCHPERIOD 1
 #define EXT1_PID_INTEGRAL_DRIVE_MAX 230
 #define EXT1_PID_INTEGRAL_DRIVE_MIN 40
-#define EXT1_PID_P 7
+#define EXT1_PID_P 3
 #define EXT1_PID_I 2
 #define EXT1_PID_D 40
 #define EXT1_PID_MAX 255
@@ -154,6 +178,7 @@
 #define EXT1_SELECT_COMMANDS ""
 #define EXT1_DESELECT_COMMANDS ""
 #define EXT1_EXTRUDER_COOLER_SPEED 255
+#endif
 #define RETRACT_DURING_HEATUP true
 #define PID_CONTROL_RANGE 20
 #define SKIP_M109_IF_WITHIN 2
@@ -225,9 +250,6 @@
 #define ENDSTOP_X_RETEST_REDUCTION_FACTOR 3
 #define ENDSTOP_Y_RETEST_REDUCTION_FACTOR 3
 #define ENDSTOP_Z_RETEST_REDUCTION_FACTOR 4
-#define ENDSTOP_X_BACK_ON_HOME 0
-#define ENDSTOP_Y_BACK_ON_HOME 7
-#define ENDSTOP_Z_BACK_ON_HOME 0
 #define ALWAYS_CHECK_ENDSTOPS 1
 
 // ################# XYZ movements ###################
@@ -245,12 +267,6 @@
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
-#if NUM_EXTRUDER == 1 //Bed size is different between DaVinci 1.0 and 2.0
-#define X_MAX_LENGTH 235 - ENDSTOP_X_BACK_ON_HOME
-#else
-#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
-#endif
-#define Y_MAX_LENGTH 211- ENDSTOP_Y_BACK_ON_HOME
 #define Z_MAX_LENGTH 202 - ENDSTOP_Z_BACK_ON_HOME
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
@@ -362,20 +378,20 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_AUTOLEVEL 1
 
 #if NUM_EXTRUDER == 1
-#define Z_PROBE_X1 21 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y1 9 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X2 21 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y2 215 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X3 206 +X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y3 215 +Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X1 21 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y1 9 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X2 21 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y2 217 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X3 206 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y3 217 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
 
 #else
-#define Z_PROBE_X1 36+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y1 0+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X2 36+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y2 210+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X3 171+X_MIN_POS-ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y3 210+Y_MIN_POS-ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X1 36 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y1 0 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X2 36 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y2 210 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
+#define Z_PROBE_X3 171 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
+#define Z_PROBE_Y3 210 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
 #endif
 
 #ifndef SDSUPPORT  // Some boards have sd support on board. These define the values already in pins.h
@@ -388,9 +404,6 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_MEMORY_POSITION 1
 #define FEATURE_CHECKSUM_FORCED 0
 #define FEATURE_CONTROLLER 1
-#define UI_LANGUAGE 0
-#define UI_PRINTER_NAME "Da Vinci 2.0"
-#define UI_PRINTER_COMPANY "^_^"
 #define UI_PAGES_DURATION 4000
 #define UI_ANIMATION 0
 #define UI_SPEEDDEPENDENT_POSITIONING 0
@@ -399,13 +412,14 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define UI_AUTOLIGHTOFF_AFTER 1
 #define ENABLE_CLEAN_NOZZLE 1
 #if ENABLE_CLEAN_NOZZLE
-  #if NUM_EXTRUDER==1 //cleaner of Davinci 1.0 is not in same position of 2.0
+  #if DAVINCI==1 //cleaner of Davinci 1.0 is not in same position of 2.0
     #define CLEAN_X 20
-    #define CLEAN_Y 0
- #else
+    #define CLEAN_Y 20
+  #endif 
+  #if DAVINCI>=2
     #define CLEAN_X 0
     #define CLEAN_Y 30
- #endif
+  #endif
 #endif
 #define FEATURE_UI_KEYS 0
 #define UI_ENCODER_SPEED 1
@@ -426,7 +440,7 @@ Values must be in range 1..255
 #define BEEPER_SHORT_SEQUENCE 2,2
 #define BEEPER_LONG_SEQUENCE 8,8
 #define UI_SET_PRESET_HEATED_BED_TEMP_PLA 55
-#define UI_SET_PRESET_EXTRUDER_TEMP_PLA   220
+#define UI_SET_PRESET_EXTRUDER_TEMP_PLA   200
 #define UI_SET_PRESET_HEATED_BED_TEMP_ABS 90
 #define UI_SET_PRESET_EXTRUDER_TEMP_ABS   230
 #define UI_SET_MIN_HEATED_BED_TEMP  30
