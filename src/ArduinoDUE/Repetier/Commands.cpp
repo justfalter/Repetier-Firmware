@@ -930,6 +930,18 @@ void Commands::executeGCode(GCode *com)
 			Printer::cleanNozzle();
 			break;
 #endif
+
+#if CASE_LIGHTS_PIN>=0
+		case 101://light on
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+			#endif
+			WRITE(CASE_LIGHTS_PIN,1);
+			break;
+		case 102://light off
+			WRITE(CASE_LIGHTS_PIN,0);
+			break;
+#endif // CASE_LIGHTS_PIN
         case 104: // M104
 #if NUM_EXTRUDER>0
             if(reportTempsensorError()) break;
