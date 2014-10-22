@@ -430,6 +430,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_BEEPER 1
 #define CASE_LIGHTS_PIN 85
 #define CASE_LIGHT_DEFAULT_ON 1
+#define CASE_KEEP_LIGHT_DEFAULT_ON 1
 #define CASE_SENSOR_DEFAULT_ON 1
 //default mode is advanced
 #define CASE_DISPLAY_MODE_DEFAULT 1 

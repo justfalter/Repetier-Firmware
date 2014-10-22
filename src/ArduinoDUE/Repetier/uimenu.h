@@ -55,7 +55,10 @@ List of placeholder:
 %sY : State of y max endstop.
 %sz : State of z min endstop.
 %sZ : State of z max endstop.
-%so:Light On/Off
+%so:Sound On/Off
+%la:LastAction
+%lo:Light On/Off
+%lk:KeepLight On/Off
 %sf:Filament Sensors:On/Off
 %do : Debug echo state.
 %di : Debug info state.
@@ -412,9 +415,15 @@ UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_SENSOR_ONOFF,UI_ACTION_SENSOR_
 UI_MENU_ACTIONCOMMAND(ui_menu_powersave,UI_TEXT_POWER_SAVE,UI_ACTION_TOGGLE_POWERSAVE,EASY_MODE);
 #define UI_POWER_SAVE_ENTRY ,&ui_menu_powersave
 #define UI_POWER_SAVE_COUNT 1
+UI_MENU_ACTIONCOMMAND(ui_menu_keeplighton,UI_TEXT_KEEP_LIGHT_ON,UI_ACTION_KEEP_LIGHT_ON,ADVANCED_MODE);
+#define UI_KEEP_LIGHT_ON_ENTRY ,&ui_menu_keeplighton
+#define UI_KEEP_LIGHT_ON_COUNT 1
+
 #else
 #define UI_POWER_SAVE_ENTRY 
 #define UI_POWER_SAVE_COUNT 0
+#define UI_KEEP_LIGHT_ON_ENTRY
+#define UI_KEEP_LIGHT_ON_COUNT 0
 #endif
 
 #if ENABLE_CLEAN_NOZZLE == 1
@@ -693,8 +702,8 @@ UI_MENU_SUBMENU(ui_menu_conf_delta, UI_TEXT_ZCALIB, ui_menu_delta,ADVANCED_MODE)
 #define UI_MENU_DELTA_COND
 #define UI_MENU_DELTA_CNT 0
 #endif
-#define UI_MENU_CONFIGURATION {UI_MENU_ADDCONDBACK UI_MENU_AUTOLEVEL &ui_menu_display_mode,&ui_menu_conf_general,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
-UI_MENU(ui_menu_configuration,UI_MENU_CONFIGURATION,UI_MENU_BACKCNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+5 +UI_MENU_AUTOLEVEL_CNT);
+#define UI_MENU_CONFIGURATION {UI_MENU_ADDCONDBACK UI_MENU_AUTOLEVEL &ui_menu_display_mode UI_KEEP_LIGHT_ON_ENTRY ,&ui_menu_conf_general,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
+UI_MENU(ui_menu_configuration,UI_MENU_CONFIGURATION,UI_MENU_BACKCNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+5 +UI_MENU_AUTOLEVEL_CNT +UI_KEEP_LIGHT_ON_COUNT);
 // Main menu
 UI_MENU_SUBMENU(ui_menu_main1, UI_TEXT_QUICK_SETTINGS,ui_menu_quick,ALL_MODE);
 UI_MENU_SUBMENU(ui_menu_main2, UI_TEXT_POSITION,ui_menu_positions,ALL_MODE);

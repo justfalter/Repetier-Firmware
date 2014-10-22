@@ -58,6 +58,7 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     baudrate = BAUDRATE;
     maxInactiveTime = MAX_INACTIVE_TIME*1000L;
     EEPROM::buselight = bool(CASE_LIGHT_DEFAULT_ON);
+    EEPROM::bkeeplighton = bool(CASE_KEEP_LIGHT_DEFAULT_ON);
     UIDisplay::display_mode=CASE_DISPLAY_MODE_DEFAULT;
     EEPROM::busesensor = bool(CASE_SENSOR_DEFAULT_ON);
 	#if CASE_LIGHTS_PIN>=0
@@ -305,6 +306,7 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
 }
 bool EEPROM::buselight=false;
 bool EEPROM::busesensor=false;
+bool EEPROM::bkeeplighton=true;
 
 #if UI_AUTOLIGHTOFF_AFTER !=0
 millis_t EEPROM::timepowersaving=1000 * 60 * 30; //30 min
@@ -366,6 +368,8 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     HAL::eprSetFloat(EPR_Y_LENGTH,Printer::yLength);
     HAL::eprSetFloat(EPR_Z_LENGTH,Printer::zLength);
     HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
+    HAL::eprSetByte(EPR_KEEP_LIGHT_ON,EEPROM::bkeeplighton);
+    
     HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
 #if defined(FIL_SENSOR1_PIN)
 	 HAL::eprSetByte(EPR_SENSOR_ON,EEPROM::busesensor);
@@ -528,6 +532,7 @@ void EEPROM::readDataFromEEPROM()
     Printer::yLength = HAL::eprGetFloat(EPR_Y_LENGTH);
     Printer::zLength = HAL::eprGetFloat(EPR_Z_LENGTH);
 	EEPROM::buselight=HAL::eprGetByte(EPR_LIGHT_ON);
+	EEPROM::bkeeplighton=HAL::eprGetByte(EPR_KEEP_LIGHT_ON);
 	UIDisplay::display_mode=HAL::eprGetByte(EPR_DISPLAY_MODE);
 	//need to be sure a valid value is set
 	if(!((UIDisplay::display_mode==ADVANCED_MODE)||(UIDisplay::display_mode==EASY_MODE)))UIDisplay::display_mode=ADVANCED_MODE;
@@ -751,6 +756,7 @@ void EEPROM::writeSettings()
     writeFloat(EPR_Y_LENGTH,Com::tEPRYMaxLength);
     writeFloat(EPR_Z_LENGTH,Com::tEPRZMaxLength);
     writeByte(EPR_LIGHT_ON,Com::tLightOn);
+    writeByte(EPR_KEEP_LIGHT_ON,Com::tKeepLightOn);
  #if defined(FIL_SENSOR1_PIN)
 	  writeByte(EPR_SENSOR_ON,Com::tSensorOn);
 #endif

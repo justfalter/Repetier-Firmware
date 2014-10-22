@@ -1176,6 +1176,7 @@ void UIDisplay::parse(const char *txt,bool ram)
             if(c2=='a') addInt(lastAction,4);
 #if defined(CASE_LIGHTS_PIN) && CASE_LIGHTS_PIN>=0
             else if(c2=='o') addStringP(READ(CASE_LIGHTS_PIN)?ui_text_on:ui_text_off);        // Lights on/off
+            else if(c2=='k') addStringP(EEPROM::bkeeplighton?ui_text_on:ui_text_off);        // Keep Lights on/off
 #endif
             break;
         case 'o':
@@ -2609,7 +2610,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
     ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
 #if UI_AUTOLIGHTOFF_AFTER!=0
-    UIDisplay::ui_autolightoff_time==HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+    UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif
 
 #endif
@@ -2838,6 +2839,13 @@ void UIDisplay::executeAction(int action)
 	break;
 	#endif
 #if UI_AUTOLIGHTOFF_AFTER >0
+	case UI_ACTION_KEEP_LIGHT_ON:
+		EEPROM::bkeeplighton=!EEPROM::bkeeplighton;
+		//save directly to eeprom
+		HAL::eprSetByte(EPR_KEEP_LIGHT_ON,EEPROM::bkeeplighton);
+		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+		UI_STATUS(UI_TEXT_KEEP_LIGHT_ON);
+	break;
 	case UI_ACTION_TOGGLE_POWERSAVE:
 		if (EEPROM::timepowersaving==0) EEPROM::timepowersaving = 1000*60;// move to 1 min
 		else if (EEPROM::timepowersaving==(1000 * 60) )EEPROM::timepowersaving = 1000*60*5;// move to 5 min
@@ -3825,7 +3833,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
         ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;
 #endif
 #if UI_AUTOLIGHTOFF_AFTER!=0
-        UIDisplay::ui_autolightoff_time==HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+        UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif
 #endif
 }
@@ -3936,17 +3944,20 @@ void UIDisplay::slowAction()
 
 #if UI_AUTOLIGHTOFF_AFTER!=0
 if (ui_autolightoff_time==-1) ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
-if ((ui_autolightoff_time<time) && (EEPROM::timepowersaving>0))
-    {
-	#if CASE_LIGHTS_PIN > 0
-	if ((READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
-		{
-		TOGGLE(CASE_LIGHTS_PIN);
+if ((ui_autolightoff_time<time) && (EEPROM::timepowersaving>0) )
+    {//if printing and keep light on do not swich off
+	if(!(EEPROM::bkeeplighton  &&((Printer::menuMode&MENU_MODE_SD_PRINTING)||(Printer::menuMode&MENU_MODE_PRINTING)||(Printer::menuMode&MENU_MODE_SD_PAUSED))))
+	{
+		#if CASE_LIGHTS_PIN > 0
+		if ((READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+			{
+			TOGGLE(CASE_LIGHTS_PIN);
+			}
+		#endif
+		#if defined(UI_BACKLIGHT_PIN)
+		WRITE(UI_BACKLIGHT_PIN, LOW);
+		#endif
 		}
-	#endif
-	#if defined(UI_BACKLIGHT_PIN)
-    WRITE(UI_BACKLIGHT_PIN, LOW);
-	#endif
 	}
 #endif
     if(menuLevel==0 && time>4000)

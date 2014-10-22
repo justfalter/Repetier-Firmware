@@ -93,6 +93,7 @@
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Unload Left \005"
 	#define UI_TEXT_SENSOR_ONOFF "Fil.Sensors:%sf"
 #endif
+#define UI_TEXT_KEEP_LIGHT_ON "Print w/LED:%lk"
 #define UI_TEXT_LOADING_FILAMENT "Loading \005"
 #define UI_TEXT_UNLOADING_FILAMENT "Unloading \005"
 #define UI_TEXT_LOADUNLOAD_FILAMENT "Load / Unload \005"
@@ -1247,6 +1248,7 @@
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Retirer \005Gauche"
 	#define UI_TEXT_SENSOR_ONOFF "Det.Fil.:%sf"
 #endif
+#define UI_TEXT_KEEP_LIGHT_ON "Impr. + LED :%lk"
 #define UI_TEXT_LOADING_FILAMENT "Chargement \005"
 #define UI_TEXT_UNLOADING_FILAMENT "Retire filam. \005"
 #define UI_TEXT_LOADUNLOAD_FILAMENT "Charg/Retir.fil."
