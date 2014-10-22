@@ -85,11 +85,13 @@
 #if NUM_EXTRUDER == 1
 	#define UI_TEXT_LOAD_FILAMENT "Load Filament"
 	#define UI_TEXT_UNLOAD_FILAMENT "Unload Filament"
+	#define UI_TEXT_SENSOR_ONOFF "Fil.Sensor:%sf"
 #else
 	#define UI_TEXT_LOAD_RIGHT_FILAMENT "Load Right \005"
 	#define UI_TEXT_UNLOAD_RIGHT_FILAMENT "Unload Right \005"
 	#define UI_TEXT_LOAD_LEFT_FILAMENT "Load Left \005"
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Unload Left \005"
+	#define UI_TEXT_SENSOR_ONOFF "Fil.Sensors:%sf"
 #endif
 #define UI_TEXT_LOADING_FILAMENT "Loading \005"
 #define UI_TEXT_UNLOADING_FILAMENT "Unloading \005"
@@ -1237,11 +1239,13 @@
 #if NUM_EXTRUDER == 1
 	#define UI_TEXT_LOAD_FILAMENT "Charge. Filament"
 	#define UI_TEXT_UNLOAD_FILAMENT "Decharg Filament"
+	#define UI_TEXT_SENSOR_ONOFF "Det.Fil.:%sf"
 #else
 	#define UI_TEXT_LOAD_RIGHT_FILAMENT "Charger \005Droit "
 	#define UI_TEXT_UNLOAD_RIGHT_FILAMENT "Retirer \005Droit "
 	#define UI_TEXT_LOAD_LEFT_FILAMENT "Charger \005Gauche"
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Retirer \005Gauche"
+	#define UI_TEXT_SENSOR_ONOFF "Det.Fil.:%sf"
 #endif
 #define UI_TEXT_LOADING_FILAMENT "Chargement \005"
 #define UI_TEXT_UNLOADING_FILAMENT "Retire filam. \005"

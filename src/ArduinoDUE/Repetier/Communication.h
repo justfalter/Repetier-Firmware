@@ -25,6 +25,7 @@
 class Com
 {
     public:
+FSTRINGVAR(tSensorOn)
 FSTRINGVAR(tLightOn)
 FSTRINGVAR(tSoundOn)
 FSTRINGVAR(tPowerSave)

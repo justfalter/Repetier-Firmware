@@ -111,6 +111,7 @@ have problems with other modules using the eeprom */
 #define EPR_SOUND_ON 947
 #define EPR_POWERSAVE_AFTER_TIME 948
 #define EPR_DISPLAY_MODE 952
+#define EPR_SENSOR_ON 953
 
 
 #define EEPROM_EXTRUDER_OFFSET 200
@@ -159,6 +160,7 @@ public:
     static void init();
     static void initBaudrate();
     static bool buselight; 
+    static bool busesensor;
     static millis_t timepowersaving;
     static void storeDataIntoEEPROM(uint8_t corrupted=0);
     static void readDataFromEEPROM();

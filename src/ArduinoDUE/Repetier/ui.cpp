@@ -1351,7 +1351,10 @@ void UIDisplay::parse(const char *txt,bool ram)
             break;
         case 's': // Endstop positions and sound
 			#if FEATURE_BEEPER
-		    if(c2=='o')addStringP(HAL::enablesound?ui_text_on:ui_text_off);        // Lights on/off
+		    if(c2=='o')addStringP(HAL::enablesound?ui_text_on:ui_text_off);        // sound on/off
+			#endif
+			#if defined(FIL_SENSOR1_PIN)
+			  if(c2=='f')addStringP(EEPROM::busesensor?ui_text_on:ui_text_off);        // sensors on/off
 			#endif
             if(c2=='x')
             {
@@ -2848,6 +2851,15 @@ void UIDisplay::executeAction(int action)
         UI_STATUS(UI_TEXT_POWER_SAVE);
 	break;
 #endif
+ #if defined(FIL_SENSOR1_PIN)
+	 case UI_ACTION_SENSOR_ONOFF:
+		 EEPROM::busesensor=!EEPROM::busesensor;
+		 //save directly to eeprom
+		HAL::eprSetByte(EPR_SENSOR_ON,EEPROM::busesensor);
+		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+		UI_STATUS(UI_TEXT_SENSOR_ONOFF);
+	 break;
+#endif
 #if CASE_LIGHTS_PIN > 0
         case UI_ACTION_LIGHTS_ONOFF:
             TOGGLE(CASE_LIGHTS_PIN);
@@ -3048,13 +3060,13 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				if (extruderid==0)//filament sensor override pushing ok button to start if filament detected, if not user still can push Ok to start 
 					{
 						#if defined(FIL_SENSOR1_PIN)
-							if(!READ(FIL_SENSOR1_PIN))step=STEP_EXT_LOAD_UNLOAD;
+							if(EEPROM::busesensor && !READ(FIL_SENSOR1_PIN))step=STEP_EXT_LOAD_UNLOAD;
 						#endif
 					}
 				else
 					{
 						#if defined(FIL_SENSOR2_PIN)
-							if(!READ(FIL_SENSOR2_PIN))step=STEP_EXT_LOAD_UNLOAD;
+							if(EEPROM::busesensor &&!READ(FIL_SENSOR2_PIN))step=STEP_EXT_LOAD_UNLOAD;
 						#endif
 					}
 			    }
@@ -3078,7 +3090,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 					if (extruderid==0)//filament sensor override to stop earlier
 					{
 						#if defined(FIL_SENSOR1_PIN)
-							if(READ(FIL_SENSOR1_PIN))
+							if(EEPROM::busesensor &&READ(FIL_SENSOR1_PIN))
 								{
 								process_it=false;
 								UI_STATUS(UI_TEXT_COOLDOWN);
@@ -3088,7 +3100,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				else
 					{
 						#if defined(FIL_SENSOR2_PIN)
-							if(READ(FIL_SENSOR2_PIN))
+							if(EEPROM::busesensor &&READ(FIL_SENSOR2_PIN))
 								{
 								process_it=false;
 								UI_STATUS(UI_TEXT_COOLDOWN);

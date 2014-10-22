@@ -55,6 +55,8 @@ List of placeholder:
 %sY : State of y max endstop.
 %sz : State of z min endstop.
 %sZ : State of z max endstop.
+%so:Light On/Off
+%sf:Filament Sensors:On/Off
 %do : Debug echo state.
 %di : Debug info state.
 %de : Debug error state.
@@ -397,6 +399,15 @@ UI_MENU_ACTIONCOMMAND(ui_menu_quick_power,UI_TEXT_POWER,UI_ACTION_POWER,ADVANCED
 #define MENU_PSON_ENTRY
 #endif
 
+#if defined(FIL_SENSOR1_PIN)
+UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_SENSOR_ONOFF,UI_ACTION_SENSOR_ONOFF,ALL_MODE);
+#define UI_SENSOR_ONOFF_ENTRY ,&ui_menu_sensoronoff
+#define UI_SENSOR_ONOFF_COUNT 1
+#else
+#define UI_SENSOR_ONOFF_ENTRY 
+#define UI_SENSOR_ONOFF_COUNT 0
+#endif
+
 #if UI_AUTOLIGHTOFF_AFTER > 0
 UI_MENU_ACTIONCOMMAND(ui_menu_powersave,UI_TEXT_POWER_SAVE,UI_ACTION_TOGGLE_POWERSAVE,EASY_MODE);
 #define UI_POWER_SAVE_ENTRY ,&ui_menu_powersave
@@ -467,8 +478,8 @@ UI_MENU_ACTIONCOMMAND(ui_menu_quick_debug,"Write Debug",UI_ACTION_WRITE_DEBUG,AD
 #define DEBUG_PRINT_COUNT 0
 #define DEBUG_PRINT_EXTRA
 #endif
-#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_POWER_SAVE_ENTRY UI_CLEAN_NOZZLE_ENTRY,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
-UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_SOUND_COUNT + UI_CLEAN_NOZZLE_COUNT + UI_POWER_SAVE_COUNT);
+#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY UI_CLEAN_NOZZLE_ENTRY,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
+UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_SOUND_COUNT + UI_CLEAN_NOZZLE_COUNT + UI_POWER_SAVE_COUNT+UI_SENSOR_ONOFF_COUNT);
 
 // **** Fan menu
 

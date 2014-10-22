@@ -302,6 +302,7 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
 
 }
 bool EEPROM::buselight=false;
+bool EEPROM::busesensor=false;
 
 #if UI_AUTOLIGHTOFF_AFTER !=0
 millis_t EEPROM::timepowersaving=1000 * 60 * 30; //30 min
@@ -364,6 +365,9 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     HAL::eprSetFloat(EPR_Z_LENGTH,Printer::zLength);
     HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
     HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
+#if defined(FIL_SENSOR1_PIN)
+	 HAL::eprSetByte(EPR_SENSOR_ON,EEPROM::busesensor);
+#endif
 #if FEATURE_BEEPER
 	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
 #endif
@@ -528,6 +532,9 @@ void EEPROM::readDataFromEEPROM()
 	#if CASE_LIGHTS_PIN>=0
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
+#if defined(FIL_SENSOR1_PIN)
+	EEPROM::busesensor=HAL::eprGetByte(EPR_SENSOR_ON);
+#endif
 #if FEATURE_BEEPER
 	HAL::enablesound=HAL::eprGetByte(EPR_SOUND_ON);
 #endif
@@ -742,6 +749,9 @@ void EEPROM::writeSettings()
     writeFloat(EPR_Y_LENGTH,Com::tEPRYMaxLength);
     writeFloat(EPR_Z_LENGTH,Com::tEPRZMaxLength);
     writeByte(EPR_LIGHT_ON,Com::tLightOn);
+ #if defined(FIL_SENSOR1_PIN)
+	  writeByte(EPR_SENSOR_ON,Com::tSensorOn);
+#endif
 #if FEATURE_BEEPER
     writeByte(EPR_SOUND_ON,Com::tSoundOn);
 #endif

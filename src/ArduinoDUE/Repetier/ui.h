@@ -181,6 +181,7 @@
 #endif
 #define UI_ACTION_AUTOLEVEL				1120
 #define UI_ACTION_DISPLAY_MODE			1121
+#define UI_ACTION_SENSOR_ONOFF			1122
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001
