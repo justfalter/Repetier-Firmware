@@ -169,19 +169,35 @@ void Printer::cleanNozzle(bool restoreposition)
         else Extruder::selectExtruderById(0); //just select E0
      
 	UI_STATUS_UPD_RAM(UI_TEXT_CLEAN_NOZZLE);
+        #if DAVINCI ==1
+	//first step noze
+	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//second step noze
+	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//third step noze
+	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//fourth step noze
+	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//fifth step noze
+	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//sixth step noze
+	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//first step Z probe
+	moveToReal(xMin,yMin + CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//second step Z probe
+	moveToReal(xMin,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//third step Z probe
+	moveToReal(xMin,yMin+CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//fourth step Z probe
+	moveToReal(xMin,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+        //fifth step Z probe
+	moveToReal(xMin,yMin+CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//sixth step Z probe
+	moveToReal(xMin,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	#else
         // move Z to zMin + 15 if under this position to be sure nozzle do not touch metal holder
         if (currentPosition[Z_AXIS] < zMin+15) moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,zMin+15,IGNORE_COORDINATE,homingFeedrate[0]);
         Commands::waitUntilEndOfAllMoves();
-   #if  DAVINCI==1
-	//first step
-	moveToReal(xMin + CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin + CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	//second step
-	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	//third step
-	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	//fourth step
-	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	#else
 	//first step
 	moveToReal(xMin + CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin + CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
 	//second step
@@ -202,7 +218,7 @@ void Printer::cleanNozzle(bool restoreposition)
         moveToReal(xLength-20,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
          //fourth step
         moveToReal(xLength,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	#endif
+        
         Commands::waitUntilEndOfAllMoves();
 	//back to original position and original extruder
         //X,Y first then Z
@@ -213,6 +229,7 @@ void Printer::cleanNozzle(bool restoreposition)
 		Commands::waitUntilEndOfAllMoves();
 		Extruder::selectExtruderById(tmp_extruderid);
 		}
+        #endif
 	}
 #endif
 
