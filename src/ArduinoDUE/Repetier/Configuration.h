@@ -55,10 +55,9 @@
 #define EXT0_INVERSE 0
 #define NUM_FAN 1
 #define X_MAX_LENGTH 237 - ENDSTOP_X_BACK_ON_HOME
-#define Y_MAX_LENGTH 217- ENDSTOP_Y_BACK_ON_HOME
+#define Y_MAX_LENGTH 217 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 1.0"
-#define UI_PRINTER_COMPANY "  XYZ Printing"
 #endif
 
 #if DAVINCI==2
@@ -66,11 +65,10 @@
 #define EXT0_INVERSE 1
 #define NUM_FAN 1 
 #define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
-#define Y_MAX_LENGTH 211- ENDSTOP_Y_BACK_ON_HOME
+#define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
-#define UI_PRINTER_COMPANY "  XYZ Printing"
 #endif
 
 #if DAVINCI==3
@@ -78,10 +76,10 @@
 #define EXT0_INVERSE 1
 #define NUM_FAN 2 
 #define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
+#define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
-#define UI_PRINTER_COMPANY "  XYZ Printing"
 #endif
 
 #include "pins.h"
@@ -430,6 +428,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_BEEPER 1
 #define CASE_LIGHTS_PIN 85
 #define CASE_LIGHT_DEFAULT_ON 1
+#define UI_PRINTER_COMPANY "  XYZ Printing"
 #define CASE_KEEP_LIGHT_DEFAULT_ON 1
 #define CASE_SENSOR_DEFAULT_ON 1
 //default mode is advanced
