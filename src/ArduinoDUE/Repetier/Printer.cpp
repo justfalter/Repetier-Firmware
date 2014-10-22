@@ -172,6 +172,16 @@ void Printer::cleanNozzle(bool restoreposition)
         // move Z to zMin + 15 if under this position to be sure nozzle do not touch metal holder
         if (currentPosition[Z_AXIS] < zMin+15) moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,zMin+15,IGNORE_COORDINATE,homingFeedrate[0]);
         Commands::waitUntilEndOfAllMoves();
+   #if  DAVINCI==1
+	//first step
+	moveToReal(xMin + CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin + CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//second step
+	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//third step
+	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	//fourth step
+	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
+	#else
 	//first step
 	moveToReal(xMin + CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin + CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
 	//second step
@@ -180,7 +190,6 @@ void Printer::cleanNozzle(bool restoreposition)
 	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin+CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
 	//fourth step
 	moveToReal(xMin-ENDSTOP_X_BACK_ON_HOME,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
-	#if NUM_EXTRUDER ==2
 	//move out to be sure first drop go to purge box
         moveToReal(xLength-2,yMin+CLEAN_Y-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
         moveToReal(xLength-2,yMin-ENDSTOP_Y_BACK_ON_HOME,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
