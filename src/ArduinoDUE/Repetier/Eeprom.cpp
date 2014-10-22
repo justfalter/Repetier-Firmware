@@ -58,6 +58,8 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     baudrate = BAUDRATE;
     maxInactiveTime = MAX_INACTIVE_TIME*1000L;
     EEPROM::buselight = bool(CASE_LIGHT_DEFAULT_ON);
+    UIDisplay::display_mode=CASE_DISPLAY_MODE_DEFAULT;
+    EEPROM::busesensor = bool(CASE_SENSOR_DEFAULT_ON);
 	#if CASE_LIGHTS_PIN>=0
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
