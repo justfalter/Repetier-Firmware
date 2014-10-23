@@ -17,7 +17,7 @@
 */
 
 #include "Repetier.h"
-
+extern void playsound(int tone,int duration);
 #if defined(USE_ADVANCE)
 uint8_t Printer::minExtruderSpeed;            ///< Timer delay for start extruder speed
 uint8_t Printer::maxExtruderSpeed;            ///< Timer delay for end extruder speed
@@ -899,6 +899,10 @@ SET_INPUT(FIL_SENSOR2_PIN);
 #if FEATURE_WATCHDOG
     HAL::startWatchdog();
 #endif // FEATURE_WATCHDOG
+    playsound(880,100);
+    playsound(1479,150);
+    playsound(1174,100);
+    playsound(2349,150);
 }
 
 void Printer::defaultLoopActions()
