@@ -8,7 +8,7 @@ You can see more on [Voltivo forum](http://voltivo.com/forum/davinci-firmware).
 
 Current firmware is based on version of  modified [repetier FW](https://github.com/repetier/Repetier-Firmware) 0.91 : [bgm370 Da Vinci 1.0 FW](https://github.com/bgm370/Repetier-Firmware) 
 
-It gets rid off Da Vinci software and filament restrictions: it allows to use clear ABS because it do not use sensor, as well as others brand name filaments because it does not use cartridge chip, it allows any slicer or third-party host software usage in normal way. 
+It gets rid off Da Vinci software and filament restrictions: it allows to use clear ABS because it allows to disable sensors, as well as others brand name filaments because it does not use cartridge chip, it allows any slicer or third-party host software usage in normal way. 
 
 ##Installation
 Use arduino IDE supporting arduino DUE, [version 1.5.8+](http://arduino.cc/en/Main/Software#toc3), variant.cpp need to be updated in arduino directory, the ino file is the repetier.ino located in src\ArduinoDUE\Repetier directory.
@@ -47,6 +47,3 @@ Plan :
 Easy: <img src='https://cloud.githubusercontent.com/assets/8822552/4748170/bfa0b7e8-5a69-11e4-80b7-02b9c99fe122.png'>
 Advanced :  <img src='https://cloud.githubusercontent.com/assets/8822552/4748932/bebab9e2-5a7c-11e4-8fea-cdbe3d70820c.png'>
 
-
-
-* 
