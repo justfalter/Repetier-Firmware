@@ -184,6 +184,7 @@
 #define UI_ACTION_SENSOR_ONOFF		1122
 #define UI_ACTION_KEEP_LIGHT_ON		1123
 #define UI_ACTION_CLEAN_DRIPBOX         1124
+#define UI_ACTION_LOAD_FAILSAFE          1125
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

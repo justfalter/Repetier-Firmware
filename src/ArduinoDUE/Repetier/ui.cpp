@@ -3663,6 +3663,18 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             BEEP_LONG;
             skipBeep = true;
             break;
+         case UI_ACTION_LOAD_FAILSAFE:
+            EEPROM::restoreEEPROMSettingsFromConfiguration();
+            Extruder::selectExtruderById(Extruder::current->id);
+            BEEP_LONG;
+            		//ask for user if he wants to save to eeprom after loading
+			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_STORE_TO_EEPROM,UI_TEXT_LOAD_FAILSAFE2))
+					{
+					executeAction(UI_ACTION_STORE_EEPROM);
+					}
+			else UI_STATUS(UI_TEXT_LOAD_FAILSAFE);
+            skipBeep = true;
+            break;
 #endif
 #if SDSUPPORT
         case UI_ACTION_SD_DELETE:

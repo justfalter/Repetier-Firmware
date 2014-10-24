@@ -60,6 +60,7 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     EEPROM::buselight = bool(CASE_LIGHT_DEFAULT_ON);
     EEPROM::bkeeplighton = bool(CASE_KEEP_LIGHT_DEFAULT_ON);
     UIDisplay::display_mode=CASE_DISPLAY_MODE_DEFAULT;
+    HAL::enablesound = bool(CASE_SOUND_DEFAULT_ON);
     EEPROM::busesensor = bool(CASE_SENSOR_DEFAULT_ON);
 	#if CASE_LIGHTS_PIN>=0
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
