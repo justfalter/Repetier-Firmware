@@ -2930,9 +2930,19 @@ void UIDisplay::executeAction(int action)
 			//clean
 			Printer::cleanNozzle(false);
 			//move to a position to let user to clean manually
+ 			#if DAVINCI==1 //be sure we cannot hit cleaner on 1.0
+			if(Printer::currentPosition[Y_AXIS]<=20)
+				{
+				Printer::moveToReal(0,0,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);//go 0,0 or xMin,yMin ?
+				Printer::moveToReal(0,20,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+				}
+			#endif
 			Printer::moveToReal(Printer::xLength/2,Printer::yLength-20,150,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
 			Commands::waitUntilEndOfAllMoves();
 			step =STEP_WAIT_FOR_OK;
+			playsound(3000,240);
+			playsound(4000,240);
+			playsound(5000,240);
 		 break;
 		 case STEP_WAIT_FOR_OK:
 		 UI_STATUS(UI_TEXT_WAIT_FOR_OK);
@@ -2947,11 +2957,16 @@ void UIDisplay::executeAction(int action)
 			 if ((lastButtonAction==UI_ACTION_OK) &&(step==STEP_WAIT_FOR_OK))
 				{//we are done
 				process_it=false;
+				playsound(5000,240);
+				playsound(3000,240);
+				Printer::homeAxis(true,true,false);
+				menuLevel=0;
+				refreshPage();
 				UI_STATUS(UI_TEXT_COOLDOWN);
 				}
 			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
 				{
-				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEAN_NOZZLE))
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEANING_NOZZLE))
 					{
 					UI_STATUS(UI_TEXT_CANCELED);
 					process_it=false;
@@ -2988,7 +3003,102 @@ void UIDisplay::executeAction(int action)
 		menuLevel=0;
 		refreshPage();
         break;
-#endif			
+#endif	
+
+#if ENABLE_CLEAN_DRIPBOX==1
+	case UI_ACTION_CLEAN_DRIPBOX:
+		process_it=true;
+		printedTime = HAL::timeInMilliseconds();
+		step=STEP_CLEAN_DRIPBOX;
+		menuLevel=0;
+		refreshPage();
+		//need to home if not
+		if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
+        else Extruder::selectExtruderById(0); //just select E0
+        UI_STATUS(UI_TEXT_PREPARING);
+		while (process_it)
+		{
+		Commands::checkForPeriodicalActions();
+		currentTime = HAL::timeInMilliseconds();
+		 //be sure not auto return
+		#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
+		#endif
+		 switch(step)
+		 {
+		 case STEP_CLEAN_DRIPBOX:
+			//move to a position to let user to clean manually
+			#if DAVINCI==1 //be sure we cannot hit cleaner on 1.0
+            if(Printer::currentPosition[Y_AXIS]<=20)
+				{
+				Printer::moveToReal(0,0,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);//go 0,0 or xMin,yMin ?
+				Printer::moveToReal(0,20,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+				}
+			#endif
+			Printer::moveToReal(Printer::xLength/2,Printer::yLength-20,150,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+			Commands::waitUntilEndOfAllMoves();
+			step =STEP_CLEAN_DRIPBOX_WAIT_FOR_OK;
+			playsound(3000,240);
+			playsound(4000,240);
+			playsound(5000,240);
+			pushMenu(&ui_menu_clean_dripbox_page,true);
+		 break;
+		 case STEP_CLEAN_DRIPBOX_WAIT_FOR_OK:
+		 UI_STATUS(UI_TEXT_WAIT_FOR_OK);
+		 //just need to wait for key to be pressed
+		 break;
+		 }
+		 //check what key is pressed
+		 if (previousaction!=lastButtonAction)
+			{
+			previousaction=lastButtonAction;
+			if(previousaction!=0)BEEP_SHORT;
+			 if ((lastButtonAction==UI_ACTION_OK) &&(step==STEP_CLEAN_DRIPBOX_WAIT_FOR_OK))
+				{//we are done
+				process_it=false;
+				playsound(5000,240);
+				playsound(3000,240);
+		        menuLevel=0;
+		        refreshPage();
+				Printer::homeAxis(true,true,false);
+				}
+			//there is no step that user can cancel but keep it if function become bore complex
+			 /*if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
+				{
+				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEANING_DRIPBOX))
+					{
+					UI_STATUS(UI_TEXT_CANCELED);
+					process_it=false;
+					}
+				else
+					{//we continue as before
+					pushMenu(&ui_menu_clean_dripbox_page,true);
+					}
+				delay(100);
+				}*/
+			 //wake up light if power saving has been launched
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			if (EEPROM::timepowersaving>0)
+				{
+				UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+				#if CASE_LIGHTS_PIN > 0
+				if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+					{
+					TOGGLE(CASE_LIGHTS_PIN);
+					}
+				#endif
+				#if defined(UI_BACKLIGHT_PIN)
+				if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+				#endif
+				}
+			#endif
+			}
+		}
+		menuLevel=0;
+		refreshPage();
+        break;
+#endif
+		
 case UI_ACTION_LOAD_EXTRUDER_0:
 case UI_ACTION_UNLOAD_EXTRUDER_0:
 #if NUM_EXTRUDER > 1

@@ -408,6 +408,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define UI_DISABLE_AUTO_PAGESWITCH 1
 #define UI_AUTORETURN_TO_MENU_AFTER 30000
 #define UI_AUTOLIGHTOFF_AFTER 1
+#define ENABLE_CLEAN_DRIPBOX 1
 #define ENABLE_CLEAN_NOZZLE 1
 #if ENABLE_CLEAN_NOZZLE
   #if DAVINCI==1 //cleaner of Davinci 1.0 is not in same position of 2.0
@@ -428,7 +429,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_BEEPER 1
 #define CASE_LIGHTS_PIN 85
 #define CASE_LIGHT_DEFAULT_ON 1
-#define UI_PRINTER_COMPANY "  XYZ Printing"
+#define UI_PRINTER_COMPANY "By XYZ Printing"
 #define CASE_KEEP_LIGHT_DEFAULT_ON 1
 #define CASE_SENSOR_DEFAULT_ON 1
 //default mode is advanced

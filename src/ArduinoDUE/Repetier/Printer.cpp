@@ -168,7 +168,7 @@ void Printer::cleanNozzle(bool restoreposition)
 	if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
         else Extruder::selectExtruderById(0); //just select E0
      
-	UI_STATUS_UPD_RAM(UI_TEXT_CLEAN_NOZZLE);
+	UI_STATUS_UPD_RAM(UI_TEXT_CLEANING_NOZZLE);
         #if DAVINCI ==1
 	//first step noze
 	moveToReal(xMin+CLEAN_X-ENDSTOP_X_BACK_ON_HOME,yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,homingFeedrate[0]);
