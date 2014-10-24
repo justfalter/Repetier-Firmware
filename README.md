@@ -18,19 +18,7 @@ Do not forget to modify the configuration.h to match the targeted Da Vinci 1.0, 
 
 ***
 ##TODO
-This is the plan of missing features to be done in addition of bugs fixes:  
-* UI improvement: Menu looks/feel
-* Add Clean Box function from menu
-* Add Stop print any time from menu
-* Add Pause print any time from menu allowing
-	* Change filament
-	* Clean nozzle
-	* TBD..
-* Add some fancy sounds for specific actions like:
-	* temperature reached for heating function
-	* when user action is requested like for clean nozzle
-	* when printer is power on, some welcoming ``"TADA"`` 
-	* when printing is done , some audio sound
+[Check issue list](https://github.com/luc-github/Repetier-Firmware/issues)
 	
 ***
 ##Implemented
@@ -41,99 +29,24 @@ This is the plan of missing features to be done in addition of bugs fixes:
 * Sound and Light management, including powersaving function
 * Cleaning Nozzle(s) by menu and by command
 * Load / Unload filament by menu
+* Sensor support for 1.0 and 2.0
+* Auto Z-probe
+* Dripbox cleaning
+* Advanced/Easy menu
+* Loading FailSafe settings
 
 ***
 ##Known Issues
 * Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), 
+and [Check issue list](https://github.com/luc-github/Repetier-Firmware/issues)
 	
 ***
-## Current LCD Menu	for Da Vinci 2.0 duo
-* Keys:   
-&nbsp;&nbsp;&nbsp;&nbsp;`[/\]`	`[Home]`    
-`[<]` `[Ok]` `[>]`   
-&nbsp;&nbsp;&nbsp;&nbsp;`[\/]`   
+Current menu: <img src='https://github.com/luc-github/Repetier-Firmware/blob/davinci/Menu%20.png'>
 
-	
-* Main Screen
-   
-	* Page 1 - sum up of temperatures, Z pos and speed   
-	
-<table><tr><td>!&nbsp;34/250!&nbsp;34/250<br>
-H&nbsp;34/&nbsp;90Mul:100%<br>   
-Z:&nbsp;&nbsp;&nbsp;0.00<br>       
-Printer ready.</td></tr></table>
-
-      
-	* Page 2 - position   
-
-<table><tr><td>X:&nbsp;&nbsp;&nbsp;0.00mm&nbsp;&nbsp;&nbsp;<br>   
-Y:&nbsp;&nbsp;&nbsp;0.00mm<br>   
-Z:&nbsp;&nbsp;&nbsp;0.00mm<br>   
-Printer ready.</td></tr></table> 
-
-   
-	* Page 3 - Printing time   
-
-<table><tr><td>Printing time&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0 days  0:00<br>  
-Filament printed<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0m.</td></tr></table>   
+Plan :  
+Easy: <img src='https://cloud.githubusercontent.com/assets/8822552/4748170/bfa0b7e8-5a69-11e4-80b7-02b9c99fe122.png'>
+Advanced :  <img src='https://cloud.githubusercontent.com/assets/8822552/4748932/bebab9e2-5a7c-11e4-8fea-cdbe3d70820c.png'>
 
 
-* Menu (when Ok key is pressed)   
-	[Quick Settings](#quick-settings)   
-	[Print file](#print-file)   
-	[Position](#position)   
-	[Extruder](#extruder)  
-	[SD Card](#sd-card)   
-	[Debugging](#debugging)   
-	[Configuration](#configuration)   
-	
----
-###Quick Settings
 
-	Home All
-	Z Babystepping
-	Speed Mul.:100%
-	Flow Mul.:100%
-	Lights :On
-	Sound :On
-	Powersave:30min
-	Cleaning Nozzle
-	Preheat PLA
-	Preheat ABS
-	Cooldown
-	Set to Origin
-	Disable stepper
-	
----
-###Print file
-
----
-###Position
-
----
-###Extruder
-	Load Left !
-	Unload Left !
-	Load Right !
-	Unload Right !
-	Bed Temp. :  0'C
-	Temp. 0 : 0'C
-	Temp. 1 : 0'C
-	Extruder 0 Off
-	Extruder 1 Off
-	* Select Extruder 0
-	- Select Extruder 1
-	Extr. Position ->
-	Set Origin
-
----
-###SD Card
-
----
-###Debugging
-
----
-###Configuration
-
+* 
