@@ -1406,12 +1406,19 @@ void UIDisplay::parse(const char *txt,bool ram)
             if(c2=='N') addStringP(PSTR(UI_PRINTER_NAME));
             #if UI_AUTOLIGHTOFF_AFTER > 0
 			else if(c2=='s') 
-			if(EEPROM::timepowersaving==0) addStringP(ui_text_off);        // powersave off
-			else if (EEPROM::timepowersaving==(1000 * 60)) addStringP("1min");//1mn
-			else if (EEPROM::timepowersaving==(1000 * 60 *5)) addStringP("5min");//5 min
+			if(EEPROM::timepowersaving==0) 
+				{
+				addStringP("  ");//for alignement need a better way as it should be depending of size of translation of "off/on" vs "30min"
+				addStringP(ui_text_off);        // powersave off
+				}
+			else if (EEPROM::timepowersaving==(1000 * 60)) addStringP(" 1min");//1mn
+			else if (EEPROM::timepowersaving==(1000 * 60 *5)) addStringP(" 5min");//5 min
 			else if (EEPROM::timepowersaving==(1000 * 60 * 15)) addStringP("15min");//15 min
 			else if (EEPROM::timepowersaving==(1000 * 60 * 30)) addStringP("30min");//30 min
-			else addStringP(ui_text_on);//if not defined
+			else {
+					addStringP("   ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
+					addStringP(ui_text_on);//if not defined by preset
+					}
       	    #endif 
             break;
 		case 'z':
