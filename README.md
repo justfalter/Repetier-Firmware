@@ -14,7 +14,13 @@ It gets rid off Da Vinci software and filament restrictions: it allows to use cl
 Use arduino IDE supporting arduino DUE, [version 1.5.8+](http://arduino.cc/en/Main/Software#toc3), variant.cpp need to be updated in arduino directory, the ino file is the repetier.ino located in src\ArduinoDUE\Repetier directory.
 For upgrade from stock FW and revert to, please check DaVinci forum.
 
-Do not forget to modify the configuration.h to match the targeted Da Vinci 1.0, 2.0 SF or 2.0. (number of extruders and fans)
+Do not forget to modify the configuration.h to match the targeted Da Vinci: 1.0, 2.0 SF or 2.0. 
+for basic installation just change :
+#define DAVINCI 1 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FANS
+
+1 for DaVinci 1.0 (1Fan, 1 Extruder)
+2 for DaVinci 2.0 SF (1Fan, 2 Extruder)
+3 for DaVinci 2.0  (2Fans, 2 Extruder)
 
 ***
 ##TODO
