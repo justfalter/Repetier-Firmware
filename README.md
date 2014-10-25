@@ -15,12 +15,12 @@ Use arduino IDE supporting arduino DUE, [version 1.5.8+](http://arduino.cc/en/Ma
 For upgrade from stock FW and revert to, please check DaVinci forum.
 
 Do not forget to modify the configuration.h to match the targeted Da Vinci: 1.0, 2.0 SF or 2.0. 
-for basic installation just change :
+for basic installation just change :  
 '#define DAVINCI 1 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FANS</code>'
 
-1 for DaVinci 1.0 (1Fan, 1 Extruder)
-2 for DaVinci 2.0 SF (1Fan, 2 Extruders)
-3 for DaVinci 2.0  (2Fans, 2 Extruders)
+  1 for DaVinci 1.0 (1Fan, 1 Extruder)  
+  2 for DaVinci 2.0 SF (1Fan, 2 Extruders)  
+  3 for DaVinci 2.0  (2Fans, 2 Extruders)  
 
 ***
 ##TODO
