@@ -185,6 +185,15 @@
 #define UI_ACTION_KEEP_LIGHT_ON		1123
 #define UI_ACTION_CLEAN_DRIPBOX         1124
 #define UI_ACTION_LOAD_FAILSAFE          1125
+#define UI_ACTION_X_1 						1126
+#define UI_ACTION_X_10 						1127
+#define UI_ACTION_X_100	 				1128
+#define UI_ACTION_Y_1 						1129
+#define UI_ACTION_Y_10 						1130
+#define UI_ACTION_Y_100	 					1131
+#define UI_ACTION_Z_1 						1132
+#define UI_ACTION_Z_10 						1133
+#define UI_ACTION_Z_100	 					1134
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

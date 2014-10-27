@@ -99,6 +99,11 @@
 	#define UI_TEXT_CLEANING_DRIPBOX 	 "Cleaning Dripboxes"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Dripboxes"
 #endif
+
+#define UI_TEXT_WARNING_POS_X_UNKNOWN    "Real X unknown !"
+#define UI_TEXT_WARNING_POS_Y_UNKNOWN    "Real Y unknown !"
+#define UI_TEXT_WARNING_POS_Z_UNKNOWN    "Real Z unknown !"
+
 #define UI_TEXT_MOVING     "Moving..."
 #define UI_TEXT_PREPARING     "Preparing..."
 #define UI_TEXT_KEEP_LIGHT_ON    "Print w/LED:%lk"

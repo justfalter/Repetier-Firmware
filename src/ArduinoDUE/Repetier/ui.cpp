@@ -2364,45 +2364,105 @@ void UIDisplay::nextPreviousAction(int8_t next)
 #endif
     Commands::printCurrentPosition();
     break;
-    case UI_ACTION_XPOSITION_FAST:
-        PrintLine::moveRelativeDistanceInStepsReal(Printer::axisStepsPerMM[0]*increment,0,0,0,Printer::homingFeedrate[0],true);
+    case UI_ACTION_X_1:
+    case UI_ACTION_X_10:
+    case UI_ACTION_X_100:
+    {
+		float tmp_pos=Printer::currentPosition[X_AXIS];
+		int istep=1;
+		if (action==UI_ACTION_X_10)istep=10;
+		if (action==UI_ACTION_X_100)istep=100;
+		if (!Printer::isHomed())//ask for home to secure movement
+		{
+			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_X,UI_TEXT_WARNING_POS_X_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
+					{
+					 executeAction(UI_ACTION_HOME_ALL);
+					}
+		}
+		if(Printer::isHomed())//check if accepted to home
+		{
+			if (Extruder::current->id==0)
+				{
+					INCREMENT_MIN_MAX(tmp_pos,istep,Printer::xMin-ENDSTOP_X_BACK_ON_HOME,Printer::xMin+Printer::xLength);//this is for default extruder
+				}
+			else
+				{
+					INCREMENT_MIN_MAX(tmp_pos,istep,Printer::xMin-ENDSTOP_X_BACK_ON_HOME+round(Extruder::current->xOffset/Printer::axisStepsPerMM[X_AXIS]),Printer::xMin+Printer::xLength+round(Extruder::current->xOffset/Printer::axisStepsPerMM[X_AXIS]));//this is for default extruder
+				}
+			if (tmp_pos!=(increment*istep)+Printer::currentPosition[X_AXIS]) break; //we are out of range so do not do
+		}
+		//we move under control range or not homed
+		PrintLine::moveRelativeDistanceInStepsReal(Printer::axisStepsPerMM[X_AXIS]*increment*istep,0,0,0,Printer::homingFeedrate[X_AXIS],true);
         Commands::printCurrentPosition();
-        break;
-    case UI_ACTION_YPOSITION_FAST:
-        PrintLine::moveRelativeDistanceInStepsReal(0,Printer::axisStepsPerMM[1]*increment,0,0,Printer::homingFeedrate[1],true);
+    break;
+	}
+
+    case UI_ACTION_Y_1:
+    case UI_ACTION_Y_10:
+    case UI_ACTION_Y_100:
+    {
+		float tmp_pos=Printer::currentPosition[Y_AXIS];
+		int istep=1;
+		if (action==UI_ACTION_Y_10)istep=10;
+		if (action==UI_ACTION_Y_100)istep=100;
+		if (!Printer::isHomed())//ask for home to secure movement
+		{
+			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_Y,UI_TEXT_WARNING_POS_Y_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
+					{
+					 executeAction(UI_ACTION_HOME_ALL);
+					}
+		}
+		if(Printer::isHomed())//check if accepted to home
+		{
+			if (Extruder::current->id==0)
+				{
+					INCREMENT_MIN_MAX(tmp_pos,istep,Printer::yMin-ENDSTOP_Y_BACK_ON_HOME,Printer::yMin+Printer::yLength);//this is for default extruder
+				}
+			else
+				{
+					INCREMENT_MIN_MAX(tmp_pos,istep,Printer::yMin-ENDSTOP_Y_BACK_ON_HOME+round(Extruder::current->yOffset/Printer::axisStepsPerMM[Y_AXIS]),Printer::yMin+Printer::yLength+round(Extruder::current->yOffset/Printer::axisStepsPerMM[Y_AXIS]));//this is for default extruder
+				}
+			if (tmp_pos!=(increment*istep)+Printer::currentPosition[Y_AXIS]) break; //we are out of range so do not do
+		}
+		//we move under control range or not homed
+		PrintLine::moveRelativeDistanceInStepsReal(0,Printer::axisStepsPerMM[Y_AXIS]*increment*istep,0,0,Printer::homingFeedrate[Y_AXIS],true);
         Commands::printCurrentPosition();
-        break;
-    case UI_ACTION_ZPOSITION_FAST:
-        PrintLine::moveRelativeDistanceInStepsReal(0,0,Printer::axisStepsPerMM[2]*increment,0,Printer::homingFeedrate[2],true);
+    break;
+	}
+   
+     case UI_ACTION_Z_1:
+    case UI_ACTION_Z_10:
+    case UI_ACTION_Z_100:
+    {
+		float tmp_pos=Printer::currentPosition[Z_AXIS];
+		int istep=1;
+		if (action==UI_ACTION_Z_10)istep=10;
+		if (action==UI_ACTION_Z_100)istep=100;
+		if (!Printer::isHomed())//ask for home to secure movement
+		{
+			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_Z,UI_TEXT_WARNING_POS_Z_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
+					{
+					 executeAction(UI_ACTION_HOME_ALL);
+					}
+		}
+		if(Printer::isHomed())//check if accepted to home
+		{
+			INCREMENT_MIN_MAX(tmp_pos,istep,Printer::zMin-ENDSTOP_Z_BACK_ON_HOME,Printer::zMin+Printer::zLength);
+
+			if (tmp_pos!=(increment*istep)+Printer::currentPosition[Z_AXIS]) break; //we are out of range so do not do
+		}
+		//we move under control range or not homed
+		PrintLine::moveRelativeDistanceInStepsReal(0,0,Printer::axisStepsPerMM[Z_AXIS]*increment*istep,0,Printer::homingFeedrate[Z_AXIS],true);
         Commands::printCurrentPosition();
-        break;
+    break;
+	}
+	
     case UI_ACTION_EPOSITION:
+         //need to check temperature ?
         PrintLine::moveRelativeDistanceInSteps(0,0,0,Printer::axisStepsPerMM[3]*increment,UI_SET_EXTRUDER_FEEDRATE,true,false);
         Commands::printCurrentPosition();
         break;
-    case UI_ACTION_ZPOSITION_NOTEST:
-        Printer::setNoDestinationCheck(true);
-#if UI_SPEEDDEPENDENT_POSITIONING
-    {
-        float d = 0.01*(float)increment*lastNextAccumul;
-        if(fabs(d)*2000>Printer::maxFeedrate[Z_AXIS]*dtReal)
-            d *= Printer::maxFeedrate[Z_AXIS]*dtReal/(2000*fabs(d));
-        long steps = (long)(d*Printer::axisStepsPerMM[Z_AXIS]);
-        steps = ( increment<0 ? RMath::min(steps,(long)increment) : RMath::max(steps,(long)increment));
-        PrintLine::moveRelativeDistanceInStepsReal(0,0,steps,0,Printer::maxFeedrate[Z_AXIS],true);
-    }
-#else
-    PrintLine::moveRelativeDistanceInStepsReal(0,0,increment,0,Printer::homingFeedrate[Z_AXIS],true);
-#endif
-        Commands::printCurrentPosition();
-        Printer::setNoDestinationCheck(false);
-    break;
-    case UI_ACTION_ZPOSITION_FAST_NOTEST:
-        Printer::setNoDestinationCheck(true);
-        PrintLine::moveRelativeDistanceInStepsReal(0,0,Printer::axisStepsPerMM[Z_AXIS]*increment,0,Printer::homingFeedrate[Z_AXIS],true);
-        Commands::printCurrentPosition();
-        Printer::setNoDestinationCheck(false);
-        break;
+
     case UI_ACTION_Z_BABYSTEPS:
         {
             previousMillisCmd = HAL::timeInMilliseconds();

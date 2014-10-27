@@ -286,7 +286,7 @@ UI_MENU_ACTIONCOMMAND(ui_menu_home_all,UI_TEXT_HOME_ALL,UI_ACTION_HOME_ALL,ALL_M
 UI_MENU_ACTIONCOMMAND(ui_menu_home_x,UI_TEXT_HOME_X,UI_ACTION_HOME_X,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_home_y,UI_TEXT_HOME_Y,UI_ACTION_HOME_Y,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_home_z,UI_TEXT_HOME_Z,UI_ACTION_HOME_Z,ADVANCED_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_xpos,UI_TEXT_X_POSITION,ui_menu_xpos,ALL_MODE);
+/*UI_MENU_ACTIONSELECTOR(ui_menu_go_xpos,UI_TEXT_X_POSITION,ui_menu_xpos,ALL_MODE);
 UI_MENU_ACTIONSELECTOR(ui_menu_go_ypos,UI_TEXT_Y_POSITION,ui_menu_ypos,ALL_MODE);
 UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos,UI_TEXT_Z_POSITION,ui_menu_zpos,ALL_MODE);
 UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos_notest,UI_TEXT_Z_POSITION,ui_menu_zpos_notest,ADVANCED_MODE);
@@ -307,11 +307,37 @@ UI_MENU_ACTIONSELECTOR(ui_menu_go_zfast_notest,UI_TEXT_Z_POS_FAST,ui_menu_zpos_f
 #define UI_SPEED_Y ,&ui_menu_go_ypos
 #define UI_SPEED_Z ,&ui_menu_go_zpos
 #define UI_SPEED_Z_NOTEST ,&ui_menu_go_zpos_notest
-#endif
+#endif*/
+
+UI_MENU_CHANGEACTION(ui_menu_x_1,"  1mm",UI_ACTION_X_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_x_10," 10mm",UI_ACTION_X_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_x_100,"100mm",UI_ACTION_X_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_x_pos,"X: %x0mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_X_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_x_1,&ui_menu_x_10,&ui_menu_x_100,&ui_menu_x_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_x_value,UI_MENU_X_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_X_pos, UI_TEXT_X_POSITION, ui_menu_pos_x_value,ALL_MODE);
+
+UI_MENU_CHANGEACTION(ui_menu_y_1,"  1mm",UI_ACTION_Y_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_y_10," 10mm",UI_ACTION_Y_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_y_100,"100mm",UI_ACTION_Y_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_y_pos,"Y: %x1mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_Y_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_y_1,&ui_menu_y_10,&ui_menu_y_100,&ui_menu_y_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_y_value,UI_MENU_Y_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_Y_pos, UI_TEXT_Y_POSITION, ui_menu_pos_y_value,ALL_MODE);
+
+UI_MENU_CHANGEACTION(ui_menu_z_1,"  1mm",UI_ACTION_Z_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_z_10," 10mm",UI_ACTION_Z_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_z_100,"100mm",UI_ACTION_Z_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_z_pos,"Z: %x2mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_Z_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_z_1,&ui_menu_z_10,&ui_menu_z_100,&ui_menu_z_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_z_value,UI_MENU_Z_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_Z_pos, UI_TEXT_Z_POSITION, ui_menu_pos_z_value,ALL_MODE);
+
+UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
 
 #if DRIVE_SYSTEM!=3     //Positioning menu for non-delta
-#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_go_epos}
-UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,5 + 3 * UI_SPEED + UI_MENU_BACKCNT);
+#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z,&ui_menu_X_pos,&ui_menu_Y_pos,&ui_menu_Z_pos ,&ui_menu_go_epos}
+UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,8 + UI_MENU_BACKCNT);
 #else                   //Positioning menu for delta (removes individual x,y,z homing)
 #define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all  UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_go_epos}
 UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,2 + 3 * UI_SPEED + UI_MENU_BACKCNT);
