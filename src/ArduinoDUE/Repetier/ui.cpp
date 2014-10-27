@@ -1658,12 +1658,14 @@ void UIDisplay::refreshPage()
     }
     else
     {
+		int numrows = UI_ROWS;
         UIMenu *men = (UIMenu*)menu[menuLevel];
         uint8_t nr = pgm_read_word_near((void*)&(men->numEntries));
         mtype = pgm_read_byte((void*)&(men->menuType));
         uint8_t offset = menuTop[menuLevel];
         UIMenuEntry **entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
-        for(r=0; r+offset<nr && r<UI_ROWS; )
+        if (mtype== UI_MENU_TYPE_MENU_WITH_STATUS)numrows--;
+        for(r=0; r+offset<nr && r<numrows; )
         {
             UIMenuEntry *ent =(UIMenuEntry *)pgm_read_word(&(entries[r+offset]));
             if(!ent->showEntry())
@@ -1674,7 +1676,7 @@ void UIDisplay::refreshPage()
             unsigned char entType = pgm_read_byte(&(ent->menuType));
             unsigned int entAction = pgm_read_word(&(ent->action));
             col=0;
-            if(entType>=2 && entType<=4)
+            if(entType>=UI_MENU_ENTRY_MIN_TYPE_CHECK && entType<=UI_MENU_ENTRY_MAX_TYPE_CHECK)
             {
                 if(r+offset==menuPos[menuLevel] && activeAction!=entAction)
                     printCols[col++]=CHAR_SELECTOR;
@@ -1684,7 +1686,7 @@ void UIDisplay::refreshPage()
                     printCols[col++]=' ';
             }
             parse((char*)pgm_read_word(&(ent->text)),false);
-            if(entType==2)   // Draw submenu marker at the right side
+            if(entType==UI_MENU_TYPE_SUBMENU || entType==UI_MENU_TYPE_MENU_WITH_STATUS)   // Draw submenu marker at the right side
             {
                 while(col<UI_COLS-1) printCols[col++]=' ';
                 if(col>UI_COLS)
@@ -1698,6 +1700,21 @@ void UIDisplay::refreshPage()
             strcpy(cache[r],printCols);
             r++;
         }
+	   
+		if (mtype==UI_MENU_TYPE_MENU_WITH_STATUS) 
+		{
+		UIMenuEntry *ent =(UIMenuEntry *)pgm_read_word(&(entries[nr-1]));	//this is status bar
+		printCols[0]=0;//fill with blank line if number of entries < 3(1 or 2)
+		if (nr<UI_ROWS)r--;
+		while(r<UI_ROWS)
+			{
+			strcpy(cache[r++],printCols);
+			}	
+		col=0;//init parsing 
+		 parse((char*)pgm_read_word(&(ent->text)),false);
+		 strcpy(cache[UI_ROWS-1],printCols);//copy status 
+		 r=UI_ROWS;
+		}
     }
 #if SDSUPPORT
     if(mtype == UI_MENU_TYPE_FILE_SELECTOR)
@@ -1745,7 +1762,7 @@ void UIDisplay::refreshPage()
         off[y] = len > UI_COLS ? RMath::min(len - UI_COLS,off0) : 0;
         if(len > UI_COLS) {
            off[y] = RMath::min(len - UI_COLS,off0);
-           if(transition == 0 && (mtype == UI_MENU_TYPE_FILE_SELECTOR || mtype == UI_MENU_TYPE_SUBMENU)) {// Copy first char to front
+           if(transition == 0 && (mtype == UI_MENU_TYPE_FILE_SELECTOR || mtype == UI_MENU_TYPE_SUBMENU || mtype == UI_MENU_TYPE_MENU_WITH_STATUS)) {// Copy first char to front
             //displayCache[y][off[y]] = displayCache[y][0];
             cache[y][off[y]] = cache[y][0];
            }
@@ -1997,7 +2014,7 @@ void UIDisplay::pushMenu(const UIMenu *men,bool refresh)
     menuTop[menuLevel] = menuPos[menuLevel] = 0;
 #if SDSUPPORT
     UIMenu *men2 = (UIMenu*)menu[menuLevel];
-    if(pgm_read_byte(&(men2->menuType))==1) {
+    if(pgm_read_byte(&(men2->menuType))==UI_MENU_TYPE_FILE_SELECTOR) {
       // Menu is Open files list
       updateSDFileCount();
       // Keep menu positon in file list, more user friendly.
@@ -2041,14 +2058,14 @@ void UIDisplay::okAction()
     UIMenuEntry *ent;
     unsigned char entType;
     int action;
-    if(mtype==3)   // action menu
+    if(mtype==UI_MENU_TYPE_ACTION_MENU)   // action menu
     {
         action = pgm_read_word(&(men->id));
         finishAction(action);
         executeAction(UI_ACTION_BACK);
         return;
     }
-    if(mtype==2 && entType==4)   // Modify action
+    if(((mtype==UI_MENU_TYPE_SUBMENU) ||(mtype == UI_MENU_TYPE_MENU_WITH_STATUS) ) && entType==UI_MENU_TYPE_MODIFICATION_MENU)   // Modify action
     {
         if(activeAction)   // finish action
         {
@@ -2128,16 +2145,16 @@ void UIDisplay::okAction()
 #endif
     entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
     ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
-    entType = pgm_read_byte(&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action
+    entType = pgm_read_byte(&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action, 5=special menu with status
     action = pgm_read_word(&(ent->action));
-    if(mtype == UI_MENU_TYPE_MODIFICATION_MENU)   // action menu
+    if(mtype == UI_MENU_TYPE_ACTION_MENU)   // action menu
     {
         action = pgm_read_word(&(men->id));
         finishAction(action);
         executeAction(UI_ACTION_BACK);
         return;
     }
-    if(mtype == UI_MENU_TYPE_SUBMENU && entType == 4)   // Modify action
+    if(((mtype == UI_MENU_TYPE_SUBMENU) ||(mtype == UI_MENU_TYPE_MENU_WITH_STATUS) )&& entType == UI_MENU_TYPE_MODIFICATION_MENU)   // Modify action
     {
         if(activeAction)   // finish action
         {
@@ -2148,13 +2165,13 @@ void UIDisplay::okAction()
             activeAction = action;
         return;
     }
-    if(entType==2)   // Enter submenu
+    if(entType==UI_MENU_TYPE_MENU_WITH_STATUS || entType==UI_MENU_TYPE_SUBMENU)   // Enter submenu
     {
         pushMenu((UIMenu*)action,false);
         BEEP_SHORT
         return;
     }
-    if(entType==3)
+    if(entType==UI_MENU_TYPE_ACTION_MENU)
     {
         executeAction(action);
         return;
@@ -2171,7 +2188,9 @@ void UIDisplay::adjustMenuPos()
     UIMenu *men = (UIMenu*)menu[menuLevel];
     UIMenuEntry **entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
     uint8_t mtype = HAL::readFlashByte((const prog_char*)&(men->menuType));
-    if(mtype != 2) return;
+    int numrows=UI_ROWS;
+    if(!((mtype == UI_MENU_TYPE_SUBMENU)||(mtype == UI_MENU_TYPE_MENU_WITH_STATUS))) return;
+    if (mtype == UI_MENU_TYPE_MENU_WITH_STATUS)numrows--;
     while(menuPos[menuLevel]>0)
     {
         if(((UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]])))->showEntry())
@@ -2192,8 +2211,8 @@ void UIDisplay::adjustMenuPos()
             if(!ent->showEntry())
                 skipped++;
         }
-        if(menuTop[menuLevel] + skipped + UI_ROWS - 1 < menuPos[menuLevel]) {
-            menuTop[menuLevel] = menuPos[menuLevel] + 1 - UI_ROWS;
+        if(menuTop[menuLevel] + skipped + numrows - 1 < menuPos[menuLevel]) {
+            menuTop[menuLevel] = menuPos[menuLevel] + 1 - numrows;
             modified = true;
         }
     }
@@ -2248,14 +2267,15 @@ void UIDisplay::nextPreviousAction(int8_t next)
     UIMenuEntry **entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
     UIMenuEntry *ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
     UIMenuEntry *testEnt;
-    uint8_t entType = HAL::readFlashByte((const prog_char*)&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command
+    uint8_t entType = HAL::readFlashByte((const prog_char*)&(ent->menuType));// 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action, 5=special menu with status
     int action = pgm_read_word(&(ent->action));
-    if(mtype == UI_MENU_TYPE_SUBMENU && activeAction == 0)   // browse through menu items
+    if(((mtype == UI_MENU_TYPE_SUBMENU)||(mtype == UI_MENU_TYPE_MENU_WITH_STATUS)) && activeAction == 0)   // browse through menu items
     {
         if((UI_INVERT_MENU_DIRECTION && next<0) || (!UI_INVERT_MENU_DIRECTION && next>0))
         {
             while(menuPos[menuLevel]+1<nr)
             {
+				if ((mtype == UI_MENU_TYPE_MENU_WITH_STATUS)&&(menuPos[menuLevel]+2 ==nr))break;
                 menuPos[menuLevel]++;
                 testEnt = (UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
                 if(testEnt->showEntry())
@@ -2291,7 +2311,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
         return;
     }
 #endif
-    if(mtype == UI_MENU_TYPE_MODIFICATION_MENU) action = pgm_read_word(&(men->id));
+    if(mtype == UI_MENU_TYPE_ACTION_MENU) action = pgm_read_word(&(men->id));
     else action = activeAction;
     int8_t increment = -next;
     switch(action)
@@ -2738,6 +2758,10 @@ void UIDisplay::executeAction(int action)
     {
         action -= UI_ACTION_TOPMENU;
         menuLevel = 0;
+        activeAction = 0;
+        action=0;
+        playsound(4000,240);
+		playsound(5000,240);
     }
     if(action>=2000 && action<3000)
     {
@@ -2769,6 +2793,10 @@ void UIDisplay::executeAction(int action)
         case UI_ACTION_TOP_MENU:
             menuLevel = 0;
 			menuPos[0]=0;
+			 activeAction = 0;
+			action=0;
+            playsound(4000,240);
+		    playsound(5000,240);
             break;
         case UI_ACTION_EMERGENCY_STOP:
             Commands::emergencyStop();
