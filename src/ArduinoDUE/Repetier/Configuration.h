@@ -38,7 +38,7 @@
 
 // ################## EDIT THESE SETTINGS MANUALLY ################
 
-#define DAVINCI 1 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FAN
+#define DAVINCI 2 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FAN
 #define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 0 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
 #define UI_LANGUAGE 0 // 0 English - 7 French (others are not up to date)
 #define MOTHERBOARD 999

@@ -543,7 +543,7 @@ void initializeLCD()
     HAL::delayMilliseconds(40);
     lcdWriteNibble(0x03);
    HAL::delayMilliseconds(40); // I have one LCD for which 4500 here was not long enough.
-Change X,Y,Z position menu to use new type if menu    // second try
+    // second try
     lcdWriteNibble(0x03);
    HAL::delayMilliseconds(40); // wait
     // third go!
