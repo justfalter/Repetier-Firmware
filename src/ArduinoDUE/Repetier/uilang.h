@@ -1415,7 +1415,7 @@
 #define UI_TEXT_UNMOUNT_CARD     "Retirer Carte"
 #define UI_TEXT_MOUNT_CARD       "Inserer Carte"
 #define UI_TEXT_DELETE_FILE      "Suppri. fichier"
-#define UI_TEXT_FEEDRATE         "Distance"
+#define UI_TEXT_FEEDRATE         "Vitesse"
 #define UI_TEXT_FEED_MAX_X       "Max X:    %fx"
 #define UI_TEXT_FEED_MAX_Y       "Max Y:    %fy"
 #define UI_TEXT_FEED_MAX_Z       "Max Z:    %fz"
