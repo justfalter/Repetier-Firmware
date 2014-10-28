@@ -2865,21 +2865,49 @@ void UIDisplay::executeAction(int action)
             Commands::emergencyStop();
             break;
         case UI_ACTION_HOME_ALL:
+			{
+			int tmpmenu=menuLevel;
+			menuLevel=0;
+			refreshPage();
             Printer::homeAxis(true,true,true);
             Commands::printCurrentPosition();
+            menuLevel=tmpmenu;
+            refreshPage();
             break;
+			}
         case UI_ACTION_HOME_X:
+			{
+			int tmpmenu=menuLevel;
+			menuLevel=0;
+			refreshPage();
             Printer::homeAxis(true,false,false);
             Commands::printCurrentPosition();
+            menuLevel=tmpmenu;
+            refreshPage();
             break;
+			}
         case UI_ACTION_HOME_Y:
+			{
+			int tmpmenu=menuLevel;
+			menuLevel=0;
+			refreshPage();
             Printer::homeAxis(false,true,false);
             Commands::printCurrentPosition();
+            menuLevel=tmpmenu;
+            refreshPage();
             break;
+           }
         case UI_ACTION_HOME_Z:
+			{
+ 			int tmpmenu=menuLevel;
+			menuLevel=0;
+			refreshPage();
             Printer::homeAxis(false,false,true);
             Commands::printCurrentPosition();
+            menuLevel=tmpmenu;
+            refreshPage();
             break;
+			}
         case UI_ACTION_SET_ORIGIN:
             Printer::setOrigin(0,0,0);
             break;
