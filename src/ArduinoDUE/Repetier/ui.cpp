@@ -1172,6 +1172,7 @@ void UIDisplay::parse(const char *txt,bool ram)
         case 'i':
             if(c2=='s') addLong(stepperInactiveTime/1000,4);
             else if(c2=='p') addLong(maxInactiveTime/1000,4);
+            else if(c2=='l') addLong(EEPROM::timepowersaving/1000,4);
             break;
         case 'O': // ops related stuff
             break;
@@ -1409,7 +1410,12 @@ void UIDisplay::parse(const char *txt,bool ram)
             if(c2=='N') addStringP(PSTR(UI_PRINTER_NAME));
             #if UI_AUTOLIGHTOFF_AFTER > 0
 			else if(c2=='s') 
-			if(EEPROM::timepowersaving==0) 
+			if((EEPROM::timepowersaving!=maxInactiveTime)||(EEPROM::timepowersaving!=stepperInactiveTime))
+					{
+					addStringP("   ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
+					addStringP(ui_text_on);//if not defined by preset
+					}
+			else if(EEPROM::timepowersaving==0) 
 				{
 				addStringP("  ");//for alignement need a better way as it should be depending of size of translation of "off/on" vs "30min"
 				addStringP(ui_text_off);        // powersave off
@@ -1419,7 +1425,7 @@ void UIDisplay::parse(const char *txt,bool ram)
 			else if (EEPROM::timepowersaving==(1000 * 60 * 15)) addStringP("15min");//15 min
 			else if (EEPROM::timepowersaving==(1000 * 60 * 30)) addStringP("30min");//30 min
 			else {
-					addStringP("   ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
+					addStringP("  ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
 					addStringP(ui_text_on);//if not defined by preset
 					}
       	    #endif 
@@ -2535,6 +2541,11 @@ void UIDisplay::nextPreviousAction(int8_t next)
         maxInactiveTime -= maxInactiveTime % 1000;
         INCREMENT_MIN_MAX(maxInactiveTime,60000UL,0,10080000UL);
         break;
+      case UI_ACTION_LIGHT_OFF_AFTER:
+        EEPROM::timepowersaving -= EEPROM::timepowersaving % 1000;
+        INCREMENT_MIN_MAX(EEPROM::timepowersaving,60000UL,0,10080000UL);
+        break;
+     
     case UI_ACTION_PRINT_ACCEL_X:
         INCREMENT_MIN_MAX(Printer::maxAccelerationMMPerSquareSecond[X_AXIS],100,0,10000);
         Printer::updateDerivedParameter();
@@ -2979,8 +2990,14 @@ void UIDisplay::executeAction(int action)
 		else if (EEPROM::timepowersaving==(1000 * 60 * 15)) EEPROM::timepowersaving = 1000*60*30;// move to 30 min
 		else EEPROM::timepowersaving = 0;// move to off
 		if (EEPROM::timepowersaving>0)UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+		//apply to stepper
+		stepperInactiveTime=EEPROM::timepowersaving;
+		//apply to inactivity timer
+		maxInactiveTime=EEPROM::timepowersaving;
 		//save directly to eeprom
 		HAL::eprSetInt32(EPR_POWERSAVE_AFTER_TIME,EEPROM::timepowersaving);
+		HAL::eprSetInt32(EPR_MAX_INACTIVE_TIME,maxInactiveTime);
+		HAL::eprSetInt32(EPR_STEPPER_INACTIVE_TIME,stepperInactiveTime);
 		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
         UI_STATUS(UI_TEXT_POWER_SAVE);
 	break;
@@ -3869,7 +3886,8 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             pushMenu(&ui_menu_zpos_fast,false);
             break;
         case UI_ACTION_MENU_QUICKSETTINGS:
-            pushMenu(&ui_menu_quick,false);
+            //pushMenu(&ui_menu_quick,false);
+            pushMenu(&ui_menu_settings,false);
             break;
         case UI_ACTION_MENU_EXTRUDER:
             pushMenu(&ui_menu_extruder,false);

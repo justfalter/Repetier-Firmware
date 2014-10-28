@@ -272,8 +272,9 @@ UI_MENU_ACTION2C(ui_menu_epos,UI_ACTION_EPOSITION,UI_TEXT_ACTION_EPOSITION_FAST2
 /*
 Next step is to define submenus leading to the action.
 */
-
-// **** Positionening menu
+///////////START MENU DEFINITION
+//******generic
+//back
 UI_MENU_ACTIONCOMMAND(ui_menu_back,UI_TEXT_BACK,UI_ACTION_BACK,ALL_MODE);
 #if UI_HAS_BACK_KEY==0
 #define UI_MENU_ADDCONDBACK &ui_menu_back,
@@ -282,85 +283,11 @@ UI_MENU_ACTIONCOMMAND(ui_menu_back,UI_TEXT_BACK,UI_ACTION_BACK,ALL_MODE);
 #define UI_MENU_ADDCONDBACK
 #define UI_MENU_BACKCNT 0
 #endif
-UI_MENU_ACTIONCOMMAND(ui_menu_home_all,UI_TEXT_HOME_ALL,UI_ACTION_HOME_ALL,ALL_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_home_x,UI_TEXT_HOME_X,UI_ACTION_HOME_X,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_home_y,UI_TEXT_HOME_Y,UI_ACTION_HOME_Y,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_home_z,UI_TEXT_HOME_Z,UI_ACTION_HOME_Z,ADVANCED_MODE);
-/*UI_MENU_ACTIONSELECTOR(ui_menu_go_xpos,UI_TEXT_X_POSITION,ui_menu_xpos,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_ypos,UI_TEXT_Y_POSITION,ui_menu_ypos,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos,UI_TEXT_Z_POSITION,ui_menu_zpos,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos_notest,UI_TEXT_Z_POSITION,ui_menu_zpos_notest,ADVANCED_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
-#if !UI_SPEEDDEPENDENT_POSITIONING
-UI_MENU_ACTIONSELECTOR(ui_menu_go_xfast,UI_TEXT_X_POS_FAST,ui_menu_xpos_fast,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_yfast,UI_TEXT_Y_POS_FAST,ui_menu_ypos_fast,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_zfast,UI_TEXT_Z_POS_FAST,ui_menu_zpos_fast,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_go_zfast_notest,UI_TEXT_Z_POS_FAST,ui_menu_zpos_fast_notest,ADVANCED_MODE);
-#define UI_SPEED 2
-#define UI_SPEED_X ,&ui_menu_go_xfast,&ui_menu_go_xpos
-#define UI_SPEED_Y ,&ui_menu_go_yfast,&ui_menu_go_ypos
-#define UI_SPEED_Z ,&ui_menu_go_zfast,&ui_menu_go_zpos
-#define UI_SPEED_Z_NOTEST ,&ui_menu_go_zfast_notest,&ui_menu_go_zpos_notest
-#else
-#define UI_SPEED 1
-#define UI_SPEED_X ,&ui_menu_go_xpos
-#define UI_SPEED_Y ,&ui_menu_go_ypos
-#define UI_SPEED_Z ,&ui_menu_go_zpos
-#define UI_SPEED_Z_NOTEST ,&ui_menu_go_zpos_notest
-#endif*/
 
-UI_MENU_CHANGEACTION(ui_menu_x_1,"  1mm",UI_ACTION_X_1,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_x_10," 10mm",UI_ACTION_X_10,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_x_100,"100mm",UI_ACTION_X_100,ALL_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_x_pos,"X: %x0mm ",UI_ACTION_DUMMY,ALL_MODE)
-#define UI_MENU_X_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_x_1,&ui_menu_x_10,&ui_menu_x_100,&ui_menu_x_pos}
-UI_MENU_WITH_STATUS(ui_menu_pos_x_value,UI_MENU_X_POS_VALUE,4+UI_MENU_BACKCNT);
-UI_MENU_SUBMENU(ui_menu_X_pos, UI_TEXT_X_POSITION, ui_menu_pos_x_value,ALL_MODE);
+//confirmation page
+UI_MENU_ACTION4C(ui_menu_confirmation,UI_ACTION_DUMMY,UI_TEXT_CONFIRMATION,ALL_MODE);
 
-UI_MENU_CHANGEACTION(ui_menu_y_1,"  1mm",UI_ACTION_Y_1,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_y_10," 10mm",UI_ACTION_Y_10,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_y_100,"100mm",UI_ACTION_Y_100,ALL_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_y_pos,"Y: %x1mm ",UI_ACTION_DUMMY,ALL_MODE)
-#define UI_MENU_Y_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_y_1,&ui_menu_y_10,&ui_menu_y_100,&ui_menu_y_pos}
-UI_MENU_WITH_STATUS(ui_menu_pos_y_value,UI_MENU_Y_POS_VALUE,4+UI_MENU_BACKCNT);
-UI_MENU_SUBMENU(ui_menu_Y_pos, UI_TEXT_Y_POSITION, ui_menu_pos_y_value,ALL_MODE);
-
-UI_MENU_CHANGEACTION(ui_menu_z_1,"  1mm",UI_ACTION_Z_1,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_z_10," 10mm",UI_ACTION_Z_10,ALL_MODE);
-UI_MENU_CHANGEACTION(ui_menu_z_100,"100mm",UI_ACTION_Z_100,ALL_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_z_pos,"Z: %x2mm ",UI_ACTION_DUMMY,ALL_MODE)
-#define UI_MENU_Z_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_z_1,&ui_menu_z_10,&ui_menu_z_100,&ui_menu_z_pos}
-UI_MENU_WITH_STATUS(ui_menu_pos_z_value,UI_MENU_Z_POS_VALUE,4+UI_MENU_BACKCNT);
-UI_MENU_SUBMENU(ui_menu_Z_pos, UI_TEXT_Z_POSITION, ui_menu_pos_z_value,ALL_MODE);
-
-UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
-
-#if DRIVE_SYSTEM!=3     //Positioning menu for non-delta
-#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z,&ui_menu_X_pos,&ui_menu_Y_pos,&ui_menu_Z_pos ,&ui_menu_go_epos}
-UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,8 + UI_MENU_BACKCNT);
-#else                   //Positioning menu for delta (removes individual x,y,z homing)
-#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all  UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_go_epos}
-UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,2 + 3 * UI_SPEED + UI_MENU_BACKCNT);
-#endif
-
-// **** Delta calibration menu
-#if Z_HOME_DIR > 0
-UI_MENU_ACTIONCOMMAND(ui_menu_set_measured_origin,UI_TEXT_SET_MEASURED_ORIGIN,UI_ACTION_SET_MEASURED_ORIGIN,ADVANCED_MODE);
-#define UI_MENU_DELTA {UI_MENU_ADDCONDBACK &ui_menu_home_all UI_SPEED_Z_NOTEST,&ui_menu_set_measured_origin}
-UI_MENU(ui_menu_delta,UI_MENU_DELTA,2 + UI_SPEED + UI_MENU_BACKCNT);
-#endif
-
-// **** Bed leveling menu
-#ifdef SOFTWARE_LEVELING
-UI_MENU_ACTIONCOMMAND(ui_menu_set_p1,UI_TEXT_SET_P1,UI_ACTION_SET_P1,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_set_p2,UI_TEXT_SET_P2,UI_ACTION_SET_P2,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_set_p3,UI_TEXT_SET_P3,UI_ACTION_SET_P3,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_calculate_leveling,UI_TEXT_CALCULATE_LEVELING,UI_ACTION_CALC_LEVEL,ADVANCED_MODE);
-#define UI_MENU_LEVEL {UI_MENU_ADDCONDBACK &ui_menu_set_p1,&ui_menu_set_p2,&ui_menu_set_p3,&ui_menu_calculate_leveling UI_SPEED_X UI_SPEED_Y UI_SPEED_Z}
-UI_MENU(ui_menu_level,UI_MENU_LEVEL,4+3*UI_SPEED+UI_MENU_BACKCNT);
-#endif
-
-// **** Extruder menu
+//****Load/Unload menu
 #if NUM_EXTRUDER == 1
 	UI_MENU_ACTIONCOMMAND(ui_menu_ext_load0,UI_TEXT_LOAD_FILAMENT,UI_ACTION_LOAD_EXTRUDER_0,ALL_MODE);
 	UI_MENU_ACTIONCOMMAND(ui_menu_ext_unload0,UI_TEXT_UNLOAD_FILAMENT,UI_ACTION_UNLOAD_EXTRUDER_0,ALL_MODE);
@@ -384,9 +311,142 @@ UI_MENU_ACTION4C(ui_menu_heatextruder_page,UI_ACTION_DUMMY,UI_PAGE_HEATEXTRUDER,
 #define STEP_EXT_LOAD_UNLOAD 4
 #define STEP_EXT_ASK_CONTINUE 5
 
+#define UI_MENU_LOAD_UNLOAD  {UI_MENU_ADDCONDBACK UIMENULOAD }
+UI_MENU(ui_menu_load_unload,UI_MENU_LOAD_UNLOAD,UI_MENU_BACKCNT + LOADCNT);
+UI_MENU_SUBMENU(ui_menu_load_unload_entry, UI_TEXT_LOAD_UNLOAD, ui_menu_load_unload,ALL_MODE);
+
+//****Maintenance menu
+//Autolevel
+#if FEATURE_AUTOLEVEL
+#define UI_MENU_AUTOLEVEL_CNT 1
+UI_MENU_ACTIONCOMMAND(ui_menu_autolevel,UI_TEXT_AUTOLEVEL,UI_ACTION_AUTOLEVEL,ALL_MODE);
+#define UI_MENU_AUTOLEVEL &ui_menu_autolevel,
+#if NUM_EXTRUDER == 1
+	#define UI_PAGE_AUTOLEVEL "\005%ec/%Ec\002","\007%eB/%Eb\002","Z:%x2","%os" 
+#else
+	#define UI_PAGE_AUTOLEVEL"\005%e0/%E0\005%e1/%E1","\007%eB/%Eb","Z:%x2","%os"
+#endif
+UI_MENU_ACTION4C(ui_menu_autolevel_page,UI_ACTION_DUMMY,UI_PAGE_AUTOLEVEL,ALL_MODE);
+#define STEP_AUTOLEVEL_HEATING 1
+#define STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE 2
+#define STEP_ZPROBE_SCRIPT 3
+#define STEP_AUTOLEVEL_START 4
+#define STEP_AUTOLEVEL_MOVE 5
+#define STEP_AUTOLEVEL_DO_ZPROB 6
+#define STEP_AUTOLEVEL_RESULTS 7
+#else
+#define UI_MENU_AUTOLEVEL 
+#define UI_MENU_AUTOLEVEL_CNT 0
+#endif
+//manual bed leveling
+//[TODO]
+
+//Clean Nozzle
+#if ENABLE_CLEAN_NOZZLE == 1
+UI_MENU_ACTIONCOMMAND(ui_menu_clean_nozzle,UI_TEXT_CLEAN_NOZZLE,UI_ACTION_CLEAN_NOZZLE,ALL_MODE);
+#define UI_CLEAN_NOZZLE_ENTRY  &ui_menu_clean_nozzle,
+#define UI_CLEAN_NOZZLE_COUNT 1
+#else
+#define UI_CLEAN_NOZZLE_ENTRY 
+#define UI_CLEAN_NOZZLE_COUNT 0
+#endif 
+#if NUM_EXTRUDER == 1
+#define UI_PAGE_CLEAN_NOZZLE "\005%ec/%Ec\002","Z:%x2","","%os"
+#else
+#define UI_PAGE_CLEAN_NOZZLE "\005%e0/%E0\002","\005%e1/%E1\002","Z:%x2","%os"
+#endif
+UI_MENU_ACTION4C(ui_menu_clean_nozzle_page,UI_ACTION_DUMMY,UI_PAGE_CLEAN_NOZZLE,ALL_MODE);
+#define STEP_HEATING 1
+#define STEP_WAIT_FOR_TEMPERATURE 2
+#define STEP_CLEAN_NOOZLE 3
+#define STEP_WAIT_FOR_OK 4
+
+//dripbox
+#if ENABLE_CLEAN_DRIPBOX == 1
+UI_MENU_ACTIONCOMMAND(ui_menu_clean_dripbox,UI_TEXT_CLEAN_DRIPBOX,UI_ACTION_CLEAN_DRIPBOX,ALL_MODE);
+#define UI_CLEAN_DRIPBOX_ENTRY &ui_menu_clean_dripbox,
+#define UI_CLEAN_DRIPBOX_COUNT 1
+#else
+#define UI_CLEAN_DRIPBOX_ENTRY 
+#define UI_CLEAN_DRIPBOX_COUNT 0
+#endif
+#define UI_PAGE_CLEAN_DRIPBOX UI_TEXT_CLEAN_DRIPBOX_1,UI_TEXT_CLEAN_DRIPBOX_2,UI_TEXT_CLEAN_DRIPBOX_3,"%os"
+UI_MENU_ACTION4C(ui_menu_clean_dripbox_page,UI_ACTION_DUMMY,UI_PAGE_CLEAN_DRIPBOX,ALL_MODE);
+#define STEP_CLEAN_DRIPBOX 1
+#define STEP_CLEAN_DRIPBOX_WAIT_FOR_OK 2
+//preheat PLA
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla,UI_TEXT_PREHEAT_PLA,UI_ACTION_PREHEAT_PLA,ADVANCED_MODE);
+//preheat ABS
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs,UI_TEXT_PREHEAT_ABS,UI_ACTION_PREHEAT_ABS,ADVANCED_MODE);
+//disable steppers
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_stopstepper,UI_TEXT_DISABLE_STEPPER,UI_ACTION_DISABLE_STEPPER,0,MENU_MODE_PRINTING,ALL_MODE);
+
+#define UI_MENU_MAINTENANCE  {UI_MENU_ADDCONDBACK &ui_menu_load_unload_entry , UI_MENU_AUTOLEVEL UI_CLEAN_NOZZLE_ENTRY UI_CLEAN_DRIPBOX_ENTRY &ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs, &ui_menu_quick_stopstepper}
+UI_MENU(ui_menu_maintenance,UI_MENU_MAINTENANCE,4+UI_MENU_AUTOLEVEL_CNT+UI_CLEAN_NOZZLE_COUNT+UI_CLEAN_DRIPBOX_COUNT+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_maintenance_entry, UI_TEXT_MAINTENANCE, ui_menu_maintenance,ALL_MODE);
+
+// **** Positionning menu
+//home all
+UI_MENU_ACTIONCOMMAND(ui_menu_home_all,UI_TEXT_HOME_ALL,UI_ACTION_HOME_ALL,ALL_MODE);
+//home X
+UI_MENU_ACTIONCOMMAND(ui_menu_home_x,UI_TEXT_HOME_X,UI_ACTION_HOME_X,ADVANCED_MODE);
+//home Y
+UI_MENU_ACTIONCOMMAND(ui_menu_home_y,UI_TEXT_HOME_Y,UI_ACTION_HOME_Y,ADVANCED_MODE);
+//home Z
+UI_MENU_ACTIONCOMMAND(ui_menu_home_z,UI_TEXT_HOME_Z,UI_ACTION_HOME_Z,ADVANCED_MODE);
+//position X
+UI_MENU_CHANGEACTION(ui_menu_x_1,"  1mm",UI_ACTION_X_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_x_10," 10mm",UI_ACTION_X_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_x_100,"100mm",UI_ACTION_X_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_x_pos,"X: %x0mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_X_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_x_1,&ui_menu_x_10,&ui_menu_x_100,&ui_menu_x_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_x_value,UI_MENU_X_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_X_pos, UI_TEXT_X_POSITION, ui_menu_pos_x_value,ALL_MODE);
+//position Y
+UI_MENU_CHANGEACTION(ui_menu_y_1,"  1mm",UI_ACTION_Y_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_y_10," 10mm",UI_ACTION_Y_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_y_100,"100mm",UI_ACTION_Y_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_y_pos,"Y: %x1mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_Y_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_y_1,&ui_menu_y_10,&ui_menu_y_100,&ui_menu_y_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_y_value,UI_MENU_Y_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_Y_pos, UI_TEXT_Y_POSITION, ui_menu_pos_y_value,ALL_MODE);
+//position Z
+UI_MENU_CHANGEACTION(ui_menu_z_1,"  1mm",UI_ACTION_Z_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_z_10," 10mm",UI_ACTION_Z_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_z_100,"100mm",UI_ACTION_Z_100,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_z_pos,"Z: %x2mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_Z_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_z_1,&ui_menu_z_10,&ui_menu_z_100,&ui_menu_z_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_z_value,UI_MENU_Z_POS_VALUE,4+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_Z_pos, UI_TEXT_Z_POSITION, ui_menu_pos_z_value,ALL_MODE);
+//baby stepping
+#if FEATURE_BABYSTEPPING
+UI_MENU_CHANGEACTION(ui_menu_quick_zbaby,UI_TEXT_Z_BABYSTEPPING,UI_ACTION_Z_BABYSTEPS,ADVANCED_MODE);
+#define BABY_CNT 1
+#define BABY_ENTRY ,&ui_menu_quick_zbaby
+#else
+#define BABY_CNT 0
+#define BABY_ENTRY
+#endif
+
+//extruder
+//[TODO] use new menu
+UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
+
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_origin,UI_TEXT_SET_TO_ORIGIN,UI_ACTION_SET_ORIGIN,0,MENU_MODE_PRINTING,ADVANCED_MODE);
+
+#if DRIVE_SYSTEM!=3     //Positioning menu for non-delta
+#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z,&ui_menu_X_pos,&ui_menu_Y_pos,&ui_menu_Z_pos BABY_ENTRY ,&ui_menu_go_epos,&ui_menu_quick_origin}
+UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,9 + BABY_CNT+ UI_MENU_BACKCNT);
+#else                   //Positioning menu for delta (removes individual x,y,z homing)
+#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all  UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_go_epos}
+UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,2 + 3 * UI_SPEED + UI_MENU_BACKCNT);
+#endif
+
+UI_MENU_SUBMENU(ui_menu_positions_entry, UI_TEXT_POSITION,ui_menu_positions,ALL_MODE);
+
+// **** Extruder menu
 UI_MENU_CHANGEACTION(ui_menu_ext_temp0,UI_TEXT_EXTR0_TEMP,UI_ACTION_EXTRUDER0_TEMP,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_ext_temp1,UI_TEXT_EXTR1_TEMP,UI_ACTION_EXTRUDER1_TEMP,ADVANCED_MODE);
-UI_MENU_CHANGEACTION(ui_menu_bed_temp, UI_TEXT_BED_TEMP,UI_ACTION_HEATED_BED_TEMP,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel0,UI_TEXT_EXTR0_SELECT,UI_ACTION_SELECT_EXTRUDER0,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel1,UI_TEXT_EXTR1_SELECT,UI_ACTION_SELECT_EXTRUDER1,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off0,UI_TEXT_EXTR0_OFF,UI_ACTION_EXTRUDER0_OFF,ADVANCED_MODE);
@@ -405,71 +465,44 @@ UI_MENU_ACTIONCOMMAND(ui_menu_ext_off2,UI_TEXT_EXTR2_OFF,UI_ACTION_EXTRUDER2_OFF
 #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_off0,
 #define UI_MENU_EXTCNT 2
 #endif
+//cool down
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,ADVANCED_MODE);
+#define UI_MENU_EXTRUDER {UIMENULOAD UI_MENU_ADDCONDBACK UI_MENU_EXTCOND &ui_menu_go_epos,&ui_menu_ext_origin,&ui_menu_quick_cooldown}
+UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_EXTCNT+2+LOADCNT);
+
+UI_MENU_SUBMENU(ui_menu_extruder_entry, UI_TEXT_EXTRUDER,ui_menu_extruder,ADVANCED_MODE); 
+
+//****bed menu
 #if HAVE_HEATED_BED==true
-#define UI_MENU_BEDCOND &ui_menu_bed_temp,
-#define UI_MENU_BEDCNT 1
+UI_MENU_CHANGEACTION(ui_menu_bed_temp, UI_TEXT_BED_TEMP,UI_ACTION_HEATED_BED_TEMP,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_bed_off, UI_TEXT_BED_OFF,UI_ACTION_HEATED_BED_OFF,ADVANCED_MODE);
+#define UI_MENU_BED  {UI_MENU_ADDCONDBACK &ui_menu_bed_temp,&ui_menu_bed_off }
+UI_MENU(ui_menu_bed,UI_MENU_BED,2+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_bed_entry, UI_TEXT_BED, ui_menu_bed,ADVANCED_MODE);
+#define UI_MENU_BED_ENTRY_COND &ui_menu_bed_entry,
+#define UI_MENU_BED_ENTRY_CNT 1
 #else
-#define UI_MENU_BEDCOND
-#define UI_MENU_BEDCNT 0
+#define UI_MENU_BED_ENTRY_COND
+#define UI_MENU_BED_ENTRY_CNT 0
 #endif
 
-#define UI_MENU_EXTRUDER {UIMENULOAD UI_MENU_ADDCONDBACK UI_MENU_BEDCOND UI_MENU_EXTCOND &ui_menu_go_epos,&ui_menu_ext_origin}
-UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_BEDCNT+UI_MENU_EXTCNT+2+LOADCNT);
-
-// **** SD card menu
-
-// **** Quick menu
-#if PS_ON_PIN>=0
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_power,UI_TEXT_POWER,UI_ACTION_POWER,ADVANCED_MODE);
-#define MENU_PSON_COUNT 1
-#define MENU_PSON_ENTRY ,&ui_menu_quick_power
+//****Settings  menu
+//display mode
+UI_MENU_ACTIONCOMMAND(ui_menu_display_mode,UI_TEXT_DISPLAY_MODE,UI_ACTION_DISPLAY_MODE,ALL_MODE);
+//Speed
+UI_MENU_CHANGEACTION(ui_menu_quick_speedmultiply,UI_TEXT_SPEED_MULTIPLY,UI_ACTION_FEEDRATE_MULTIPLY,ALL_MODE);
+//Flow
+UI_MENU_CHANGEACTION(ui_menu_quick_flowmultiply,UI_TEXT_FLOW_MULTIPLY,UI_ACTION_FLOWRATE_MULTIPLY,ALL_MODE);
+//light on off
+#if CASE_LIGHTS_PIN > 0
+UI_MENU_ACTIONCOMMAND(ui_menu_toggle_light,UI_TEXT_LIGHTS_ONOFF,UI_ACTION_LIGHTS_ONOFF,ALL_MODE);
+#define UI_TOOGLE_LIGHT_ENTRY ,&ui_menu_toggle_light
+#define UI_TOGGLE_LIGHT_COUNT 1
 #else
-#define MENU_PSON_COUNT 0
-#define MENU_PSON_ENTRY
+#define UI_TOOGLE_LIGHT_ENTRY
+#define UI_TOGGLE_LIGHT_COUNT 0
 #endif
-
-#if defined(FIL_SENSOR1_PIN)
-UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_SENSOR_ONOFF,UI_ACTION_SENSOR_ONOFF,ALL_MODE);
-#define UI_SENSOR_ONOFF_ENTRY ,&ui_menu_sensoronoff
-#define UI_SENSOR_ONOFF_COUNT 1
-#else
-#define UI_SENSOR_ONOFF_ENTRY 
-#define UI_SENSOR_ONOFF_COUNT 0
-#endif
-
-#if UI_AUTOLIGHTOFF_AFTER > 0
-UI_MENU_ACTIONCOMMAND(ui_menu_powersave,UI_TEXT_POWER_SAVE,UI_ACTION_TOGGLE_POWERSAVE,EASY_MODE);
-#define UI_POWER_SAVE_ENTRY ,&ui_menu_powersave
-#define UI_POWER_SAVE_COUNT 1
-UI_MENU_ACTIONCOMMAND(ui_menu_keeplighton,UI_TEXT_KEEP_LIGHT_ON,UI_ACTION_KEEP_LIGHT_ON,ADVANCED_MODE);
-#define UI_KEEP_LIGHT_ON_ENTRY ,&ui_menu_keeplighton
-#define UI_KEEP_LIGHT_ON_COUNT 1
-
-#else
-#define UI_POWER_SAVE_ENTRY 
-#define UI_POWER_SAVE_COUNT 0
-#define UI_KEEP_LIGHT_ON_ENTRY
-#define UI_KEEP_LIGHT_ON_COUNT 0
-#endif
-
-#if ENABLE_CLEAN_NOZZLE == 1
-UI_MENU_ACTIONCOMMAND(ui_menu_clean_nozzle,UI_TEXT_CLEAN_NOZZLE,UI_ACTION_CLEAN_NOZZLE,ALL_MODE);
-#define UI_CLEAN_NOZZLE_ENTRY ,&ui_menu_clean_nozzle
-#define UI_CLEAN_NOZZLE_COUNT 1
-#else
-#define UI_CLEAN_NOZZLE_ENTRY 
-#define UI_CLEAN_NOZZLE_COUNT 0
-#endif 
-
-#if ENABLE_CLEAN_DRIPBOX == 1
-UI_MENU_ACTIONCOMMAND(ui_menu_clean_dripbox,UI_TEXT_CLEAN_DRIPBOX,UI_ACTION_CLEAN_DRIPBOX,ALL_MODE);
-#define UI_CLEAN_DRIPBOX_ENTRY ,&ui_menu_clean_dripbox
-#define UI_CLEAN_DRIPBOX_COUNT 1
-#else
-#define UI_CLEAN_DRIPBOX_ENTRY 
-#define UI_CLEAN_DRIPBOX_COUNT 0
-#endif
-
+//sound on off
 #if FEATURE_BEEPER
 UI_MENU_ACTIONCOMMAND(ui_menu_sound,UI_TEXT_SOUND_ONOF,UI_ACTION_SOUND,ALL_MODE);
 #define UI_SOUND_ENTRY ,&ui_menu_sound
@@ -479,122 +512,59 @@ UI_MENU_ACTIONCOMMAND(ui_menu_sound,UI_TEXT_SOUND_ONOF,UI_ACTION_SOUND,ALL_MODE)
 #define UI_SOUND_COUNT 0
 #endif 
 
-UI_MENU_ACTION4C(ui_menu_confirmation,UI_ACTION_DUMMY,UI_TEXT_CONFIRMATION,ALL_MODE);
-#if NUM_EXTRUDER == 1
-#define UI_PAGE_CLEAN_NOZZLE "\005%ec/%Ec\002","Z:%x2","","%os"
+//filament sensor
+#if defined(FIL_SENSOR1_PIN)
+UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_SENSOR_ONOFF,UI_ACTION_SENSOR_ONOFF,ALL_MODE);
+#define UI_SENSOR_ONOFF_ENTRY ,&ui_menu_sensoronoff
+#define UI_SENSOR_ONOFF_COUNT 1
 #else
-#define UI_PAGE_CLEAN_NOZZLE "\005%e0/%E0\002","\005%e1/%E1\002","Z:%x2","%os"
-#endif
-UI_MENU_ACTION4C(ui_menu_clean_nozzle_page,UI_ACTION_DUMMY,UI_PAGE_CLEAN_NOZZLE,ALL_MODE);
-#define STEP_HEATING 1
-#define STEP_WAIT_FOR_TEMPERATURE 2
-#define STEP_CLEAN_NOOZLE 3
-#define STEP_WAIT_FOR_OK 4
-
-#define UI_PAGE_CLEAN_DRIPBOX UI_TEXT_CLEAN_DRIPBOX_1,UI_TEXT_CLEAN_DRIPBOX_2,UI_TEXT_CLEAN_DRIPBOX_3,"%os"
-UI_MENU_ACTION4C(ui_menu_clean_dripbox_page,UI_ACTION_DUMMY,UI_PAGE_CLEAN_DRIPBOX,ALL_MODE);
-#define STEP_CLEAN_DRIPBOX 1
-#define STEP_CLEAN_DRIPBOX_WAIT_FOR_OK 2
-
-#if CASE_LIGHTS_PIN > 0
-UI_MENU_ACTIONCOMMAND(ui_menu_toggle_light,UI_TEXT_LIGHTS_ONOFF,UI_ACTION_LIGHTS_ONOFF,ALL_MODE);
-#define UI_TOOGLE_LIGHT_ENTRY ,&ui_menu_toggle_light
-#define UI_TOGGLE_LIGHT_COUNT 1
-#else
-#define UI_TOOGLE_LIGHT_ENTRY
-#define UI_TOGGLE_LIGHT_COUNT 0
-#endif
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla,UI_TEXT_PREHEAT_PLA,UI_ACTION_PREHEAT_PLA,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs,UI_TEXT_PREHEAT_ABS,UI_ACTION_PREHEAT_ABS,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_origin,UI_TEXT_SET_TO_ORIGIN,UI_ACTION_SET_ORIGIN,0,MENU_MODE_PRINTING,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_stopstepper,UI_TEXT_DISABLE_STEPPER,UI_ACTION_DISABLE_STEPPER,0,MENU_MODE_PRINTING,ALL_MODE);
-#if FEATURE_BABYSTEPPING
-UI_MENU_CHANGEACTION(ui_menu_quick_zbaby,UI_TEXT_Z_BABYSTEPPING,UI_ACTION_Z_BABYSTEPS,ADVANCED_MODE);
-#define BABY_CNT 1
-#define BABY_ENTRY ,&ui_menu_quick_zbaby
-#else
-#define BABY_CNT 0
-#define BABY_ENTRY
-#endif
-UI_MENU_CHANGEACTION(ui_menu_quick_speedmultiply,UI_TEXT_SPEED_MULTIPLY,UI_ACTION_FEEDRATE_MULTIPLY,ADVANCED_MODE);
-UI_MENU_CHANGEACTION(ui_menu_quick_flowmultiply,UI_TEXT_FLOW_MULTIPLY,UI_ACTION_FLOWRATE_MULTIPLY,ADVANCED_MODE);
-#ifdef DEBUG_PRINT
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_debug,"Write Debug",UI_ACTION_WRITE_DEBUG,ADVANCED_MODE);
-#define DEBUG_PRINT_COUNT 1
-#define DEBUG_PRINT_EXTRA ,&ui_menu_quick_debug
-#else
-#define DEBUG_PRINT_COUNT 0
-#define DEBUG_PRINT_EXTRA
-#endif
-#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY UI_CLEAN_NOZZLE_ENTRY UI_CLEAN_DRIPBOX_ENTRY,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
-UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_SOUND_COUNT + UI_CLEAN_NOZZLE_COUNT + UI_CLEAN_DRIPBOX_COUNT + UI_POWER_SAVE_COUNT + UI_SENSOR_ONOFF_COUNT);
-
-// **** Fan menu
-
-#if FAN_PIN>-1
-UI_MENU_CHANGEACTION(ui_menu_fan_fanspeed, UI_TEXT_ACTION_FANSPEED,UI_ACTION_FANSPEED,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_fan_off,UI_TEXT_FAN_OFF,UI_ACTION_FAN_OFF,MENU_MODE_FAN_RUNNING,0,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_fan_25,UI_TEXT_FAN_25,UI_ACTION_FAN_25,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_fan_50,UI_TEXT_FAN_50,UI_ACTION_FAN_50,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_fan_75,UI_TEXT_FAN_75,UI_ACTION_FAN_75,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_fan_full,UI_TEXT_FAN_FULL,UI_ACTION_FAN_FULL,ADVANCED_MODE);
-#define UI_MENU_FAN {UI_MENU_ADDCONDBACK &ui_menu_fan_fanspeed,&ui_menu_fan_off,&ui_menu_fan_25,&ui_menu_fan_50,&ui_menu_fan_75,&ui_menu_fan_full}
-UI_MENU(ui_menu_fan,UI_MENU_FAN,6+UI_MENU_BACKCNT);
-UI_MENU_SUBMENU(ui_menu_fan_sub,UI_TEXT_FANSPEED,ui_menu_fan,ADVANCED_MODE);
-#define UI_MENU_FAN_COND &ui_menu_fan_sub,
-#define UI_MENU_FAN_CNT 1
-#else
-#define UI_MENU_FAN_COND
-#define UI_MENU_FAN_CNT 0
+#define UI_SENSOR_ONOFF_ENTRY 
+#define UI_SENSOR_ONOFF_COUNT 0
 #endif
 
-// **** SD card menu
-
-#ifdef SDSUPPORT
-#define UI_MENU_SD_FILESELECTOR {&ui_menu_back}
-UI_MENU_FILESELECT(ui_menu_sd_fileselector,UI_MENU_SD_FILESELECTOR,1);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_printfile, UI_TEXT_PRINT_FILE,     UI_ACTION_SD_PRINT,    MENU_MODE_SD_MOUNTED,  MENU_MODE_SD_PRINTING,ALL_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_pause,     UI_TEXT_PAUSE_PRINT,    UI_ACTION_SD_PAUSE,    MENU_MODE_SD_PRINTING, MENU_MODE_SD_PAUSED,ALL_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_continue,  UI_TEXT_CONTINUE_PRINT, UI_ACTION_SD_CONTINUE, MENU_MODE_SD_PAUSED,   0,ALL_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_stop,      UI_TEXT_STOP_PRINT,     UI_ACTION_SD_STOP,     MENU_MODE_SD_PRINTING, 0,ALL_MODE);
-#define SD_PRINTFILE_ENTRY &ui_menu_sd_printfile,
-#define SD_PRINTFILE_ENTRY_CNT 1
-#if defined(SDCARDDETECT) && SDCARDDETECT>-1
-#define UI_MOUNT_CNT 0
-#define UI_MOUNT_CMD
+//powersave easy entry
+#if UI_AUTOLIGHTOFF_AFTER > 0
+UI_MENU_ACTIONCOMMAND(ui_menu_powersave,UI_TEXT_POWER_SAVE,UI_ACTION_TOGGLE_POWERSAVE,EASY_MODE);
+#define UI_POWER_SAVE_ENTRY ,&ui_menu_powersave
+#define UI_POWER_SAVE_COUNT 1
+UI_MENU_ACTIONCOMMAND(ui_menu_keeplighton,UI_TEXT_KEEP_LIGHT_ON,UI_ACTION_KEEP_LIGHT_ON,ADVANCED_MODE);
+#define UI_KEEP_LIGHT_ON_ENTRY ,&ui_menu_keeplighton
+#define UI_KEEP_LIGHT_ON_COUNT 1
+UI_MENU_ACTION2C(ui_menu_light_off_after2,UI_ACTION_LIGHT_OFF_AFTER ,UI_TEXT_LIGHT_OFF_AFTER2,ADVANCED_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_light_off_after,UI_TEXT_LIGHT_OFF_AFTER,ui_menu_light_off_after2,ADVANCED_MODE);
+#define UI_LIGHT_OFF_AFTER_ENTRY  ,&ui_menu_light_off_after
+#define UI_LIGHT_OFF_AFTER_COUNT 1
 #else
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_unmount,UI_TEXT_UNMOUNT_CARD,UI_ACTION_SD_UNMOUNT,MENU_MODE_SD_MOUNTED,0,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_mount,UI_TEXT_MOUNT_CARD,UI_ACTION_SD_MOUNT,0,MENU_MODE_SD_MOUNTED,ADVANCED_MODE);
-#define UI_MOUNT_CNT 2
-#define UI_MOUNT_CMD ,&ui_menu_sd_unmount,&ui_menu_sd_mount
+#define UI_POWER_SAVE_ENTRY 
+#define UI_POWER_SAVE_COUNT 0
+#define UI_KEEP_LIGHT_ON_ENTRY
+#define UI_KEEP_LIGHT_ON_COUNT 0
+#define UI_LIGHT_OFF_AFTER_ENTRY 
+#define UI_LIGHT_OFF_AFTER_COUNT 0
 #endif
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_delete,UI_TEXT_DELETE_FILE,UI_ACTION_SD_DELETE,MENU_MODE_SD_MOUNTED,MENU_MODE_SD_PRINTING,ADVANCED_MODE);
-#define UI_MENU_SD {UI_MENU_ADDCONDBACK &ui_menu_sd_printfile,&ui_menu_sd_pause,&ui_menu_sd_stop,&ui_menu_sd_continue UI_MOUNT_CMD ,&ui_menu_sd_delete}
-UI_MENU(ui_menu_sd,UI_MENU_SD,UI_MENU_BACKCNT+5+UI_MOUNT_CNT);
-UI_MENU_SUBMENU(ui_menu_sd_sub,UI_TEXT_SD_CARD,ui_menu_sd,ADVANCED_MODE);
-
-#define UI_MENU_SD_COND &ui_menu_sd_sub,
-#define UI_MENU_SD_CNT 1
+//powersave advanced menu
+//stepper inactive
+UI_MENU_ACTION2C(ui_menu_stepper2,UI_ACTION_STEPPER_INACTIVE,UI_TEXT_STEPPER_INACTIVE2,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_general_stepper_inactive,UI_TEXT_STEPPER_INACTIVE,ui_menu_stepper2,ALL_MODE);
+//max inactive
+UI_MENU_ACTION2C(ui_menu_maxinactive2,UI_ACTION_MAX_INACTIVE,UI_TEXT_POWER_INACTIVE2,ADVANCED_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_general_max_inactive,UI_TEXT_POWER_INACTIVE,ui_menu_maxinactive2,ADVANCED_MODE);
+#define UI_MENU_POWERSAVE_MENU  {UI_MENU_ADDCONDBACK &ui_menu_general_stepper_inactive, &ui_menu_general_max_inactive UI_KEEP_LIGHT_ON_ENTRY UI_LIGHT_OFF_AFTER_ENTRY}
+UI_MENU(ui_menu_powersave_menu,UI_MENU_POWERSAVE_MENU,2+UI_KEEP_LIGHT_ON_COUNT+UI_LIGHT_OFF_AFTER_COUNT+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_powersave_menu_entry, UI_TEXT_POWER_SAVE_MENU, ui_menu_powersave_menu,ADVANCED_MODE);
+//power menu
+#if PS_ON_PIN>=0
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_power,UI_TEXT_POWER,UI_ACTION_POWER,ADVANCED_MODE);
+#define MENU_PSON_COUNT 1
+#define MENU_PSON_ENTRY ,&ui_menu_quick_power
 #else
-#define UI_MENU_SD_COND
-#define UI_MENU_SD_CNT 0
-#define SD_PRINTFILE_ENTRY
-#define SD_PRINTFILE_ENTRY_CNT 0
+#define MENU_PSON_COUNT 0
+#define MENU_PSON_ENTRY
 #endif
-
-
-// **** Debugging menu
-UI_MENU_ACTIONCOMMAND(ui_menu_debug_echo,   UI_TEXT_DBG_ECHO,   UI_ACTION_DEBUG_ECHO,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_debug_info,   UI_TEXT_DBG_INFO,   UI_ACTION_DEBUG_INFO,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_debug_error,  UI_TEXT_DBG_ERROR,  UI_ACTION_DEBUG_ERROR,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_debug_dryrun, UI_TEXT_DBG_DRYRUN, UI_ACTION_DEBUG_DRYRUN,ADVANCED_MODE);
-
-#define UI_MENU_DEBUGGING {UI_MENU_ADDCONDBACK &ui_menu_debug_echo,&ui_menu_debug_info,&ui_menu_debug_error,&ui_menu_debug_dryrun}
-UI_MENU(ui_menu_debugging,UI_MENU_DEBUGGING,4 + UI_MENU_BACKCNT);
-
-// **** Acceleration settings
+//baud rate
+UI_MENU_CHANGEACTION(ui_menu_general_baud,UI_TEXT_BAUDRATE,UI_ACTION_BAUDRATE,ADVANCED_MODE);
 #if DRIVE_SYSTEM!=3
+// **** Acceleration settings
 UI_MENU_CHANGEACTION(ui_menu_accel_printx,  UI_TEXT_PRINT_X,UI_ACTION_PRINT_ACCEL_X,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_accel_printy,  UI_TEXT_PRINT_Y,UI_ACTION_PRINT_ACCEL_Y,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_accel_printz,  UI_TEXT_PRINT_Z,UI_ACTION_PRINT_ACCEL_Z,ADVANCED_MODE);
@@ -605,7 +575,6 @@ UI_MENU_CHANGEACTION(ui_menu_accel_jerk,    UI_TEXT_JERK,UI_ACTION_MAX_JERK,ADVA
 UI_MENU_CHANGEACTION(ui_menu_accel_zjerk,   UI_TEXT_ZJERK,UI_ACTION_MAX_ZJERK,ADVANCED_MODE);
 #define UI_MENU_ACCEL {UI_MENU_ADDCONDBACK &ui_menu_accel_printx,&ui_menu_accel_printy,&ui_menu_accel_printz,&ui_menu_accel_travelx,&ui_menu_accel_travely,&ui_menu_accel_travelz,&ui_menu_accel_jerk,&ui_menu_accel_zjerk}
 UI_MENU(ui_menu_accel,UI_MENU_ACCEL,8+UI_MENU_BACKCNT);
-
 // **** Feedrates
 UI_MENU_CHANGEACTION(ui_menu_feedrate_maxx,  UI_TEXT_FEED_MAX_X,  UI_ACTION_MAX_FEEDRATE_X,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_feedrate_maxy,  UI_TEXT_FEED_MAX_Y,  UI_ACTION_MAX_FEEDRATE_Y,ADVANCED_MODE);
@@ -616,31 +585,21 @@ UI_MENU_CHANGEACTION(ui_menu_feedrate_homez, UI_TEXT_FEED_HOME_Z, UI_ACTION_HOMI
 #define UI_MENU_FEEDRATE {UI_MENU_ADDCONDBACK &ui_menu_feedrate_maxx,&ui_menu_feedrate_maxy,&ui_menu_feedrate_maxz,&ui_menu_feedrate_homex,&ui_menu_feedrate_homey,&ui_menu_feedrate_homez}
 UI_MENU(ui_menu_feedrate,UI_MENU_FEEDRATE,6 + UI_MENU_BACKCNT);
 #else
+// **** Acceleration settings
 UI_MENU_CHANGEACTION(ui_menu_accel_printz,UI_TEXT_PRINT_Z_DELTA,UI_ACTION_PRINT_ACCEL_Z,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_accel_travelz,UI_TEXT_MOVE_Z_DELTA,UI_ACTION_MOVE_ACCEL_Z,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_accel_jerk,UI_TEXT_JERK,UI_ACTION_MAX_JERK,ADVANCED_MODE);
 #define UI_MENU_ACCEL {UI_MENU_ADDCONDBACK &ui_menu_accel_printz,&ui_menu_accel_travelz,&ui_menu_accel_jerk}
 UI_MENU(ui_menu_accel,UI_MENU_ACCEL,3+UI_MENU_BACKCNT);
-
 // **** Feedrates
 UI_MENU_CHANGEACTION(ui_menu_feedrate_maxz,UI_TEXT_FEED_MAX_Z_DELTA,UI_ACTION_MAX_FEEDRATE_Z,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_feedrate_homez,UI_TEXT_FEED_HOME_Z_DELTA,UI_ACTION_HOMING_FEEDRATE_Z,ADVANCED_MODE);
 #define UI_MENU_FEEDRATE {UI_MENU_ADDCONDBACK &ui_menu_feedrate_maxz,&ui_menu_feedrate_homez}
 UI_MENU(ui_menu_feedrate,UI_MENU_FEEDRATE,2+UI_MENU_BACKCNT);
 #endif
-
-// **** General configuration settings
-
-UI_MENU_ACTION2C(ui_menu_stepper2,UI_ACTION_STEPPER_INACTIVE,UI_TEXT_STEPPER_INACTIVE2,ALL_MODE);
-UI_MENU_ACTION2C(ui_menu_maxinactive2,UI_ACTION_MAX_INACTIVE,UI_TEXT_POWER_INACTIVE2,ADVANCED_MODE);
-UI_MENU_CHANGEACTION(ui_menu_general_baud,UI_TEXT_BAUDRATE,UI_ACTION_BAUDRATE,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_general_stepper_inactive,UI_TEXT_STEPPER_INACTIVE,ui_menu_stepper2,ALL_MODE);
-UI_MENU_ACTIONSELECTOR(ui_menu_general_max_inactive,UI_TEXT_POWER_INACTIVE,ui_menu_maxinactive2,ADVANCED_MODE);
-#define UI_MENU_GENERAL {UI_MENU_ADDCONDBACK &ui_menu_general_baud,&ui_menu_general_stepper_inactive,&ui_menu_general_max_inactive}
-UI_MENU(ui_menu_general,UI_MENU_GENERAL,3+UI_MENU_BACKCNT);
-
+UI_MENU_SUBMENU(ui_menu_conf_accel,   UI_TEXT_ACCELERATION, ui_menu_accel,ADVANCED_MODE);
+UI_MENU_SUBMENU(ui_menu_conf_feed,    UI_TEXT_FEEDRATE,     ui_menu_feedrate,ADVANCED_MODE);
 // **** Extruder configuration
-
 UI_MENU_CHANGEACTION(ui_menu_cext_steps,          UI_TEXT_EXTR_STEPS,              UI_ACTION_EXTR_STEPS,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_cext_start_feedrate, UI_TEXT_EXTR_START_FEED,         UI_ACTION_EXTR_START_FEEDRATE,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_cext_max_feedrate,   UI_TEXT_EXTR_MAX_FEED,           UI_ACTION_EXTR_MAX_FEEDRATE,ADVANCED_MODE);
@@ -685,38 +644,8 @@ UI_MENU_CHANGEACTION(ui_menu_cext_yoffset,UI_TEXT_EXTR_YOFF,UI_ACTION_Y_OFFSET,A
 #endif
 #define UI_MENU_CEXTR {UI_MENU_ADDCONDBACK UI_MENU_CONFEXTCOND &ui_menu_cext_steps,&ui_menu_cext_start_feedrate,&ui_menu_cext_max_feedrate,&ui_menu_cext_acceleration,&ui_menu_cext_watch_period,&ui_menu_ext_wait_units,&ui_menu_ext_wait_temp UI_MENU_ADVANCE UI_MENU_PIDCOND}
 UI_MENU(ui_menu_cextr,UI_MENU_CEXTR,7+UI_MENU_BACKCNT+UI_MENU_PIDCNT+UI_MENU_CONFEXTCNT+UI_MENU_ADV_CNT);
-
-// **** Configuration menu
-
-UI_MENU_ACTIONCOMMAND(ui_menu_display_mode,UI_TEXT_DISPLAY_MODE,UI_ACTION_DISPLAY_MODE,ALL_MODE);
-
-#if FEATURE_AUTOLEVEL
-#define UI_MENU_AUTOLEVEL_CNT 1
-UI_MENU_ACTIONCOMMAND(ui_menu_autolevel,UI_TEXT_AUTOLEVEL,UI_ACTION_AUTOLEVEL,ALL_MODE);
-#define UI_MENU_AUTOLEVEL &ui_menu_autolevel,
-#if NUM_EXTRUDER == 1
-	#define UI_PAGE_AUTOLEVEL "\005%ec/%Ec\002","\007%eB/%Eb\002","Z:%x2","%os" 
-#else
-	#define UI_PAGE_AUTOLEVEL"\005%e0/%E0\005%e1/%E1","\007%eB/%Eb","Z:%x2","%os"
-#endif
-UI_MENU_ACTION4C(ui_menu_autolevel_page,UI_ACTION_DUMMY,UI_PAGE_AUTOLEVEL,ALL_MODE);
-#define STEP_AUTOLEVEL_HEATING 1
-#define STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE 2
-#define STEP_ZPROBE_SCRIPT 3
-#define STEP_AUTOLEVEL_START 4
-#define STEP_AUTOLEVEL_MOVE 5
-#define STEP_AUTOLEVEL_DO_ZPROB 6
-#define STEP_AUTOLEVEL_RESULTS 7
-#else
-#define UI_MENU_AUTOLEVEL 
-#define UI_MENU_AUTOLEVEL_CNT 0
-#endif
-UI_MENU_SUBMENU(ui_menu_conf_general, UI_TEXT_GENERAL,      ui_menu_general,ADVANCED_MODE);
-UI_MENU_SUBMENU(ui_menu_conf_accel,   UI_TEXT_ACCELERATION, ui_menu_accel,ADVANCED_MODE);
-UI_MENU_SUBMENU(ui_menu_conf_feed,    UI_TEXT_FEEDRATE,     ui_menu_feedrate,ADVANCED_MODE);
 UI_MENU_SUBMENU(ui_menu_conf_extr,    UI_TEXT_EXTRUDER,     ui_menu_cextr,ADVANCED_MODE);
-
-
+//eeprom
 #if EEPROM_MODE!=0
 UI_MENU_ACTIONCOMMAND(ui_menu_conf_to_eeprom,UI_TEXT_STORE_TO_EEPROM,UI_ACTION_STORE_EEPROM,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_conf_from_eeprom,UI_TEXT_LOAD_EEPROM,UI_ACTION_LOAD_EEPROM,ADVANCED_MODE);
@@ -729,13 +658,11 @@ UI_MENU_ACTION2C(ui_menu_eeprom_loaded, UI_ACTION_DUMMY, UI_TEXT_EEPROM_LOADED,A
 #define UI_MENU_EEPROM_COND
 #define UI_MENU_EEPROM_CNT 0
 #endif
-#ifdef SOFTWARE_LEVELING
-#define UI_MENU_SL_COND ,&ui_menu_conf_level
-#define UI_MENU_SL_CNT 1
-UI_MENU_SUBMENU(ui_menu_conf_level, UI_TEXT_LEVEL, ui_menu_level,ADVANCED_MODE);
-#else
-#define UI_MENU_SL_COND
-#define UI_MENU_SL_CNT 0
+//Delta calibration menu
+#if Z_HOME_DIR > 0
+UI_MENU_ACTIONCOMMAND(ui_menu_set_measured_origin,UI_TEXT_SET_MEASURED_ORIGIN,UI_ACTION_SET_MEASURED_ORIGIN,ADVANCED_MODE);
+#define UI_MENU_DELTA {UI_MENU_ADDCONDBACK &ui_menu_home_all UI_SPEED_Z_NOTEST,&ui_menu_set_measured_origin}
+UI_MENU(ui_menu_delta,UI_MENU_DELTA,2 + UI_SPEED + UI_MENU_BACKCNT);
 #endif
 #if Z_HOME_DIR > 0
 #define UI_MENU_DELTA_COND ,&ui_menu_conf_delta
@@ -745,16 +672,146 @@ UI_MENU_SUBMENU(ui_menu_conf_delta, UI_TEXT_ZCALIB, ui_menu_delta,ADVANCED_MODE)
 #define UI_MENU_DELTA_COND
 #define UI_MENU_DELTA_CNT 0
 #endif
+//sw leveling
+#ifdef SOFTWARE_LEVELING
+UI_MENU_ACTIONCOMMAND(ui_menu_set_p1,UI_TEXT_SET_P1,UI_ACTION_SET_P1,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_set_p2,UI_TEXT_SET_P2,UI_ACTION_SET_P2,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_set_p3,UI_TEXT_SET_P3,UI_ACTION_SET_P3,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_calculate_leveling,UI_TEXT_CALCULATE_LEVELING,UI_ACTION_CALC_LEVEL,ADVANCED_MODE);
+#define UI_MENU_LEVEL {UI_MENU_ADDCONDBACK &ui_menu_set_p1,&ui_menu_set_p2,&ui_menu_set_p3,&ui_menu_calculate_leveling UI_SPEED_X UI_SPEED_Y UI_SPEED_Z}
+UI_MENU(ui_menu_level,UI_MENU_LEVEL,4+3*UI_SPEED+UI_MENU_BACKCNT);
+#endif
+#ifdef SOFTWARE_LEVELING
+#define UI_MENU_SL_COND ,&ui_menu_conf_level
+#define UI_MENU_SL_CNT 1
+UI_MENU_SUBMENU(ui_menu_conf_level, UI_TEXT_LEVEL, ui_menu_level,ADVANCED_MODE);
+#else
+#define UI_MENU_SL_COND
+#define UI_MENU_SL_CNT 0
+#endif
+
+
+#define UI_MENU_SETTINGS  {UI_MENU_ADDCONDBACK &ui_menu_display_mode,&ui_menu_quick_speedmultiply, &ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY ,&ui_menu_powersave_menu_entry MENU_PSON_ENTRY,&ui_menu_general_baud,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
+UI_MENU(ui_menu_settings,UI_MENU_SETTINGS,8+UI_TOGGLE_LIGHT_COUNT+UI_SOUND_COUNT+UI_SENSOR_ONOFF_COUNT+UI_POWER_SAVE_COUNT+MENU_PSON_COUNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_settings_entry, UI_TEXT_SETTINGS, ui_menu_settings,ALL_MODE);
+
+// **** Fan menu
+#if FAN_PIN>-1
+UI_MENU_CHANGEACTION(ui_menu_fan_fanspeed, UI_TEXT_ACTION_FANSPEED,UI_ACTION_FANSPEED,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_fan_off,UI_TEXT_FAN_OFF,UI_ACTION_FAN_OFF,MENU_MODE_FAN_RUNNING,0,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_fan_25,UI_TEXT_FAN_25,UI_ACTION_FAN_25,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_fan_50,UI_TEXT_FAN_50,UI_ACTION_FAN_50,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_fan_75,UI_TEXT_FAN_75,UI_ACTION_FAN_75,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_fan_full,UI_TEXT_FAN_FULL,UI_ACTION_FAN_FULL,ADVANCED_MODE);
+#define UI_MENU_FAN {UI_MENU_ADDCONDBACK &ui_menu_fan_fanspeed,&ui_menu_fan_off,&ui_menu_fan_25,&ui_menu_fan_50,&ui_menu_fan_75,&ui_menu_fan_full}
+UI_MENU(ui_menu_fan,UI_MENU_FAN,6+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_fan_sub,UI_TEXT_FANSPEED,ui_menu_fan,ADVANCED_MODE);
+#define UI_MENU_FAN_COND &ui_menu_fan_sub,
+#define UI_MENU_FAN_CNT 1
+#else
+#define UI_MENU_FAN_COND
+#define UI_MENU_FAN_CNT 0
+#endif
+
+// **** SD card menu
+#ifdef SDSUPPORT
+#define UI_MENU_SD_FILESELECTOR {&ui_menu_back}
+UI_MENU_FILESELECT(ui_menu_sd_fileselector,UI_MENU_SD_FILESELECTOR,1);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_printfile, UI_TEXT_PRINT_FILE,     UI_ACTION_SD_PRINT,    MENU_MODE_SD_MOUNTED,  MENU_MODE_SD_PRINTING,ALL_MODE);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_pause,     UI_TEXT_PAUSE_PRINT,    UI_ACTION_SD_PAUSE,    MENU_MODE_SD_PRINTING, MENU_MODE_SD_PAUSED,ALL_MODE);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_continue,  UI_TEXT_CONTINUE_PRINT, UI_ACTION_SD_CONTINUE, MENU_MODE_SD_PAUSED,   0,ALL_MODE);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_stop,      UI_TEXT_STOP_PRINT,     UI_ACTION_SD_STOP,     MENU_MODE_SD_PRINTING, 0,ALL_MODE);
+#define SD_PRINTFILE_ENTRY &ui_menu_sd_printfile,
+#define SD_PRINTFILE_ENTRY_CNT 1
+#if defined(SDCARDDETECT) && SDCARDDETECT>-1
+#define UI_MOUNT_CNT 0
+#define UI_MOUNT_CMD
+#else
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_unmount,UI_TEXT_UNMOUNT_CARD,UI_ACTION_SD_UNMOUNT,MENU_MODE_SD_MOUNTED,0,ALL_MODE);
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_mount,UI_TEXT_MOUNT_CARD,UI_ACTION_SD_MOUNT,0,MENU_MODE_SD_MOUNTED,ALL_MODE);
+#define UI_MOUNT_CNT 2
+#define UI_MOUNT_CMD ,&ui_menu_sd_unmount,&ui_menu_sd_mount
+#endif
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_sd_delete,UI_TEXT_DELETE_FILE,UI_ACTION_SD_DELETE,MENU_MODE_SD_MOUNTED,MENU_MODE_SD_PRINTING,ADVANCED_MODE);
+#define UI_MENU_SD {UI_MENU_ADDCONDBACK &ui_menu_sd_printfile,&ui_menu_sd_pause,&ui_menu_sd_stop,&ui_menu_sd_continue UI_MOUNT_CMD ,&ui_menu_sd_delete}
+UI_MENU(ui_menu_sd,UI_MENU_SD,UI_MENU_BACKCNT+5+UI_MOUNT_CNT);
+UI_MENU_SUBMENU(ui_menu_sd_sub,UI_TEXT_SD_CARD,ui_menu_sd,ALL_MODE);
+
+#define UI_MENU_SD_COND &ui_menu_sd_sub,
+#define UI_MENU_SD_CNT 1
+#else
+#define UI_MENU_SD_COND
+#define UI_MENU_SD_CNT 0
+#define SD_PRINTFILE_ENTRY
+#define SD_PRINTFILE_ENTRY_CNT 0
+#endif
+
+// **** Debugging menu
+UI_MENU_ACTIONCOMMAND(ui_menu_debug_echo,   UI_TEXT_DBG_ECHO,   UI_ACTION_DEBUG_ECHO,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_debug_info,   UI_TEXT_DBG_INFO,   UI_ACTION_DEBUG_INFO,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_debug_error,  UI_TEXT_DBG_ERROR,  UI_ACTION_DEBUG_ERROR,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_debug_dryrun, UI_TEXT_DBG_DRYRUN, UI_ACTION_DEBUG_DRYRUN,ADVANCED_MODE);
+
+#ifdef DEBUG_PRINT
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_debug,UI_TEXT_WRITE_DEBUG,UI_ACTION_WRITE_DEBUG,ADVANCED_MODE);
+#define DEBUG_PRINT_COUNT 1
+#define DEBUG_PRINT_EXTRA ,&ui_menu_quick_debug
+#else
+#define DEBUG_PRINT_COUNT 0
+#define DEBUG_PRINT_EXTRA
+#endif
+
+#define UI_MENU_DEBUGGING {UI_MENU_ADDCONDBACK &ui_menu_debug_echo,&ui_menu_debug_info,&ui_menu_debug_error,&ui_menu_debug_dryrun DEBUG_PRINT_EXTRA}
+UI_MENU(ui_menu_debugging,UI_MENU_DEBUGGING,4 + DEBUG_PRINT_COUNT + UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_debugging_entry, UI_TEXT_DEBUGGING,ui_menu_debugging,ADVANCED_MODE);
+
+// **************Main menu
+#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK  SD_PRINTFILE_ENTRY &ui_menu_maintenance_entry, &ui_menu_positions_entry,&ui_menu_extruder_entry, UI_MENU_BED_ENTRY_COND UI_MENU_FAN_COND  &ui_menu_settings_entry, UI_MENU_SD_COND  &ui_menu_debugging_entry}
+UI_MENU(ui_menu_main,UI_MENU_MAIN,5+UI_MENU_BACKCNT+UI_MENU_SD_CNT+UI_MENU_FAN_CNT+SD_PRINTFILE_ENTRY_CNT +UI_MENU_BED_ENTRY_CNT);
+
+///////////END MENU DEFINITION
+
+
+/*
+ 
+// **** Quick menu
+#define UI_MENU_QUICK {UI_MENU_ADDCONDBACK &ui_menu_home_all BABY_ENTRY ,&ui_menu_quick_speedmultiply,&ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY  ,&ui_menu_quick_preheat_pla,&ui_menu_quick_preheat_abs,&ui_menu_quick_cooldown,&ui_menu_quick_origin,&ui_menu_quick_stopstepper MENU_PSON_ENTRY DEBUG_PRINT_EXTRA}
+UI_MENU(ui_menu_quick,UI_MENU_QUICK,8+BABY_CNT+UI_MENU_BACKCNT+MENU_PSON_COUNT+DEBUG_PRINT_COUNT+UI_TOGGLE_LIGHT_COUNT + UI_SOUND_COUNT  + UI_POWER_SAVE_COUNT + UI_SENSOR_ONOFF_COUNT);
+ // **** Configuration menu
+UI_MENU_SUBMENU(ui_menu_conf_general, UI_TEXT_GENERAL,      ui_menu_general,ADVANCED_MODE);
 #define UI_MENU_CONFIGURATION {UI_MENU_ADDCONDBACK UI_MENU_AUTOLEVEL &ui_menu_display_mode UI_KEEP_LIGHT_ON_ENTRY ,&ui_menu_conf_general,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
 UI_MENU(ui_menu_configuration,UI_MENU_CONFIGURATION,UI_MENU_BACKCNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+5 +UI_MENU_AUTOLEVEL_CNT +UI_KEEP_LIGHT_ON_COUNT);
+// **** General configuration settings
+#define UI_MENU_GENERAL {UI_MENU_ADDCONDBACK &ui_menu_general_baud,&ui_menu_general_stepper_inactive,&ui_menu_general_max_inactive}
+UI_MENU(ui_menu_general,UI_MENU_GENERAL,3+UI_MENU_BACKCNT);
+
+UI_MENU_ACTIONSELECTOR(ui_menu_go_xpos,UI_TEXT_X_POSITION,ui_menu_xpos,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_ypos,UI_TEXT_Y_POSITION,ui_menu_ypos,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos,UI_TEXT_Z_POSITION,ui_menu_zpos,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_zpos_notest,UI_TEXT_Z_POSITION,ui_menu_zpos_notest,ADVANCED_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
+#if !UI_SPEEDDEPENDENT_POSITIONING
+UI_MENU_ACTIONSELECTOR(ui_menu_go_xfast,UI_TEXT_X_POS_FAST,ui_menu_xpos_fast,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_yfast,UI_TEXT_Y_POS_FAST,ui_menu_ypos_fast,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_zfast,UI_TEXT_Z_POS_FAST,ui_menu_zpos_fast,ALL_MODE);
+UI_MENU_ACTIONSELECTOR(ui_menu_go_zfast_notest,UI_TEXT_Z_POS_FAST,ui_menu_zpos_fast_notest,ADVANCED_MODE);
+#define UI_SPEED 2
+#define UI_SPEED_X ,&ui_menu_go_xfast,&ui_menu_go_xpos
+#define UI_SPEED_Y ,&ui_menu_go_yfast,&ui_menu_go_ypos
+#define UI_SPEED_Z ,&ui_menu_go_zfast,&ui_menu_go_zpos
+#define UI_SPEED_Z_NOTEST ,&ui_menu_go_zfast_notest,&ui_menu_go_zpos_notest
+#else
+#define UI_SPEED 1
+#define UI_SPEED_X ,&ui_menu_go_xpos
+#define UI_SPEED_Y ,&ui_menu_go_ypos
+#define UI_SPEED_Z ,&ui_menu_go_zpos
+#define UI_SPEED_Z_NOTEST ,&ui_menu_go_zpos_notest
+#endif
+
 // Main menu
 UI_MENU_SUBMENU(ui_menu_main1, UI_TEXT_QUICK_SETTINGS,ui_menu_quick,ALL_MODE);
-UI_MENU_SUBMENU(ui_menu_main2, UI_TEXT_POSITION,ui_menu_positions,ALL_MODE);
-UI_MENU_SUBMENU(ui_menu_main3, UI_TEXT_EXTRUDER,ui_menu_extruder,ADVANCED_MODE);
-UI_MENU_SUBMENU(ui_menu_main4, UI_TEXT_DEBUGGING,ui_menu_debugging,ADVANCED_MODE);
-UI_MENU_SUBMENU(ui_menu_main5, UI_TEXT_CONFIGURATION,ui_menu_configuration,ALL_MODE);
-#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK  &ui_menu_main1,SD_PRINTFILE_ENTRY &ui_menu_main2,&ui_menu_main3,UI_MENU_FAN_COND UI_MENU_SD_COND &ui_menu_main4,&ui_menu_main5}
-UI_MENU(ui_menu_main,UI_MENU_MAIN,5+UI_MENU_BACKCNT+UI_MENU_SD_CNT+UI_MENU_FAN_CNT+SD_PRINTFILE_ENTRY_CNT);
+UI_MENU_SUBMENU(ui_menu_configuration_entry, UI_TEXT_CONFIGURATION,ui_menu_configuration,ALL_MODE);
+*/
 
 /* Define menus accessible by action commands
 
