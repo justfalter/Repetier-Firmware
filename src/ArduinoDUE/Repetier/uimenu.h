@@ -467,8 +467,8 @@ UI_MENU_ACTIONCOMMAND(ui_menu_ext_off2,UI_TEXT_EXTR2_OFF,UI_ACTION_EXTRUDER2_OFF
 #endif
 //cool down
 UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,ADVANCED_MODE);
-#define UI_MENU_EXTRUDER {UIMENULOAD UI_MENU_ADDCONDBACK UI_MENU_EXTCOND &ui_menu_go_epos,&ui_menu_ext_origin,&ui_menu_quick_cooldown}
-UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_EXTCNT+2+LOADCNT);
+#define UI_MENU_EXTRUDER { UI_MENU_ADDCONDBACK UI_MENU_EXTCOND &ui_menu_go_epos,&ui_menu_ext_origin,&ui_menu_quick_cooldown}
+UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_EXTCNT+2);
 
 UI_MENU_SUBMENU(ui_menu_extruder_entry, UI_TEXT_EXTRUDER,ui_menu_extruder,ADVANCED_MODE); 
 
