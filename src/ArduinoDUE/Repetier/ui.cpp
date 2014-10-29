@@ -1406,6 +1406,14 @@ void UIDisplay::parse(const char *txt,bool ram)
             if(c2=='z') addFloat(Printer::axisStepsPerMM[2],3,1);
             if(c2=='e') addFloat(Extruder::current->stepsPerMM,3,1);
             break;
+        case 'N':
+			 if(c2=='e')
+				{
+#if NUM_EXTRUDER>1
+					addInt(Extruder::current->id+1,1);
+#endif
+				}
+        break;
         case 'P':
             if(c2=='N') addStringP(PSTR(UI_PRINTER_NAME));
             #if UI_AUTOLIGHTOFF_AFTER > 0
@@ -2465,7 +2473,43 @@ void UIDisplay::nextPreviousAction(int8_t next)
         Commands::printCurrentPosition();
     break;
 	}
-	
+	case UI_ACTION_E_1:
+    case UI_ACTION_E_10:
+    case UI_ACTION_E_100:
+    {
+		int istep=1;
+		if (action==UI_ACTION_E_10)istep=10;
+		if (action==UI_ACTION_E_100)istep=100;
+		if(reportTempsensorError() or Printer::debugDryrun()) break;
+		//check temperature
+		if(Extruder::current->tempControl.currentTemperatureC<=MIN_EXTRUDER_TEMP)
+			{
+				if (confirmationDialog(UI_TEXT_WARNING ,UI_TEXT_EXTRUDER_COLD,UI_TEXT_HEAT_EXTRUDER,UI_CONFIRMATION_TYPE_YES_NO,true))
+					{
+					UI_STATUS(UI_TEXT_HEATING_EXTRUDER);
+					Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,Extruder::current->id);
+					}
+				else
+					{
+					UI_STATUS(UI_TEXT_EXTRUDER_COLD);
+					}
+			executeAction(UI_ACTION_TOP_MENU);
+			 break;
+			}
+		//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			long tmp_autoreturn_time=ui_autoreturn_time;
+			ui_autoreturn_time=HAL::timeInMilliseconds()+(1000*3600);
+#endif
+		//we move 
+		PrintLine::moveRelativeDistanceInSteps(0,0,0,Printer::axisStepsPerMM[E_AXIS]*increment*istep,UI_SET_EXTRUDER_FEEDRATE,true,false);
+        Commands::printCurrentPosition();
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			ui_autoreturn_time=tmp_autoreturn_time;
+ #endif
+    break;
+	}
+   
     case UI_ACTION_EPOSITION:
          //need to check temperature ?
         PrintLine::moveRelativeDistanceInSteps(0,0,0,Printer::axisStepsPerMM[3]*increment,UI_SET_EXTRUDER_FEEDRATE,true,false);

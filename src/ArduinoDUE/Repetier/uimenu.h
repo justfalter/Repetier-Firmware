@@ -429,16 +429,31 @@ UI_MENU_CHANGEACTION(ui_menu_quick_zbaby,UI_TEXT_Z_BABYSTEPPING,UI_ACTION_Z_BABY
 #endif
 
 //extruder
-//[TODO] use new menu
-UI_MENU_ACTIONSELECTOR(ui_menu_go_epos,UI_TEXT_E_POSITION,ui_menu_epos,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel0,UI_TEXT_EXTR0_SELECT,UI_ACTION_SELECT_EXTRUDER0,ADVANCED_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel1,UI_TEXT_EXTR1_SELECT,UI_ACTION_SELECT_EXTRUDER1,ADVANCED_MODE);
+UI_MENU_CHANGEACTION(ui_menu_e_1,"  1mm",UI_ACTION_E_1,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_e_10," 10mm",UI_ACTION_E_10,ALL_MODE);
+UI_MENU_CHANGEACTION(ui_menu_e_100,"100mm",UI_ACTION_E_100,ALL_MODE);
+#if NUM_EXTRUDER==2
+#define MENU_SELECT_EXTRUDER_ENTRY ,&ui_menu_ext_sel0,&ui_menu_ext_sel1
+#define MENU_SELECT_EXTRUDER_CNT 2
+#else
+#define MENU_SELECT_EXTRUDER_ENTRY
+#define MENU_SELECT_EXTRUDER_CNT 0
+#endif
+UI_MENU_ACTIONCOMMAND(ui_menu_e_pos,"E%Ne: %x3mm ",UI_ACTION_DUMMY,ALL_MODE)
+#define UI_MENU_E_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_e_1,&ui_menu_e_10,&ui_menu_e_100 MENU_SELECT_EXTRUDER_ENTRY,&ui_menu_e_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_e_value,UI_MENU_E_POS_VALUE,4+MENU_SELECT_EXTRUDER_CNT+UI_MENU_BACKCNT);
+UI_MENU_SUBMENU(ui_menu_E_pos, UI_TEXT_E_POSITION, ui_menu_pos_e_value,ALL_MODE);
+
 
 UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_origin,UI_TEXT_SET_TO_ORIGIN,UI_ACTION_SET_ORIGIN,0,MENU_MODE_PRINTING,ADVANCED_MODE);
 
 #if DRIVE_SYSTEM!=3     //Positioning menu for non-delta
-#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z,&ui_menu_X_pos,&ui_menu_Y_pos,&ui_menu_Z_pos BABY_ENTRY ,&ui_menu_go_epos,&ui_menu_quick_origin}
+#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all,&ui_menu_home_x,&ui_menu_home_y,&ui_menu_home_z,&ui_menu_X_pos,&ui_menu_Y_pos,&ui_menu_Z_pos BABY_ENTRY ,&ui_menu_E_pos,&ui_menu_quick_origin}
 UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,9 + BABY_CNT+ UI_MENU_BACKCNT);
 #else                   //Positioning menu for delta (removes individual x,y,z homing)
-#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all  UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_go_epos}
+#define UI_MENU_POSITIONS {UI_MENU_ADDCONDBACK &ui_menu_home_all  UI_SPEED_X UI_SPEED_Y UI_SPEED_Z ,&ui_menu_E_pos}
 UI_MENU(ui_menu_positions,UI_MENU_POSITIONS,2 + 3 * UI_SPEED + UI_MENU_BACKCNT);
 #endif
 
@@ -447,11 +462,9 @@ UI_MENU_SUBMENU(ui_menu_positions_entry, UI_TEXT_POSITION,ui_menu_positions,ALL_
 // **** Extruder menu
 UI_MENU_CHANGEACTION(ui_menu_ext_temp0,UI_TEXT_EXTR0_TEMP,UI_ACTION_EXTRUDER0_TEMP,ADVANCED_MODE);
 UI_MENU_CHANGEACTION(ui_menu_ext_temp1,UI_TEXT_EXTR1_TEMP,UI_ACTION_EXTRUDER1_TEMP,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel0,UI_TEXT_EXTR0_SELECT,UI_ACTION_SELECT_EXTRUDER0,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel1,UI_TEXT_EXTR1_SELECT,UI_ACTION_SELECT_EXTRUDER1,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off0,UI_TEXT_EXTR0_OFF,UI_ACTION_EXTRUDER0_OFF,ADVANCED_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off1,UI_TEXT_EXTR1_OFF,UI_ACTION_EXTRUDER1_OFF,ADVANCED_MODE);
-UI_MENU_ACTIONCOMMAND(ui_menu_ext_origin,UI_TEXT_EXTR_ORIGIN,UI_ACTION_RESET_EXTRUDER,ADVANCED_MODE);
+//UI_MENU_ACTIONCOMMAND(ui_menu_ext_origin,UI_TEXT_EXTR_ORIGIN,UI_ACTION_RESET_EXTRUDER,ADVANCED_MODE);
 #if NUM_EXTRUDER==2
 #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_temp1,&ui_menu_ext_off0,&ui_menu_ext_off1,&ui_menu_ext_sel0,&ui_menu_ext_sel1,
 #define UI_MENU_EXTCNT 6
@@ -466,9 +479,9 @@ UI_MENU_ACTIONCOMMAND(ui_menu_ext_off2,UI_TEXT_EXTR2_OFF,UI_ACTION_EXTRUDER2_OFF
 #define UI_MENU_EXTCNT 2
 #endif
 //cool down
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,ADVANCED_MODE);
+//UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,ADVANCED_MODE);
 #define UI_MENU_EXTRUDER { UI_MENU_ADDCONDBACK UI_MENU_EXTCOND}
-UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_EXTCNT+2);
+UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_EXTCNT);
 
 UI_MENU_SUBMENU(ui_menu_extruder_entry, UI_TEXT_EXTRUDER,ui_menu_extruder,ADVANCED_MODE); 
 
