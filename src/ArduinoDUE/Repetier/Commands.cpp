@@ -75,6 +75,8 @@ void Commands::checkForPeriodicalActions()
         counter250ms=5;
     }
     UI_SLOW;
+    //check if emergency stop button is pressed 
+    if(uid.lastButtonAction==UI_ACTION_OK_NEXT_BACK)Commands::emergencyStop();
 }
 
 /** \brief Waits until movement cache is empty.

@@ -2844,6 +2844,13 @@ void UIDisplay::executeAction(int action)
     else
         switch(action)
         {
+		//fast switch UI without saving
+		case UI_ACTION_OK_PREV_RIGHT:
+		if (display_mode&ADVANCED_MODE)display_mode=EASY_MODE;
+		else display_mode=ADVANCED_MODE;
+		playsound(5000,240);
+		playsound(5000,240);
+		break;
 		case UI_ACTION_RIGHT_KEY:
         case UI_ACTION_OK:
             okAction();

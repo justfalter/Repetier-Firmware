@@ -47,6 +47,16 @@
 #define UI_ACTION_PREVIOUS 2
 #define UI_ACTION_RIGHT_KEY 3
 
+#define UI_ACTION_OK_TOP_PREV 10
+#define UI_ACTION_OK_TOP_NEXT 11
+#define UI_ACTION_OK_TOP_BACK 12
+#define UI_ACTION_OK_TOP_RIGHT 13
+#define UI_ACTION_OK_NEXT_BACK  14
+#define UI_ACTION_OK_NEXT_PREV  15
+#define UI_ACTION_OK_NEXT_RIGHT 16
+#define UI_ACTION_OK_PREV_RIGHT 17
+#define UI_ACTION_OK_PREV_BACK 18
+
 #define UI_ACTION_X_UP                 100
 #define UI_ACTION_X_DOWN               101
 #define UI_ACTION_Y_UP                 102

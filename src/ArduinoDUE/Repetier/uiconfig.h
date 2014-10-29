@@ -55,6 +55,13 @@ Currently supported hardware:
 #ifndef _ui_config_h
 #define _ui_config_h
 
+#define FLAG_OK					1 
+#define FLAG_NEXT				2 
+#define FLAG_PREVIOUS		4 
+#define FLAG_BACK				8
+#define FLAG_RIGHT 			16
+#define FLAG_TOPMENU 	32 
+
 /** While the ascii chars are all the same, the driver have different charsets
 for special chars used in different countries. The charset allows to fix for
 this problem. If characters look wrong, try a different charset. If nothing
@@ -354,14 +361,30 @@ void ui_init_keys() {
 }
 void ui_check_keys(int &action) {
 #if UI_HAS_KEYS!=0
-
+ int key_flag=0;
  //UI_KEYS_CLICKENCODER_LOW_REV(33,31); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
  UI_KEYS_BUTTON_LOW(76,UI_ACTION_OK); // push button, connects gnd to pin
+ if (action==UI_ACTION_OK)key_flag = key_flag|FLAG_OK;
  UI_KEYS_BUTTON_LOW(10,UI_ACTION_NEXT); // push button, connects gnd to pin
+  if (action==UI_ACTION_NEXT)key_flag = key_flag|FLAG_NEXT;
  UI_KEYS_BUTTON_LOW(44,UI_ACTION_PREVIOUS); // push button, connects gnd to pin
+  if (action==UI_ACTION_PREVIOUS)key_flag = key_flag|FLAG_PREVIOUS;
  UI_KEYS_BUTTON_LOW(75,UI_ACTION_BACK); // push button, connects gnd to pin
+  if (action==UI_ACTION_BACK)key_flag = key_flag|FLAG_BACK;
  UI_KEYS_BUTTON_LOW(72,UI_ACTION_RIGHT_KEY); // push button, connects gnd to pin
+  if (action==UI_ACTION_RIGHT_KEY)key_flag = key_flag|FLAG_RIGHT;
  UI_KEYS_BUTTON_LOW(77,UI_ACTION_TOP_MENU); // push button, connects gnd to pin
+  if (action==UI_ACTION_TOP_MENU)key_flag = key_flag|FLAG_TOPMENU;
+  if (key_flag==(FLAG_OK|FLAG_PREVIOUS|FLAG_TOPMENU))action=UI_ACTION_OK_TOP_PREV;
+  if (key_flag==(FLAG_OK|FLAG_NEXT|FLAG_TOPMENU))action=UI_ACTION_OK_TOP_NEXT;
+  if (key_flag==(FLAG_OK|FLAG_NEXT|FLAG_TOPMENU))action=UI_ACTION_OK_TOP_BACK;
+  if (key_flag==(FLAG_OK|FLAG_RIGHT|FLAG_BACK))action=UI_ACTION_OK_TOP_RIGHT;
+  if (key_flag==(FLAG_OK|FLAG_NEXT|FLAG_BACK))action=UI_ACTION_OK_NEXT_BACK;
+  if (key_flag==(FLAG_OK|FLAG_NEXT|FLAG_PREVIOUS))action=UI_ACTION_OK_NEXT_PREV;
+  if (key_flag==(FLAG_OK|FLAG_NEXT|FLAG_RIGHT))action=UI_ACTION_OK_NEXT_RIGHT;
+  if (key_flag==(FLAG_OK|FLAG_PREVIOUS|FLAG_RIGHT))action=UI_ACTION_OK_PREV_RIGHT;
+  if (key_flag==(FLAG_OK|FLAG_PREVIOUS|FLAG_BACK))action=UI_ACTION_OK_PREV_BACK;
+  
 //  UI_KEYS_CLICKENCODER_LOW_REV(47,45); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
 //  UI_KEYS_BUTTON_LOW(43,UI_ACTION_OK); // push button, connects gnd to pin
 #endif
