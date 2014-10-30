@@ -248,6 +248,14 @@ FSTRINGVAR(tZProbeY2)
 FSTRINGVAR(tZProbeX3)
 FSTRINGVAR(tZProbeY3)
 #endif
+FSTRINGVAR(tManualProbeX1)
+FSTRINGVAR(tManualProbeY1)
+FSTRINGVAR(tManualProbeX2)
+FSTRINGVAR(tManualProbeY2)
+FSTRINGVAR(tManualProbeX3)
+FSTRINGVAR(tManualProbeY3)
+FSTRINGVAR(tManualProbeX4)
+FSTRINGVAR(tManualProbeY4)
 #if FEATURE_AUTOLEVEL
 FSTRINGVAR(tAutolevelActive)
 #endif

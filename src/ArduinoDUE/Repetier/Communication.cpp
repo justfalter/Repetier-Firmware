@@ -247,6 +247,14 @@ FSTRINGVALUE(Com::tZProbeY2,"Z-probe Y2")
 FSTRINGVALUE(Com::tZProbeX3,"Z-probe X3")
 FSTRINGVALUE(Com::tZProbeY3,"Z-probe Y3")
 #endif
+FSTRINGVALUE(Com::tManualProbeX1,"Manual-probe X1")
+FSTRINGVALUE(Com::tManualProbeY1,"Manual-probe Y1")
+FSTRINGVALUE(Com::tManualProbeX2,"Manual-probe X2")
+FSTRINGVALUE(Com::tManualProbeY2,"Manual-probe Y2")
+FSTRINGVALUE(Com::tManualProbeX3,"Manual-probe X3")
+FSTRINGVALUE(Com::tManualProbeY3,"Manual-probe Y3")
+FSTRINGVALUE(Com::tManualProbeX4,"Manual-probe X4")
+FSTRINGVALUE(Com::tManualProbeY4,"Manual-probe Y4")
 #if FEATURE_AUTOLEVEL
 FSTRINGVALUE(Com::tAutolevelActive,"Autolevel active (1/0)")
 #endif

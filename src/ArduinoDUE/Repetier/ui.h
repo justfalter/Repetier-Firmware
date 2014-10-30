@@ -209,6 +209,7 @@
 #define UI_ACTION_E_100	 					1137
 #define UI_ACTION_BED_OFF 					1138
 #define UI_ACTION_LIGHT_OFF_AFTER			1139
+#define UI_ACTION_MANUAL_LEVEL				1140
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

@@ -99,6 +99,20 @@
 	#define UI_TEXT_CLEANING_DRIPBOX 	 "Cleaning Dripboxes"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Dripboxes"
 #endif
+
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_1 "Find the 3 knobs","on the bottom of","platform and","tighten 4 turns."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_2 "I am going to","move extruder to","some positions","for adjustment."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_3 "In each position","we will need to","adjust 2 knobs","at same time."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_4 "Nozzle is on the","right height if","can just slide","a sheet of paper"
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_5 "between nozzle","and plate. Grab","a sheet of paper","to proceed."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_6"Ajust the front","2 knobs until it","just slides amid","nozzle and plate"
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_7 "Ajust the back","knob until paper","just slides amid","nozzle and plate"
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_8 "Ajust the back","and right knobs","until paper just","slides."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_9 "Ajust the back","and left knobs","until paper just","slides."
+#define UI_TEXT_MANUAL_BED_LEVEL_PAGE_10 "Check that paper","just slides","between nozzle","and plate."
+
+#define UI_TEXT_PLEASE_WAIT        "Please wait"
+#define UI_TEXT_MANUAL_LEVEL        "Manual leveling"
 #define UI_TEXT_WARNING		"Warning!"
 #define UI_TEXT_EXTRUDER_COLD		"E%Ne is too cold!"
 #define UI_TEXT_HEAT_EXTRUDER		"Heat extruder ?"

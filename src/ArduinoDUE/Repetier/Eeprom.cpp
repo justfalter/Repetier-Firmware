@@ -464,6 +464,15 @@ void EEPROM::initalizeUncached()
     HAL::eprSetFloat(EPR_Z_PROBE_Y2,Z_PROBE_Y2);
     HAL::eprSetFloat(EPR_Z_PROBE_X3,Z_PROBE_X3);
     HAL::eprSetFloat(EPR_Z_PROBE_Y3,Z_PROBE_Y3);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X1, MANUAL_LEVEL_X1);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y1, MANUAL_LEVEL_Y1);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X2, MANUAL_LEVEL_X2);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y2, MANUAL_LEVEL_Y2);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X3, MANUAL_LEVEL_X3);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y3, MANUAL_LEVEL_Y3);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X4, MANUAL_LEVEL_X4);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y4, MANUAL_LEVEL_Y4);
+    
     HAL::eprSetFloat(EPR_Z_PROBE_BED_DISTANCE,Z_PROBE_BED_DISTANCE);
 #if DRIVE_SYSTEM==3
     HAL::eprSetFloat(EPR_DELTA_DIAGONAL_ROD_LENGTH,DELTA_DIAGONAL_ROD);
@@ -623,6 +632,14 @@ void EEPROM::readDataFromEEPROM()
             HAL::eprSetFloat(EPR_Z_PROBE_Y2,Z_PROBE_Y2);
             HAL::eprSetFloat(EPR_Z_PROBE_X3,Z_PROBE_X3);
             HAL::eprSetFloat(EPR_Z_PROBE_Y3,Z_PROBE_Y3);
+            HAL::eprSetFloat(EPR_MANUAL_LEVEL_X1, MANUAL_LEVEL_X1);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y1, MANUAL_LEVEL_Y1);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_X2, MANUAL_LEVEL_X2);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y2, MANUAL_LEVEL_Y2);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_X3, MANUAL_LEVEL_X3);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y3, MANUAL_LEVEL_Y3);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_X4, MANUAL_LEVEL_X4);
+			HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y4, MANUAL_LEVEL_Y4);
         }
         if(version<4)
         {
@@ -810,6 +827,14 @@ void EEPROM::writeSettings()
     writeFloat(EPR_Z_MAX_TRAVEL_ACCEL,Com::tEPRZTravelAcceleration);
 #endif
 #endif
+     writeFloat(EPR_MANUAL_LEVEL_X1, Com::tManualProbeX1);
+     writeFloat(EPR_MANUAL_LEVEL_Y1, Com::tManualProbeY1);
+     writeFloat(EPR_MANUAL_LEVEL_X2, Com::tManualProbeX2);
+     writeFloat(EPR_MANUAL_LEVEL_Y2, Com::tManualProbeY2);
+     writeFloat(EPR_MANUAL_LEVEL_X3, Com::tManualProbeX3);
+     writeFloat(EPR_MANUAL_LEVEL_Y3, Com::tManualProbeY3);
+     writeFloat(EPR_MANUAL_LEVEL_X4, Com::tManualProbeX4);
+     writeFloat(EPR_MANUAL_LEVEL_Y4, Com::tManualProbeY4);
 #if FEATURE_Z_PROBE
     writeFloat(EPR_Z_PROBE_HEIGHT,Com::tZProbeHeight);
     writeFloat(EPR_Z_PROBE_BED_DISTANCE,Com::tZProbeBedDitance);

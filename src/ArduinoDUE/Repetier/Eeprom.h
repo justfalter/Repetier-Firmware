@@ -113,7 +113,14 @@ have problems with other modules using the eeprom */
 #define EPR_DISPLAY_MODE 952
 #define EPR_SENSOR_ON 953
 #define EPR_KEEP_LIGHT_ON 954
-
+#define EPR_MANUAL_LEVEL_X1 955
+#define EPR_MANUAL_LEVEL_Y1 959
+#define EPR_MANUAL_LEVEL_X2 963
+#define EPR_MANUAL_LEVEL_Y2 971
+#define EPR_MANUAL_LEVEL_X3 975
+#define EPR_MANUAL_LEVEL_Y3 979
+#define EPR_MANUAL_LEVEL_X4 983
+#define EPR_MANUAL_LEVEL_Y4 987
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development
@@ -255,6 +262,71 @@ public:
         return Z_PROBE_BED_DISTANCE;
 #endif
     }
+
+static inline float ManualProbeX1() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_X1);
+#else
+        return MANUAL_LEVEL_X1;
+#endif
+    }
+    
+static inline float ManualProbeY1() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_Y1);
+#else
+        return MANUAL_LEVEL_Y1;
+#endif
+    } 
+    
+static inline float ManualProbeX2() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_X2);
+#else
+        return MANUAL_LEVEL_X2;
+#endif
+    }
+    
+static inline float ManualProbeY2() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_Y2);
+#else
+        return MANUAL_LEVEL_Y2;
+#endif
+    }    
+       
+static inline float ManualProbeX3() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_X3);
+#else
+        return MANUAL_LEVEL_X3;
+#endif
+    }
+    
+static inline float ManualProbeY3() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_Y3);
+#else
+        return MANUAL_LEVEL_Y3;
+#endif
+    }    
+ 
+ static inline float ManualProbeX4() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_X4);
+#else
+        return MANUAL_LEVEL_X4;
+#endif
+    }
+    
+static inline float ManualProbeY4() {
+#if EEPROM_MODE!=0
+        return HAL::eprGetFloat(EPR_MANUAL_LEVEL_Y4);
+#else
+        return MANUAL_LEVEL_Y4;
+#endif
+    }    
+ 
 #if NONLINEAR_SYSTEM
     static inline int16_t deltaSegmentsPerSecondMove() {
 #if EEPROM_MODE!=0
