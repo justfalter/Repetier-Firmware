@@ -37,6 +37,7 @@ char uipagedialog[4][MAX_COLS+1];;
 
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
 long ui_autoreturn_time=0;
+bool benable_autoreturn=true;
 #endif
 
 #if FEATURE_BEEPER
@@ -2025,7 +2026,7 @@ void UIDisplay::pushMenu(const UIMenu *men,bool refresh)
         refreshPage();
         return;
     }
-    if(menuLevel==4) return;
+    if(menuLevel==UI_MENU_MAXLEVEL-1) return;
     menuLevel++;
     menu[menuLevel]=men;
     menuTop[menuLevel] = menuPos[menuLevel] = 0;
@@ -2496,16 +2497,21 @@ void UIDisplay::nextPreviousAction(int8_t next)
 			executeAction(UI_ACTION_TOP_MENU);
 			 break;
 			}
-		//to be sure no return menu
+//to be sure no return menu
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
-			long tmp_autoreturn_time=ui_autoreturn_time;
-			ui_autoreturn_time=HAL::timeInMilliseconds()+(1000*3600);
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
 #endif
 		//we move 
 		PrintLine::moveRelativeDistanceInSteps(0,0,0,Printer::axisStepsPerMM[E_AXIS]*increment*istep,UI_SET_EXTRUDER_FEEDRATE,true,false);
         Commands::printCurrentPosition();
+//restore autoreturn function
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
-			ui_autoreturn_time=tmp_autoreturn_time;
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
  #endif
     break;
 	}
@@ -2770,6 +2776,13 @@ bool UIDisplay::confirmationDialog(char * title,char * line1,char * line2,int ty
 bool response=defaultresponse;
 bool process_it=true;
 int previousaction=0;
+int tmpmenulevel = menuLevel;
+if (menuLevel>3)menuLevel=3;
+//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+bool btmp_autoreturn=benable_autoreturn; //save current value
+benable_autoreturn=false;//desactivate no need to test if active or not
+#endif
 //init dialog strings
 col=0;
 parse(title,false);
@@ -2792,10 +2805,6 @@ delay(500);
 //main loop
 while (process_it)
 	{
-	//be sure not auto return
-	#if UI_AUTORETURN_TO_MENU_AFTER!=0
-    ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
-	#endif
 	//process critical actions
 	Commands::checkForPeriodicalActions();
 	//be sure button is pressed and not same one 
@@ -2839,7 +2848,15 @@ while (process_it)
 		refreshPage();
 		}
 	}//end while
-menuLevel--;
+ menuLevel=tmpmenulevel;
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
 return response;
 }
 // Actions are events from user input. Depending on the current state, each
@@ -2929,44 +2946,64 @@ void UIDisplay::executeAction(int action)
         case UI_ACTION_HOME_ALL:
 			{
 			int tmpmenu=menuLevel;
+			int tmpmenupos=menuPos[menuLevel];
+			UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 			menuLevel=0;
+			menuPos[0] = 0;
 			refreshPage();
             Printer::homeAxis(true,true,true);
             Commands::printCurrentPosition();
             menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
             refreshPage();
             break;
 			}
         case UI_ACTION_HOME_X:
 			{
 			int tmpmenu=menuLevel;
+			int tmpmenupos=menuPos[menuLevel];
+			UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 			menuLevel=0;
+			menuPos[0] = 0;
 			refreshPage();
             Printer::homeAxis(true,false,false);
             Commands::printCurrentPosition();
             menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
             refreshPage();
             break;
 			}
         case UI_ACTION_HOME_Y:
 			{
 			int tmpmenu=menuLevel;
+			int tmpmenupos=menuPos[menuLevel];
+			UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 			menuLevel=0;
+			menuPos[0] = 0;
 			refreshPage();
             Printer::homeAxis(false,true,false);
             Commands::printCurrentPosition();
-            menuLevel=tmpmenu;
+			menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
             refreshPage();
             break;
            }
         case UI_ACTION_HOME_Z:
 			{
- 			int tmpmenu=menuLevel;
+			int tmpmenu=menuLevel;
+			int tmpmenupos=menuPos[menuLevel];
+			UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 			menuLevel=0;
+			menuPos[0] = 0;
 			refreshPage();
             Printer::homeAxis(false,false,true);
             Commands::printCurrentPosition();
-            menuLevel=tmpmenu;
+			menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
             refreshPage();
             break;
 			}
@@ -3077,8 +3114,18 @@ void UIDisplay::executeAction(int action)
 #endif
 #if ENABLE_CLEAN_NOZZLE==1
 	case UI_ACTION_CLEAN_NOZZLE:
-	    //be sure no issue
+	    {//be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
+		//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
+#endif
+		int status=STATUS_OK;
+		int tmpmenu=menuLevel;
+		int tmpmenupos=menuPos[menuLevel];
+		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
+		if(menuLevel>0) menuLevel--;
 		pushMenu(&ui_menu_clean_nozzle_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
@@ -3092,10 +3139,6 @@ void UIDisplay::executeAction(int action)
             Commands::printTemperatures();
             printedTime = currentTime;
            }
-		 //be sure not auto return
-		#if UI_AUTORETURN_TO_MENU_AFTER!=0
-		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
-		#endif
 		 switch(step)
 		 {
 		 case  STEP_HEATING:
@@ -3154,8 +3197,6 @@ void UIDisplay::executeAction(int action)
 				playsound(5000,240);
 				playsound(3000,240);
 				Printer::homeAxis(true,true,false);
-				menuLevel=0;
-				refreshPage();
 				UI_STATUS(UI_TEXT_COOLDOWN);
 				}
 			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
@@ -3163,10 +3204,12 @@ void UIDisplay::executeAction(int action)
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEANING_NOZZLE))
 					{
 					UI_STATUS(UI_TEXT_CANCELED);
+					status=STATUS_CANCEL;
 					process_it=false;
 					}
 				else
 					{//we continue as before
+					if(menuLevel>0) menuLevel--;
 					pushMenu(&ui_menu_clean_nozzle_page,true);
 					}
 				delay(100);
@@ -3194,16 +3237,43 @@ void UIDisplay::executeAction(int action)
 		#if NUM_EXTRUDER>1
         Extruder::setTemperatureForExtruder(0,1);
 		#endif
-		menuLevel=0;
+		if(status==STATUS_OK)
+			{
+			menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
+			}
+		else if (status==STATUS_CANCEL)
+			{
+			menuLevel=0;
+			}
 		refreshPage();
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
         break;
+		}
 #endif	
 
 #if ENABLE_CLEAN_DRIPBOX==1
 	case UI_ACTION_CLEAN_DRIPBOX:
+		{
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
 		step=STEP_CLEAN_DRIPBOX;
+//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
+#endif
+		int tmpmenu=menuLevel;
+		int tmpmenupos=menuPos[menuLevel];
+		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 		menuLevel=0;
 		refreshPage();
 		//need to home if not
@@ -3214,10 +3284,6 @@ void UIDisplay::executeAction(int action)
 		{
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
-		 //be sure not auto return
-		#if UI_AUTORETURN_TO_MENU_AFTER!=0
-		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
-		#endif
 		 switch(step)
 		 {
 		 case STEP_CLEAN_DRIPBOX:
@@ -3256,7 +3322,7 @@ void UIDisplay::executeAction(int action)
 		        refreshPage();
 				Printer::homeAxis(true,true,false);
 				}
-			//there is no step that user can cancel but keep it if function become bore complex
+			//there is no step that user can cancel but keep it if function become more complex
 			 /*if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
 				{
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_CLEANING_DRIPBOX))
@@ -3266,6 +3332,7 @@ void UIDisplay::executeAction(int action)
 					}
 				else
 					{//we continue as before
+					if(menuLevel>0) menuLevel--;
 					pushMenu(&ui_menu_clean_dripbox_page,true);
 					}
 				delay(100);
@@ -3288,16 +3355,36 @@ void UIDisplay::executeAction(int action)
 			#endif
 			}
 		}
-		menuLevel=0;
+		menuLevel=tmpmenu;
+		menuPos[menuLevel]=tmpmenupos;
+		menu[menuLevel]=tmpmen;
 		refreshPage();
+		UI_STATUS(UI_TEXT_PRINTER_READY);
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
         break;
+		}
 #endif
 		
-case UI_ACTION_LOAD_EXTRUDER_0:
-case UI_ACTION_UNLOAD_EXTRUDER_0:
-#if NUM_EXTRUDER > 1
-case UI_ACTION_LOAD_EXTRUDER_1:
-case UI_ACTION_UNLOAD_EXTRUDER_1:
+		case UI_ACTION_LOAD_EXTRUDER_0:
+		case UI_ACTION_UNLOAD_EXTRUDER_0:
+		#if NUM_EXTRUDER > 1
+		case UI_ACTION_LOAD_EXTRUDER_1:
+		case UI_ACTION_UNLOAD_EXTRUDER_1:
+		#endif
+		{
+		int status=STATUS_OK;
+		int tmpmenulevel=menuLevel;
+//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
 #endif
 		if (action== UI_ACTION_LOAD_EXTRUDER_0)
 			{
@@ -3326,6 +3413,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
 		UI_STATUS(UI_TEXT_HEATING);
+		 if(menuLevel>0) menuLevel--;
 		pushMenu(&ui_menu_heatextruder_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
@@ -3339,10 +3427,6 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             Commands::printTemperatures();
             printedTime = currentTime;
            }
-		 //be sure not auto return
-		#if UI_AUTORETURN_TO_MENU_AFTER!=0
-		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
-		#endif
 		 switch(step)
 		 {
 		 case STEP_EXT_HEATING:
@@ -3434,6 +3518,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				//ask to redo or stop
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CONTINUE_ACTION,UI_TEXT_PUSH_FILAMENT,UI_CONFIRMATION_TYPE_YES_NO,true))
 						{
+						 if(menuLevel>0) menuLevel--;
 						pushMenu(&ui_menu_heatextruder_page,true);
 						counter=0;
 						step =STEP_EXT_LOAD_UNLOAD;
@@ -3464,10 +3549,12 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_LOADUNLOAD_FILAMENT))
 					{
 					UI_STATUS(UI_TEXT_CANCELED);
+					status=STATUS_CANCEL;
 					process_it=false;
 					}
 				else
 					{//we continue as before
+					if(menuLevel>0) menuLevel--;
 					pushMenu(&ui_menu_heatextruder_page,true);
 					}
 				delay(100);
@@ -3493,14 +3580,38 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 		//cool down
 		Extruder::setTemperatureForExtruder(0,extruderid);
 		Extruder::selectExtruderById(tmpextruderid,false);
-		menuLevel--;
+		if(status==STATUS_OK)
+			{
+			tmpmenulevel=menuLevel;
+			if(menuLevel>0) menuLevel--;
+			}
+		else if (status==STATUS_CANCEL)
+			{
+			menuLevel=0;
+			}
 		refreshPage();
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
         break;
-		
+		}
 		case UI_ACTION_AUTOLEVEL:
 		{
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
+//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
+#endif
+		int tmpmenu=menuLevel;
+		int tmpmenupos=menuPos[menuLevel];
+		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
 		#if ENABLE_CLEAN_NOZZLE==1
 		//ask for user if he wants to clean nozzle and plate
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_CLEAN1,UI_TEXT_CLEAN2))
@@ -3509,6 +3620,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 					}
 			
 		 #endif
+		 if(menuLevel>0) menuLevel--;
 		 pushMenu(&ui_menu_autolevel_page,true);
 		//Home first
 		Printer::homeAxis(true,true,true);
@@ -3537,10 +3649,6 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
             Commands::printTemperatures();
             printedTime = currentTime;
            }
-		 //be sure not auto return
-		#if UI_AUTORETURN_TO_MENU_AFTER!=0
-		ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER +10000;
-		#endif
 		 switch(step)
 		 {
 		 case STEP_AUTOLEVEL_HEATING:
@@ -3700,6 +3808,7 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 					}
 				else
 					{//we continue as before
+					if(menuLevel>0) menuLevel--;
 					pushMenu(&ui_menu_autolevel_page,true);
 					}
 				delay(100);
@@ -3721,7 +3830,6 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 				}
 			#endif
 			}
-			
 		}
 		//cool down
 		Extruder::setTemperatureForExtruder(0,0);
@@ -3739,7 +3847,11 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 		Printer::feedrate = oldFeedrate;
 		if(status==STATUS_OK)
 			{
-			menuLevel--;
+			UI_STATUS(UI_TEXT_PRINTER_READY);
+			menuLevel=tmpmenu;
+			menuPos[menuLevel]=tmpmenupos;
+			menu[menuLevel]=tmpmen;
+			refreshPage();
 			}
 		else if (status==STATUS_FAIL)
 			{
@@ -3751,8 +3863,16 @@ case UI_ACTION_UNLOAD_EXTRUDER_1:
 			UI_STATUS(UI_TEXT_CANCELED);
 			menuLevel=0;
 			}
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
 		refreshPage();
-        break;
+		break;
 		}
 		
         case UI_ACTION_PREHEAT_PLA:
@@ -4251,7 +4371,7 @@ void UIDisplay::slowAction()
     HAL::allowInterrupts();
 #endif
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
-    if(menuLevel>0 && ui_autoreturn_time<time)
+    if(menuLevel>0 && ui_autoreturn_time<time && benable_autoreturn)
     {
         lastSwitch = time;
         menuLevel=0;
