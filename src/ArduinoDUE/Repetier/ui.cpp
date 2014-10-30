@@ -2390,14 +2390,14 @@ void UIDisplay::nextPreviousAction(int8_t next)
 		int istep=1;
 		if (action==UI_ACTION_X_10)istep=10;
 		if (action==UI_ACTION_X_100)istep=100;
-		if (!Printer::isHomed())//ask for home to secure movement
+		if (!Printer::isXHomed())//ask for home to secure movement
 		{
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_X,UI_TEXT_WARNING_POS_X_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
 					{
-					 executeAction(UI_ACTION_HOME_ALL);
+					 executeAction(UI_ACTION_HOME_X);
 					}
 		}
-		if(Printer::isHomed())//check if accepted to home
+		if(Printer::isXHomed())//check if accepted to home
 		{
 			if (Extruder::current->id==0)
 				{
@@ -2423,14 +2423,14 @@ void UIDisplay::nextPreviousAction(int8_t next)
 		int istep=1;
 		if (action==UI_ACTION_Y_10)istep=10;
 		if (action==UI_ACTION_Y_100)istep=100;
-		if (!Printer::isHomed())//ask for home to secure movement
+		if (!Printer::isYHomed())//ask for home to secure movement
 		{
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_Y,UI_TEXT_WARNING_POS_Y_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
 					{
-					 executeAction(UI_ACTION_HOME_ALL);
+					 executeAction(UI_ACTION_HOME_Y);
 					}
 		}
-		if(Printer::isHomed())//check if accepted to home
+		if(Printer::isYHomed())//check if accepted to home
 		{
 			if (Extruder::current->id==0)
 				{
@@ -2456,14 +2456,14 @@ void UIDisplay::nextPreviousAction(int8_t next)
 		int istep=1;
 		if (action==UI_ACTION_Z_10)istep=10;
 		if (action==UI_ACTION_Z_100)istep=100;
-		if (!Printer::isHomed())//ask for home to secure movement
+		if (!Printer::isZHomed())//ask for home to secure movement
 		{
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_Z,UI_TEXT_WARNING_POS_Z_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
 					{
-					 executeAction(UI_ACTION_HOME_ALL);
+					 executeAction(UI_ACTION_HOME_Z);
 					}
 		}
-		if(Printer::isHomed())//check if accepted to home
+		if(Printer::isZHomed())//check if accepted to home
 		{
 			INCREMENT_MIN_MAX(tmp_pos,istep,Printer::zMin-ENDSTOP_Z_BACK_ON_HOME,Printer::zMin+Printer::zLength);
 

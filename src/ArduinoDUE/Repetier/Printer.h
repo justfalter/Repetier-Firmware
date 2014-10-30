@@ -41,6 +41,9 @@ union floatLong {
 #define PRINTER_FLAG1_ALLKILLED             8
 #define PRINTER_FLAG1_UI_ERROR_MESSAGE      16
 #define PRINTER_FLAG1_NO_DESTINATION_CHECK  32
+#define PRINTER_FLAG_HOME_X		1
+#define PRINTER_FLAG_HOME_Y		2
+#define PRINTER_FLAG_HOME_Z		4
 
 class Printer
 {
@@ -71,7 +74,7 @@ public:
     static uint8_t unitIsInches;
 
     static uint8_t debugLevel;
-    static uint8_t flag0,flag1; // 1 = stepper disabled, 2 = use external extruder interrupt, 4 = temp Sensor defect, 8 = homed
+    static uint8_t flag0,flag1,flaghome; // 1 = stepper disabled, 2 = use external extruder interrupt, 4 = temp Sensor defect, 8 = homed
     static uint8_t stepsPerTimerCall;
     static unsigned long interval;    ///< Last step duration in ticks.
     static unsigned long timer;              ///< used for acceleration/deceleration timing
@@ -340,8 +343,38 @@ public:
     }
     static inline uint8_t isHomed()
     {
-        return flag1 & PRINTER_FLAG1_HOMED;
+        return flaghome & (PRINTER_FLAG_HOME_X|PRINTER_FLAG_HOME_Y|PRINTER_FLAG_HOME_Z);
     }
+    
+    static inline uint8_t isXHomed()
+    {
+        return flaghome & PRINTER_FLAG_HOME_X;
+    }
+    
+     static inline uint8_t isYHomed()
+    {
+        return flaghome & PRINTER_FLAG_HOME_Y;
+    }
+    static inline uint8_t isZHomed()
+    {
+        return flaghome & PRINTER_FLAG_HOME_Z;
+    }
+    
+    static inline void setHomedX(uint8_t b)
+    {
+        flaghome = (b ? flaghome | PRINTER_FLAG_HOME_X : flag1 & ~PRINTER_FLAG_HOME_X);
+    }
+    
+    static inline void setHomedY(uint8_t b)
+    {
+        flaghome = (b ? flaghome | PRINTER_FLAG_HOME_Y : flag1 & ~PRINTER_FLAG_HOME_Y);
+    }
+    
+     static inline void setHomedZ(uint8_t b)
+    {
+        flaghome = (b ? flaghome | PRINTER_FLAG_HOME_Z : flag1 & ~PRINTER_FLAG_HOME_Z);
+    }
+    //this function just mention a home command has been sent not home is fully done, can be only X homed
     static inline void setHomed(uint8_t b)
     {
         flag1 = (b ? flag1 | PRINTER_FLAG1_HOMED : flag1 & ~PRINTER_FLAG1_HOMED);

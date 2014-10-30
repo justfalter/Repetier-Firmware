@@ -54,6 +54,7 @@ long Printer::destinationSteps[4];
 float Printer::coordinateOffset[3] = {0,0,0};
 uint8_t Printer::flag0 = 0;
 uint8_t Printer::flag1 = 0;
+uint8_t Printer::flaghome = 0;
 uint8_t Printer::debugLevel = 6; ///< Bitfield defining debug output. 1 = echo, 2 = info, 4 = error, 8 = dry run., 16 = Only communication, 32 = No moves
 uint8_t Printer::stepsPerTimerCall = 1;
 uint8_t Printer::menuMode = 0;
@@ -968,16 +969,19 @@ void Printer::deltaMoveToTopEndstops(float feedrate)
 }
 void Printer::homeXAxis()
 {
+	setHomedX(true);
     destinationSteps[X_AXIS] = 0;
     PrintLine::queueDeltaMove(true,false,false);
 }
 void Printer::homeYAxis()
 {
+	setHomedY(true);
     Printer::destinationSteps[Y_AXIS] = 0;
     PrintLine::queueDeltaMove(true,false,false);
 }
 void Printer::homeZAxis() // Delta z homing
 {
+	setHomedZ(true);
     deltaMoveToTopEndstops(Printer::homingFeedrate[Z_AXIS]);
     PrintLine::moveRelativeDistanceInSteps(0,0,2*axisStepsPerMM[Z_AXIS]*-ENDSTOP_Z_BACK_MOVE,0,Printer::homingFeedrate[Z_AXIS]/ENDSTOP_X_RETEST_REDUCTION_FACTOR, true, false);
     deltaMoveToTopEndstops(Printer::homingFeedrate[Z_AXIS]/ENDSTOP_X_RETEST_REDUCTION_FACTOR);
@@ -1054,6 +1058,7 @@ void Printer::homeAxis(bool xaxis,bool yaxis,bool zaxis) // Delta homing code
 void Printer::homeXAxis()
 {
     long steps;
+    setHomedX(true);
     if ((MIN_HARDWARE_ENDSTOP_X && X_MIN_PIN > -1 && X_HOME_DIR==-1 && MIN_HARDWARE_ENDSTOP_Y && Y_MIN_PIN > -1 && Y_HOME_DIR==-1) ||
             (MAX_HARDWARE_ENDSTOP_X && X_MAX_PIN > -1 && X_HOME_DIR==1 && MAX_HARDWARE_ENDSTOP_Y && Y_MAX_PIN > -1 && Y_HOME_DIR==1))
     {
@@ -1101,11 +1106,13 @@ void Printer::homeXAxis()
 void Printer::homeYAxis()
 {
     // Dummy function x and y homing must occur together
+    setHomedY(true);
 }
 #else // cartesian printer
 void Printer::homeXAxis()
 {
     long steps;
+    setHomedX(true);
 	Extruder::selectExtruderById(0,false);
     if ((MIN_HARDWARE_ENDSTOP_X && X_MIN_PIN > -1 && X_HOME_DIR==-1) || (MAX_HARDWARE_ENDSTOP_X && X_MAX_PIN > -1 && X_HOME_DIR==1))
     {
@@ -1139,6 +1146,7 @@ void Printer::homeXAxis()
 void Printer::homeYAxis()
 {
     long steps;
+    setHomedY(true);
 	Extruder::selectExtruderById(0,false);
     if ((MIN_HARDWARE_ENDSTOP_Y && Y_MIN_PIN > -1 && Y_HOME_DIR==-1) || (MAX_HARDWARE_ENDSTOP_Y && Y_MAX_PIN > -1 && Y_HOME_DIR==1))
     {
@@ -1174,6 +1182,7 @@ void Printer::homeYAxis()
 void Printer::homeZAxis()
 {
     long steps;
+    setHomedZ(true);
     if ((MIN_HARDWARE_ENDSTOP_Z && Z_MIN_PIN > -1 && Z_HOME_DIR==-1) || (MAX_HARDWARE_ENDSTOP_Z && Z_MAX_PIN > -1 && Z_HOME_DIR==1))
     {
         UI_STATUS_UPD(UI_TEXT_HOME_Z);
