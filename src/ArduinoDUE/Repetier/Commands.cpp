@@ -99,13 +99,14 @@ void Commands::waitUntilEndOfAllMoves()
 }
 void Commands::waitUntilEndOfAllBuffers()
 {
-    GCode *code;
+    GCode *code=NULL;
 #ifdef DEBUG_PRINT
     debugWaitLoop = 9;
 #endif
-    while(PrintLine::hasLines() || (code = GCode::peekCurrentCommand()) != NULL)
+    while(PrintLine::hasLines() || (code != NULL))
     {
         GCode::readFromSerial();
+        code = GCode::peekCurrentCommand();
         UI_MEDIUM; // do check encoder
         if(code)
         {
@@ -1549,6 +1550,23 @@ void Commands::executeGCode(GCode *com)
             com->printCommand();
         }
     }
+	if (com->hasE() && !Printer:: isMenuMode(MENU_MODE_SD_PAUSED))
+		{
+			Com::printFLN("Current Extruder ID: ",Extruder::current->id);
+			if ((Extruder::current->id)==0)//check correct extruder sensor 
+					{
+						#if defined(FIL_SENSOR1_PIN)
+							if(EEPROM::busesensor && READ(FIL_SENSOR1_PIN))uid.executeAction(UI_ACTION_NO_FILAMENT);
+						#endif
+					}
+				else
+					{
+						#if defined(FIL_SENSOR2_PIN)
+							if(EEPROM::busesensor &&READ(FIL_SENSOR2_PIN))uid.executeAction(UI_ACTION_NO_FILAMENT);
+						#endif
+					}
+		}
+  
 }
 void Commands::emergencyStop()
 {

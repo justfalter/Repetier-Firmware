@@ -100,6 +100,7 @@
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Dripboxes"
 #endif
 
+#define UI_TEXT_ALERT_NO_FILAMENT "Extruder%Ne has no","filament !","Push Ok to go to","change filament"
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_1 "Find the 3 knobs","on the bottom of","platform and","tighten 4 turns."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_2 "I am going to","move extruder to","some positions","for adjustment."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_3 "In each position","we will need to","adjust 2 knobs","at same time."

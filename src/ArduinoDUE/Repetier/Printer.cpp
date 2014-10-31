@@ -913,7 +913,7 @@ void Printer::defaultLoopActions()
 
     UI_MEDIUM; // do check encoder
     millis_t curtime = HAL::timeInMilliseconds();
-    if(PrintLine::hasLines())
+    if(PrintLine::hasLines()|| isMenuMode(MENU_MODE_SD_PAUSED))
         previousMillisCmd = curtime;
     else
     {

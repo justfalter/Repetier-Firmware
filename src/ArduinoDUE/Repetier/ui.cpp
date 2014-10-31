@@ -3373,6 +3373,70 @@ void UIDisplay::executeAction(int action)
 		}
 #endif
 		
+		case UI_ACTION_NO_FILAMENT:
+		{
+		int tmpmenu=menuLevel;
+		int tmpmenupos=menuPos[menuLevel];
+		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
+		process_it=true;
+		sd.pausePrint(true);
+		//to be sure no return menu
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+		bool btmp_autoreturn=benable_autoreturn; //save current value
+		benable_autoreturn=false;//desactivate no need to test if active or not
+#endif
+		playsound(3000,240);
+		playsound(4000,240);
+		playsound(5000,240);
+		if(menuLevel>0) menuLevel--;
+		pushMenu(&ui_no_filament_box,true);
+		previousaction=0;
+		while (process_it)
+		{
+		Commands::checkForPeriodicalActions();
+		if (previousaction!=lastButtonAction)
+			{
+			previousaction=lastButtonAction;
+			if(previousaction!=0)BEEP_SHORT;
+			if (lastButtonAction==UI_ACTION_OK)
+				{
+					process_it=false;
+				}
+			delay(100);
+				}
+			 //wake up light if power saving has been launched
+			#if UI_AUTOLIGHTOFF_AFTER!=0
+			if (EEPROM::timepowersaving>0)
+				{
+				UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+				#if CASE_LIGHTS_PIN > 0
+				if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+					{
+					TOGGLE(CASE_LIGHTS_PIN);
+					}
+				#endif
+				#if defined(UI_BACKLIGHT_PIN)
+				if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+				#endif
+				}
+			#endif
+			}
+//restore autoreturn function
+#if UI_AUTORETURN_TO_MENU_AFTER!=0
+			if (btmp_autoreturn)//if was activated restore it - if not do nothing - stay desactivate
+			{
+			benable_autoreturn=true;//reactivate 
+			ui_autoreturn_time=HAL::timeInMilliseconds()+UI_AUTORETURN_TO_MENU_AFTER;//reset counter
+			}
+ #endif
+		//menuLevel=0;
+		//pushMenu(&ui_menu_load_unload,true);
+		menuLevel=tmpmenu;
+		menuPos[menuLevel]=tmpmenupos;
+		menu[menuLevel]=tmpmen;
+		break;
+		}
+		
 		case UI_ACTION_LOAD_EXTRUDER_0:
 		case UI_ACTION_UNLOAD_EXTRUDER_0:
 		#if NUM_EXTRUDER > 1
