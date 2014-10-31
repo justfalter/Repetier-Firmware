@@ -304,6 +304,7 @@ It must be called frequently to empty the incoming buffer.
 */
 void GCode::readFromSerial()
 {
+	if (Printer:: isMenuMode(MENU_MODE_SD_PAUSED))return;
     if(bufferLength>=GCODE_BUFFER_SIZE) return; // all buffers full
     if(waitUntilAllCommandsAreParsed && bufferLength) return;
     waitUntilAllCommandsAreParsed=false;

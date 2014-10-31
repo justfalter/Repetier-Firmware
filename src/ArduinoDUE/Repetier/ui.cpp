@@ -3420,7 +3420,30 @@ void UIDisplay::executeAction(int action)
 		pushMenu(&ui_menu_heatextruder_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
-		step=STEP_EXT_HEATING;
+		if(!Printer:: isMenuMode(MENU_MODE_SD_PAUSED))
+			{//we heat only if not printing
+			step=STEP_EXT_HEATING;
+			}
+		else
+			{	//we are in menu pause but is temp ok ?
+				if(Extruder::current->tempControl.currentTemperatureC<=MIN_EXTRUDER_TEMP)
+					{
+					process_it=true;
+					menuLevel=0;
+					refreshPage();
+					UI_STATUS(UI_TEXT_EXTRUDER_COLD);
+					return;
+					}
+			else
+				{//temperature is ok so lets proceed
+				step = STEP_EXT_ASK_FOR_FILAMENT;
+				playsound(3000,240);
+				playsound(4000,240);
+				playsound(5000,240);
+				UI_STATUS(UI_TEXT_WAIT_FILAMENT);
+				}
+			counter=0;	
+			}
 		while (process_it)
 		{
 		Commands::checkForPeriodicalActions();
@@ -3528,7 +3551,6 @@ void UIDisplay::executeAction(int action)
 						}
 					else
 						{//we end
-						UI_STATUS(UI_TEXT_COOLDOWN);
 						process_it=false;
 						}
 					delay(100);
@@ -3581,7 +3603,7 @@ void UIDisplay::executeAction(int action)
 			}
 		}
 		//cool down
-		Extruder::setTemperatureForExtruder(0,extruderid);
+		if(!Printer:: isMenuMode(MENU_MODE_SD_PAUSED))Extruder::setTemperatureForExtruder(0,extruderid);
 		Extruder::selectExtruderById(tmpextruderid,false);
 		if(status==STATUS_OK)
 			{
