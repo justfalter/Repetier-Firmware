@@ -2488,7 +2488,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
 				if (confirmationDialog(UI_TEXT_WARNING ,UI_TEXT_EXTRUDER_COLD,UI_TEXT_HEAT_EXTRUDER,UI_CONFIRMATION_TYPE_YES_NO,true))
 					{
 					UI_STATUS(UI_TEXT_HEATING_EXTRUDER);
-					Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,Extruder::current->id);
+					Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,Extruder::current->id);
 					}
 				else
 					{
@@ -3142,9 +3142,9 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case  STEP_HEATING:
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 			#if NUM_EXTRUDER>1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 			#endif
 			step =  STEP_WAIT_FOR_TEMPERATURE;
 		 break;
@@ -3433,7 +3433,7 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case STEP_EXT_HEATING:
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,extruderid);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,extruderid);
 			step =  STEP_EXT_WAIT_FOR_TEMPERATURE;
 		 break;
 		 case STEP_EXT_WAIT_FOR_TEMPERATURE:
@@ -3657,12 +3657,12 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case STEP_AUTOLEVEL_HEATING:
-           Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+           Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 		   #if NUM_EXTRUDER>1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 		   #endif
 		   #if HAVE_HEATED_BED==true
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
+            Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_abs);
 		   #endif
 		   step =  STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE;
 		 break;
@@ -3925,12 +3925,12 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case STEP_MANUAL_LEVEL_HEATING:
-           Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+           Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 		   #if NUM_EXTRUDER>1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 		   #endif
 		   #if HAVE_HEATED_BED==true
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
+            Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_abs);
 		   #endif
 		   step =  STEP_MANUAL_LEVEL_WAIT_FOR_TEMPERATURE;
 		 break;
@@ -4183,28 +4183,28 @@ void UIDisplay::executeAction(int action)
 
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_pla,0);
 #if NUM_EXTRUDER>1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,1);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_pla,1);
 #endif
 #if NUM_EXTRUDER>2
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,2);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_pla,2);
 #endif
 #if HAVE_HEATED_BED==true
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
+            Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_pla);
 #endif
             break;
         case UI_ACTION_PREHEAT_ABS:
             UI_STATUS(UI_TEXT_PREHEAT_ABS);
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 #if NUM_EXTRUDER>1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 #endif
 #if NUM_EXTRUDER>2
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,2);
+            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,2);
 #endif
 #if HAVE_HEATED_BED==true
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
+            Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_abs);
 #endif
             break;
         case UI_ACTION_COOLDOWN:

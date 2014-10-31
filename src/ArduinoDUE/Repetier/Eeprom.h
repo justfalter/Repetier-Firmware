@@ -121,6 +121,10 @@ have problems with other modules using the eeprom */
 #define EPR_MANUAL_LEVEL_Y3 979
 #define EPR_MANUAL_LEVEL_X4 983
 #define EPR_MANUAL_LEVEL_Y4 987
+#define EPR_TEMP_EXT_PLA		 991
+#define EPR_TEMP_EXT_ABS 		 995
+#define EPR_TEMP_BED_PLA		 999
+#define EPR_TEMP_BED_ABS		1003
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development
@@ -170,6 +174,10 @@ public:
     static bool buselight; 
     static bool busesensor;
     static bool bkeeplighton;
+    static float ftemp_ext_pla;
+    static float ftemp_ext_abs;
+    static float ftemp_bed_pla;
+    static float ftemp_bed_abs;
     static millis_t timepowersaving;
     static void storeDataIntoEEPROM(uint8_t corrupted=0);
     static void readDataFromEEPROM();

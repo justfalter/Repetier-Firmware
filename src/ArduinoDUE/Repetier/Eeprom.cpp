@@ -62,6 +62,10 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     UIDisplay::display_mode=CASE_DISPLAY_MODE_DEFAULT;
     HAL::enablesound = bool(CASE_SOUND_DEFAULT_ON);
     EEPROM::busesensor = bool(CASE_SENSOR_DEFAULT_ON);
+    EEPROM::ftemp_ext_pla=UI_SET_PRESET_EXTRUDER_TEMP_PLA;
+    EEPROM::ftemp_ext_abs=UI_SET_PRESET_EXTRUDER_TEMP_ABS;
+    EEPROM::ftemp_bed_pla=UI_SET_PRESET_HEATED_BED_TEMP_PLA;
+    EEPROM::ftemp_bed_abs=UI_SET_PRESET_HEATED_BED_TEMP_ABS;
 	#if CASE_LIGHTS_PIN>=0
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
@@ -308,6 +312,10 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
 bool EEPROM::buselight=false;
 bool EEPROM::busesensor=false;
 bool EEPROM::bkeeplighton=true;
+float EEPROM::ftemp_ext_pla=UI_SET_PRESET_EXTRUDER_TEMP_PLA;
+float EEPROM::ftemp_ext_abs=UI_SET_PRESET_EXTRUDER_TEMP_ABS;
+float EEPROM::ftemp_bed_pla=UI_SET_PRESET_HEATED_BED_TEMP_PLA;
+float EEPROM::ftemp_bed_abs=UI_SET_PRESET_HEATED_BED_TEMP_ABS;
 
 #if UI_AUTOLIGHTOFF_AFTER !=0
 millis_t EEPROM::timepowersaving=1000 * 60 * 30; //30 min
@@ -381,6 +389,18 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
 #if UI_AUTOLIGHTOFF_AFTER !=0
 	HAL::eprSetInt32(EPR_POWERSAVE_AFTER_TIME,EEPROM::timepowersaving);
 #endif
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X1, MANUAL_LEVEL_X1);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y1, MANUAL_LEVEL_Y1);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X2, MANUAL_LEVEL_X2);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y2, MANUAL_LEVEL_Y2);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X3, MANUAL_LEVEL_X3);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y3, MANUAL_LEVEL_Y3);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_X4, MANUAL_LEVEL_X4);
+    HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y4, MANUAL_LEVEL_Y4);
+    HAL::eprSetFloat(EPR_TEMP_BED_PLA, EEPROM::ftemp_bed_pla);
+    HAL::eprSetFloat(EPR_TEMP_BED_ABS, EEPROM::ftemp_bed_abs);
+    HAL::eprSetFloat(EPR_TEMP_EXT_PLA, EEPROM::ftemp_ext_pla);
+    HAL::eprSetFloat(EPR_TEMP_EXT_ABS, EEPROM::ftemp_ext_abs);
 #if ENABLE_BACKLASH_COMPENSATION
     HAL::eprSetFloat(EPR_BACKLASH_X,Printer::backlashX);
     HAL::eprSetFloat(EPR_BACKLASH_Y,Printer::backlashY);
@@ -472,6 +492,10 @@ void EEPROM::initalizeUncached()
     HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y3, MANUAL_LEVEL_Y3);
     HAL::eprSetFloat(EPR_MANUAL_LEVEL_X4, MANUAL_LEVEL_X4);
     HAL::eprSetFloat(EPR_MANUAL_LEVEL_Y4, MANUAL_LEVEL_Y4);
+    HAL::eprSetFloat(EPR_TEMP_BED_PLA, EEPROM::ftemp_bed_pla);
+    HAL::eprSetFloat(EPR_TEMP_BED_ABS, EEPROM::ftemp_bed_abs);
+    HAL::eprSetFloat(EPR_TEMP_EXT_PLA, EEPROM::ftemp_ext_pla);
+    HAL::eprSetFloat(EPR_TEMP_EXT_ABS, EEPROM::ftemp_ext_abs);
     
     HAL::eprSetFloat(EPR_Z_PROBE_BED_DISTANCE,Z_PROBE_BED_DISTANCE);
 #if DRIVE_SYSTEM==3
@@ -560,6 +584,10 @@ void EEPROM::readDataFromEEPROM()
 	//new value do reset time
 	UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
 #endif	
+EEPROM::ftemp_ext_pla= HAL::eprGetFloat(EPR_TEMP_EXT_PLA);
+EEPROM::ftemp_ext_abs= HAL::eprGetFloat(EPR_TEMP_EXT_ABS);
+EEPROM::ftemp_bed_pla= HAL::eprGetFloat(EPR_TEMP_BED_PLA);
+EEPROM::ftemp_bed_abs= HAL::eprGetFloat(EPR_TEMP_BED_ABS);
 #if ENABLE_BACKLASH_COMPENSATION
     Printer::backlashX = HAL::eprGetFloat(EPR_BACKLASH_X);
     Printer::backlashY = HAL::eprGetFloat(EPR_BACKLASH_Y);
@@ -784,6 +812,10 @@ void EEPROM::writeSettings()
 #if UI_AUTOLIGHTOFF_AFTER !=0
 	writeLong(EPR_POWERSAVE_AFTER_TIME,Com::tPowerSave);
 #endif
+    writeFloat(EPR_TEMP_EXT_PLA,Com::tTempExtPLA);
+    writeFloat(EPR_TEMP_EXT_ABS,Com::tTempExtABS);
+    writeFloat(EPR_TEMP_BED_PLA,Com::tTempBedPLA);
+    writeFloat(EPR_TEMP_BED_ABS,Com::tTempBedABS);
 	writeByte(EPR_DISPLAY_MODE,Com::tDisplayMode);
 #if ENABLE_BACKLASH_COMPENSATION
     writeFloat(EPR_BACKLASH_X,Com::tEPRXBacklash);

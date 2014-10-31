@@ -25,6 +25,10 @@
 class Com
 {
     public:
+FSTRINGVAR(tTempExtABS)
+FSTRINGVAR(tTempExtPLA)
+FSTRINGVAR(tTempBedABS)
+FSTRINGVAR(tTempBedPLA)
 FSTRINGVAR(tKeepLightOn)
 FSTRINGVAR(tSensorOn)
 FSTRINGVAR(tLightOn)

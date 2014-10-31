@@ -30,6 +30,10 @@ FSTRINGVALUE(Com::tFirmware,"FIRMWARE_NAME:Repetier_" REPETIER_VERSION " FIRMWAR
 FSTRINGVALUE(Com::tFirmware,"FIRMWARE_NAME:Repetier_" REPETIER_VERSION " FIRMWARE_URL:https://github.com/repetier/Repetier-Firmware/ PROTOCOL_VERSION:1.0 MACHINE_TYPE:Core_XY EXTRUDER_COUNT:" XSTR(NUM_EXTRUDER) " REPETIER_PROTOCOL:2")
 #endif
 #endif
+FSTRINGVALUE(Com::tTempExtABS,"Temp Ext ABS:");
+FSTRINGVALUE(Com::tTempExtPLA,"Temp Ext PLA:");
+FSTRINGVALUE(Com::tTempBedABS,"Temp Bed ABS:");
+FSTRINGVALUE(Com::tTempBedPLA,"Temp Bed PLA:");
 FSTRINGVALUE(Com::tKeepLightOn,"Keep Light On:");
 FSTRINGVALUE(Com::tSensorOn,"Sensor On:");
 FSTRINGVALUE(Com::tLightOn,"Light On:");
