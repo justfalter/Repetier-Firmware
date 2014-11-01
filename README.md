@@ -21,6 +21,8 @@ for basic installation just change :
   1 for DaVinci 1.0 (1Fan, 1 Extruder)  
   2 for DaVinci 2.0 SF (1Fan, 2 Extruders)  
   3 for DaVinci 2.0  (2Fans, 2 Extruders)  
+  
+  Once flash is done <S>do not forget to use M502 then M500 </S>from repetier <S>or got select printer menu "Settings/Load Fail-Safe"</S> and accept to save in eeprom to have correct eeprom settings.
 
 ***
 ##TODO
@@ -29,25 +31,33 @@ for basic installation just change :
 ***
 ##Implemented
 * Standard GCODE commands
-* Dual extruders support
+* Single/Dual extruders support (DaVinci 1.0/2.0)
 * Single Fan / Dual fans support according printer configuration
 * Repurpose of second fan usage to be controlled by M106/M107 commands on Da Vinci 2.0
-* Sound and Light management, including powersaving function
-* Cleaning Nozzle(s) by menu and by command
+* Sound and Light management, including powersaving function (light can be managed remotely by GCODE)
+* Cleaning Nozzle(s) by menu and by GCODE for 1.0 and 2.0
 * Load / Unload filament by menu
-* Sensor support for 1.0 and 2.0
-* Auto Z-probe
+* Filament Sensor support for 1.0 and 2.0 (auto loading / alert if no filament when printing)
+* Auto Z-probe for 1.0 and 2.0 
+* Manual Leveling for 1.0 and 2.0 
 * Dripbox cleaning
-* Advanced/Easy menu
+* Advanced/Easy menu (switch in "Settings/Mode" or using Up key/Right key/ Ok key in same time)
 * Loading FailSafe settings
+* Pause  from printer when printing from host or printer
+* Emergency stop (Left key/Down key/Ok key  in same time)
+* Increase extruder temperature range to 270C and bed to 130C
+* Add temperature control on extruder to avoid movement if too cold
+* Add fast switch (1/10/100mm) for manual position/extrusion
+* Several fixes from original FW
+* More to come ....
 
 ***
 ##Known Issues
-* Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), 
+* Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), one solution is there : https://github.com/repetier/Repetier-Firmware/wiki/Installation
 and [Check issue list](https://github.com/luc-github/Repetier-Firmware/issues)
 	
 ***
-Current menu: <img src='https://github.com/luc-github/Repetier-Firmware/blob/davinci/Menu%20.png'>
+Current menu <S>(out dated)</S>: <img src='https://github.com/luc-github/Repetier-Firmware/blob/davinci/Menu%20.png'>
 
 Plan :  
 Easy: <img src='https://cloud.githubusercontent.com/assets/8822552/4748170/bfa0b7e8-5a69-11e4-80b7-02b9c99fe122.png'>
