@@ -22,7 +22,7 @@ for basic installation just change :
   2 for DaVinci 2.0 SF (1Fan, 2 Extruders)  
   3 for DaVinci 2.0  (2Fans, 2 Extruders)  
   
-  Once flash is done <S>do not forget to use M502 then M500 </S>from repetier <S>or got select printer menu "Settings/Load Fail-Safe"</S> and accept to save in eeprom to have correct eeprom settings.
+  Once flash is done <B>do not forget to use M502 then M500 </B>from repetier <B>or got select printer menu "Settings/Load Fail-Safe"</B> and accept to save in eeprom to have correct eeprom settings.
 
 ***
 ##TODO
@@ -57,7 +57,7 @@ for basic installation just change :
 and [Check issue list](https://github.com/luc-github/Repetier-Firmware/issues)
 	
 ***
-Current menu <S>(out dated)</S>: <img src='https://github.com/luc-github/Repetier-Firmware/blob/davinci/Menu%20.png'>
+Current menu <B>(out dated)</B>: <img src='https://github.com/luc-github/Repetier-Firmware/blob/davinci/Menu%20.png'>
 
 Plan :  
 Easy: <img src='https://cloud.githubusercontent.com/assets/8822552/4748170/bfa0b7e8-5a69-11e4-80b7-02b9c99fe122.png'>
