@@ -42,7 +42,11 @@
 #define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 0 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
 #define UI_LANGUAGE 0 // 0 English - 7 French (others are not up to date)
 #define MOTHERBOARD 999
-
+#define VERSION_MAJOR "  1"
+#define VERSION_MINOR_YEAR "14"
+#define VERSION_MINOR_MONTH "11"
+#define VERSION_MINOR_DAY "3"
+#define VERSION_BUILD "1"
 
 // ################ END MANUAL SETTINGS ##########################
 
@@ -58,6 +62,7 @@
 #define Y_MAX_LENGTH 217 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 1.0"
+#define DAVINCI_TYPE "1"
 #endif
 
 #if DAVINCI==2
@@ -69,6 +74,7 @@
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
+#define DAVINCI_TYPE "2"
 #endif
 
 #if DAVINCI==3
@@ -80,6 +86,7 @@
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
+#define DAVINCI_TYPE "3"
 #endif
 
 #include "pins.h"

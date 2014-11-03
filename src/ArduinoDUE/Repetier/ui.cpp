@@ -291,6 +291,7 @@ const long baudrates[] PROGMEM = {9600,14400,19200,28800,38400,56000,57600,76800
 
 static const uint8_t LCDLineOffsets[] PROGMEM = UI_LINE_OFFSETS;
 static const char versionString[] PROGMEM = UI_VERSION_STRING;
+static const char versionString2[] PROGMEM = UI_VERSION_STRING2;
 
 
 #if UI_DISPLAY_TYPE==3
@@ -885,9 +886,10 @@ void UIDisplay::initialize()
     {
 #endif
         for(uint8_t y=0; y<UI_ROWS; y++) displayCache[y][0] = 0;
-        printRowP(0, versionString);
-        printRowP(1, PSTR(UI_PRINTER_NAME));
+        printRowP(0, PSTR(UI_PRINTER_NAME));
+        printRowP(1, versionString);
 #if UI_ROWS>2
+		printRowP(2, versionString2);
         printRowP(UI_ROWS-1, PSTR(UI_PRINTER_COMPANY));
 #endif
 #if UI_DISPLAY_TYPE == 5
@@ -895,11 +897,14 @@ void UIDisplay::initialize()
     while( u8g_NextPage(&u8g) );  //end picture loop
 #endif
 #else
-    slideIn(0, versionString);
+    slideIn(0, PSTR(UI_PRINTER_NAME));
     strcpy(displayCache[0], printCols);
-    slideIn(1, PSTR(UI_PRINTER_NAME));
+    slideIn(1, versionString);
     strcpy(displayCache[1], printCols);
+    
 #if UI_ROWS>2
+	slideIn(2, versionString2);
+    strcpy(displayCache[2], printCols);
     slideIn(UI_ROWS-1, PSTR(UI_PRINTER_COMPANY));
     strcpy(displayCache[UI_ROWS-1], printCols);
 #endif
@@ -1420,7 +1425,7 @@ void UIDisplay::parse(const char *txt,bool ram)
 			else if(c2=='s') 
 			if((EEPROM::timepowersaving!=maxInactiveTime)||(EEPROM::timepowersaving!=stepperInactiveTime))
 					{
-					addStringP("   ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
+					addStringP("  ");//for alignement need a better way as it should be depending of size of translation of "off" vs "30min"
 					addStringP(ui_text_on);//if not defined by preset
 					}
 			else if(EEPROM::timepowersaving==0) 

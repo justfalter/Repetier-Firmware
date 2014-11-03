@@ -1144,7 +1144,9 @@ void ui_check_slow_keys(int &action) {}
 #include "uimenu.h"
 #endif
 
-#define UI_VERSION_STRING "Repetier " REPETIER_VERSION
+#define UI_VERSION_STRING2 "Repetier " REPETIER_VERSION "Mod"
+
+#define UI_VERSION_STRING  VERSION_MAJOR "." VERSION_MINOR_YEAR "-" VERSION_MINOR_MONTH "-" VERSION_MINOR_DAY "_" VERSION_BUILD "." DAVINCI_TYPE
 
 #ifdef UI_HAS_I2C_KEYS
 #define COMPILE_I2C_DRIVER
