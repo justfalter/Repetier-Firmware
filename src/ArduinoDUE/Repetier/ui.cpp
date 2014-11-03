@@ -24,8 +24,7 @@ extern const int8_t encoder_table[16] PROGMEM ;
 #include <inttypes.h>
 #include <ctype.h>
 
-
-char uipagedialog[4][MAX_COLS+1];;
+char uipagedialog[4][MAX_COLS+1];
 
 #if BEEPER_TYPE==2 && defined(UI_HAS_I2C_KEYS) && UI_I2C_KEY_ADDRESS!=BEEPER_ADDRESS
 #error Beeper address and i2c key address must be identical
@@ -1666,6 +1665,34 @@ void UIDisplay::refreshPage()
         UIMenu *men = (UIMenu*)pgm_read_word(&(ui_pages[menuPos[0]]));
         uint8_t nr = pgm_read_word_near(&(men->numEntries));
         UIMenuEntry **entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
+        //check entry is visible
+        UIMenuEntry *testent =(UIMenuEntry *)pgm_read_word(&(entries[0]));
+         if (!testent->showEntry())//not visible so look for next one
+			{
+			int  nb = 0;
+			bool bloop =true;
+		  while( nb < UI_NUM_PAGES+1 && bloop)
+			  {
+				  if (lastAction==UI_ACTION_PREVIOUS)
+				  {
+					menuPos[0] = (menuPos[0]==0 ? UI_NUM_PAGES-1 : menuPos[0]-1);
+				  }
+				  else
+				  {
+				  menuPos[0]++;
+				  if(menuPos[0]>=UI_NUM_PAGES)menuPos[0]=0;
+				 }
+			  nb++; //to avoid to loop more than all entries once
+			  UIMenu *mentest = (UIMenu*)pgm_read_word(&(ui_pages[menuPos[0]]));
+			  UIMenuEntry **entriestest = (UIMenuEntry**)pgm_read_word(&(mentest->entries));
+			  UIMenuEntry *enttest=(UIMenuEntry *)pgm_read_word(&(entriestest[0]));
+			   if (enttest->showEntry()) bloop=false; //ok we found visible so we end here
+			   }
+		   if (bloop) menuPos[0]=0; //nothing was found so set page 0 even not visible
+		   men = (UIMenu*)pgm_read_word(&(ui_pages[menuPos[0]]));
+			nr = pgm_read_word_near(&(men->numEntries));
+			entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
+			}
         for(r=0; r<nr && r<UI_ROWS; r++)
         {
             UIMenuEntry *ent =(UIMenuEntry *)pgm_read_word(&(entries[r]));

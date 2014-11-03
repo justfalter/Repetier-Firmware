@@ -172,31 +172,30 @@ for 2 row displays. You can add additional pages or change the default pages lik
   // How many pages do you want to have. Minimum is 1.
   #define UI_NUM_PAGES 1+UI_PRINTTIME_COUNT
 
+
 #elif UI_ROWS>=4
+//page 1
  #if HAVE_HEATED_BED==true
    #if NUM_EXTRUDER == 1
-   UI_PAGE4(ui_page1,"\005%ec/%Ec\002\007%eB/%Eb\002","Z:%x2","Mul:%om Buf:%oB","%os",ALL_MODE);
-   //UI_PAGE4(ui_page1,UI_TEXT_PAGE_EXTRUDER,UI_TEXT_PAGE_BED,UI_TEXT_PAGE_BUFFER,"%os",ALL_MODE);
+   UI_PAGE4(ui_page1,"\005%ec/%Ec\007%eB/%Eb","Z:%x2","Mul:%om Buf:%oB","%os",ADVANCED_MODE);
+   UI_PAGE4(ui_page1e,"\005%ec/%Ec\002C","\007%eB/%Eb\002C","Z:%x2","%os",EASY_MODE);
    #else
-   UI_PAGE4(ui_page1,"\005%e0/%E0\005%e1/%E1","\007%eB/%EbMul:%om%%%","Z:%x2","%os",ALL_MODE);
+   UI_PAGE4(ui_page1,"\005%e0/%E0\005%e1/%E1","\007%eB/%EbMul:%om%%%","Z:%x2","%os",ADVANCED_MODE);
+   UI_PAGE4(ui_page1e,"\0051 %e0/%E0\002C","\0052 %e1/%E1\002C","\007 %eB/%Eb\002C","%os",EASY_MODE);
    #endif
  #else
    UI_PAGE4(ui_page1,UI_TEXT_PAGE_EXTRUDER,"Z:%x2 mm",UI_TEXT_PAGE_BUFFER,"%os",ALL_MODE);
+    #if NUM_EXTRUDER == 1
+   UI_PAGE4(ui_page1,"\005%ec/%Ec\002","Z:%x2",UI_TEXT_PAGE_BUFFER,"%os",ALL_MODE);
+   #else
+   UI_PAGE4(ui_page1,"\005%e0/%E0\005%e1/%E1",UI_TEXT_PAGE_BUFFER,"%os",ALL_MODE);
+   #endif
  #endif
-  UI_PAGE4(ui_page2,"X:%x0 mm","Y:%x1 mm","Z:%x2 mm","%os",ALL_MODE);
-//UI_PAGE4(ui_page2,"dX:%y0 mm %sX","dY:%y1 mm %sY","dZ:%y2 mm %sZ","%os",ALL_MODE);
- /*  UI_PAGE4(ui_page3,UI_TEXT_PAGE_EXTRUDER1,
- #if NUM_EXTRUDER>1
-   UI_TEXT_PAGE_EXTRUDER2
- #else
-   ""
- #endif
- #if HAVE_HEATED_BED==true
-  ,UI_TEXT_PAGE_BED
- #else
-  ,""
- #endif
- ,"%os",ALL_MODE);*/
+ //page 2
+ UI_PAGE4(ui_page2,"X:%x0 mm","Y:%x1 mm","Z:%x2 mm","%os",ALL_MODE);
+ //page 3
+ UI_PAGE4(ui_page3,UI_TEXT_SPEED_MULTIPLY,UI_TEXT_FLOW_MULTIPLY,UI_TEXT_PAGE_BUFFER,"%os",ALL_MODE);
+ //printing time
  #if EEPROM_MODE!=0
   UI_PAGE4(ui_page4,UI_TEXT_PRINT_TIME,"%Ut",UI_TEXT_PRINT_FILAMENT,"%Uf m",ADVANCED_MODE);
   #define UI_PRINTTIME_PAGES ,&ui_page4
@@ -209,9 +208,9 @@ for 2 row displays. You can add additional pages or change the default pages lik
 Merge pages together. Use the following pattern:
 #define UI_PAGES {&name1,&name2,&name3}
 */
- #define UI_PAGES {&ui_page1,&ui_page2 UI_PRINTTIME_PAGES}
+ #define UI_PAGES {&ui_page1,&ui_page1e,&ui_page2,&ui_page3 UI_PRINTTIME_PAGES}
 // How many pages do you want to have. Minimum is 1.
- #define UI_NUM_PAGES 2+UI_PRINTTIME_COUNT
+ #define UI_NUM_PAGES 4+UI_PRINTTIME_COUNT
 #else
 #if HAVE_HEATED_BED==true
 UI_PAGE2(ui_page1,UI_TEXT_PAGE_EXTRUDER,UI_TEXT_PAGE_BED,ALL_MODE);
