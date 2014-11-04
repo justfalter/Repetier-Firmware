@@ -4819,6 +4819,7 @@ if ((ui_autolightoff_time<time) && (EEPROM::timepowersaving>0) )
 		WRITE(UI_BACKLIGHT_PIN, LOW);
 		#endif
 		}
+	if((EEPROM::bkeeplighton  &&((Printer::menuMode&MENU_MODE_SD_PRINTING)||(Printer::menuMode&MENU_MODE_PRINTING)||(Printer::menuMode&MENU_MODE_SD_PAUSED))))ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving+10000;
 	}
 #endif
     if(menuLevel==0 && time>4000)
