@@ -4225,6 +4225,8 @@ void UIDisplay::executeAction(int action)
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_MANUAL_LEVEL))
 					{
 					status=STATUS_CANCEL;
+					if(menuLevel>0) menuLevel--;
+					pushMenu(&ui_menu_manual_level_heat_page,true);
 					PrintLine::moveRelativeDistanceInSteps(0,0,10*Printer::axisStepsPerMM[Z_AXIS],0,Printer::homingFeedrate[0],true,false);
 					UI_STATUS(UI_TEXT_CANCELED);
 					process_it=false;

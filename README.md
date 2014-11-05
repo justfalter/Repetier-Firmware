@@ -43,7 +43,6 @@ for basic installation just change :
 * Dripbox cleaning
 * Advanced/Easy menu (switch in "Settings/Mode" or using Up key/Right key/ Ok key in same time)
 * Loading FailSafe settings
-* Pause  from printer when printing from host or printer
 * Emergency stop (Left key/Down key/Ok key  in same time)
 * Increase extruder temperature range to 270C and bed to 130C
 * Add temperature control on extruder to avoid movement if too cold
