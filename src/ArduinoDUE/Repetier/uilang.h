@@ -103,7 +103,15 @@
 	#define UI_TEXT_EXTR_XOFF         "Xoffst:%Xx"
 	#define UI_TEXT_EXTR_YOFF         "Yoffst:%Xy"
 #endif
-
+#define UI_TEXT_EXT_TEMP_ABS "T\002Ext.ABS:%T1\002C"
+#define UI_TEXT_EXT_TEMP_PLA "T\002Ext.PLA:%T2\002C"
+#define UI_TEXT_BED_TEMP_ABS "T\002Bed ABS:%T3\002C"
+#define UI_TEXT_BED_TEMP_PLA "T\002Bed PLA:%T4\002C"
+#if HAVE_HEATED_BED==true
+#define UI_TEXT_EXTRUDER_BED "Extruder/Bed"
+#else
+#define UI_TEXT_EXTRUDER_BED "Extruder"
+#endif
 #define UI_TEXT_ALERT_NO_FILAMENT "Extruder%Ne has no","filament !","Push Ok to go to","change filament"
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_1 "Find the 3 knobs","on the bottom of","platform and","tighten 4 turns."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_2 "I am going to","move extruder to","some positions","for adjustment."

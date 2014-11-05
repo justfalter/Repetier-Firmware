@@ -1359,6 +1359,14 @@ void UIDisplay::parse(const char *txt,bool ram)
             }
 #endif
             break;
+        case 'T':
+			if(c2=='1')addFloat(EEPROM::ftemp_ext_abs,3,0 );
+			else if(c2=='2')addFloat(EEPROM::ftemp_ext_pla,3,0 );
+			 #if HAVE_HEATED_BED==true
+			 else if(c2=='3')addFloat(EEPROM::ftemp_bed_abs,3,0 );
+			 else if(c2=='4')addFloat(EEPROM::ftemp_bed_pla,3,0 );
+			 #endif
+        break;
         case 's': // Endstop positions and sound
 			#if FEATURE_BEEPER
 		    if(c2=='o')addStringP(HAL::enablesound?ui_text_on:ui_text_off);        // sound on/off
@@ -2579,6 +2587,50 @@ void UIDisplay::nextPreviousAction(int8_t next)
     }
 #endif
     break;
+    case UI_ACTION_EXT_TEMP_ABS :
+    {
+		 int tmp = EEPROM::ftemp_ext_abs;
+        if(tmp<UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
+        tmp+=increment;
+        if(tmp==1) tmp = UI_SET_MIN_EXTRUDER_TEMP;
+        if(tmp<UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
+        else if(tmp>UI_SET_MAX_EXTRUDER_TEMP) tmp = UI_SET_MAX_EXTRUDER_TEMP;
+        EEPROM::ftemp_ext_abs=tmp;
+	}
+	break;
+	case UI_ACTION_EXT_TEMP_PLA :
+    {
+		 int tmp = EEPROM::ftemp_ext_pla;
+        if(tmp<UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
+        tmp+=increment;
+        if(tmp==1) tmp = UI_SET_MIN_EXTRUDER_TEMP;
+        if(tmp<UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
+        else if(tmp>UI_SET_MAX_EXTRUDER_TEMP) tmp = UI_SET_MAX_EXTRUDER_TEMP;
+        EEPROM::ftemp_ext_pla=tmp;
+	}
+	break;
+	case UI_ACTION_BED_TEMP_ABS :
+    {
+		 int tmp = EEPROM::ftemp_bed_abs;
+        if(tmp<UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
+        tmp+=increment;
+        if(tmp==1) tmp = UI_SET_MIN_HEATED_BED_TEMP;
+        if(tmp<UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
+        else if(tmp>UI_SET_MAX_HEATED_BED_TEMP) tmp = UI_SET_MAX_HEATED_BED_TEMP;
+        EEPROM::ftemp_bed_abs=tmp;
+	}
+	break;
+case UI_ACTION_BED_TEMP_PLA :
+    {
+		 int tmp = EEPROM::ftemp_bed_pla;
+        if(tmp<UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
+        tmp+=increment;
+        if(tmp==1) tmp = UI_SET_MIN_HEATED_BED_TEMP;
+        if(tmp<UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
+        else if(tmp>UI_SET_MAX_HEATED_BED_TEMP) tmp = UI_SET_MAX_HEATED_BED_TEMP;
+        EEPROM::ftemp_bed_pla=tmp;
+	}
+	break;
     case UI_ACTION_EXTRUDER0_TEMP:
     {
         int tmp = (int)extruder[0].tempControl.targetTemperatureC;

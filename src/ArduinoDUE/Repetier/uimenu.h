@@ -704,9 +704,20 @@ UI_MENU_CHANGEACTION(ui_menu_cext_yoffset,UI_TEXT_EXTR_YOFF,UI_ACTION_Y_OFFSET,A
 #define UI_MENU_CONFEXTCOND
 #define UI_MENU_CONFEXTCNT 0
 #endif
-#define UI_MENU_CEXTR {UI_MENU_ADDCONDBACK UI_MENU_CONFEXTCOND &ui_menu_cext_steps,&ui_menu_cext_start_feedrate,&ui_menu_cext_max_feedrate,&ui_menu_cext_acceleration,&ui_menu_cext_watch_period,&ui_menu_ext_wait_units,&ui_menu_ext_wait_temp UI_MENU_ADVANCE UI_MENU_PIDCOND}
-UI_MENU(ui_menu_cextr,UI_MENU_CEXTR,7+UI_MENU_BACKCNT+UI_MENU_PIDCNT+UI_MENU_CONFEXTCNT+UI_MENU_ADV_CNT);
-UI_MENU_SUBMENU(ui_menu_conf_extr,    UI_TEXT_EXTRUDER,     ui_menu_cextr,ADVANCED_MODE);
+UI_MENU_CHANGEACTION(ui_menu_ext_temp_abs,UI_TEXT_EXT_TEMP_ABS,UI_ACTION_EXT_TEMP_ABS,ADVANCED_MODE);
+UI_MENU_CHANGEACTION(ui_menu_ext_temp_pla,UI_TEXT_EXT_TEMP_PLA,UI_ACTION_EXT_TEMP_PLA,ADVANCED_MODE);
+#if HAVE_HEATED_BED==true
+UI_MENU_CHANGEACTION(ui_menu_bed_temp_abs,UI_TEXT_BED_TEMP_ABS,UI_ACTION_BED_TEMP_ABS,ADVANCED_MODE);
+UI_MENU_CHANGEACTION(ui_menu_bed_temp_pla,UI_TEXT_BED_TEMP_PLA,UI_ACTION_BED_TEMP_PLA,ADVANCED_MODE);
+#define PREHEAT_BED_TEMP_ENTRY &ui_menu_bed_temp_abs, &ui_menu_bed_temp_pla,
+#define PREHEAT_BED_TEMP_CNT 2
+#else
+#define PREHEAT_BED_TEMP_ENTRY 
+#define PREHEAT_BED_TEMP_CNT 0
+#endif
+#define UI_MENU_CEXTR {UI_MENU_ADDCONDBACK UI_MENU_CONFEXTCOND &ui_menu_ext_temp_abs,&ui_menu_ext_temp_pla, PREHEAT_BED_TEMP_ENTRY &ui_menu_cext_steps,&ui_menu_cext_start_feedrate,&ui_menu_cext_max_feedrate,&ui_menu_cext_acceleration,&ui_menu_cext_watch_period,&ui_menu_ext_wait_units,&ui_menu_ext_wait_temp UI_MENU_ADVANCE UI_MENU_PIDCOND}
+UI_MENU(ui_menu_cextr,UI_MENU_CEXTR,9+PREHEAT_BED_TEMP_CNT+UI_MENU_BACKCNT+UI_MENU_PIDCNT+UI_MENU_CONFEXTCNT+UI_MENU_ADV_CNT);
+UI_MENU_SUBMENU(ui_menu_conf_extr,    UI_TEXT_EXTRUDER_BED,     ui_menu_cextr,ADVANCED_MODE);
 //eeprom
 #if EEPROM_MODE!=0
 UI_MENU_ACTIONCOMMAND(ui_menu_conf_to_eeprom,UI_TEXT_STORE_TO_EEPROM,UI_ACTION_STORE_EEPROM,ADVANCED_MODE);
