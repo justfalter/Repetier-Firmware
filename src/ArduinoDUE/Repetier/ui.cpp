@@ -2195,6 +2195,9 @@ void UIDisplay::okAction()
                 {
                     Com::printFLN(Com::tFileDeleted);
                     BEEP_LONG
+                    if(menuPos[menuLevel]>0)
+						menuPos[menuLevel]--;
+					updateSDFileCount();
                 }
                 else
                 {
