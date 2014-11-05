@@ -103,6 +103,10 @@
 	#define UI_TEXT_EXTR_XOFF         "Xoffst:%Xx"
 	#define UI_TEXT_EXTR_YOFF         "Yoffst:%Xy"
 #endif
+
+#define UI_TEXT_X_LENGTH "X Length:%Lxmm"
+#define UI_TEXT_Y_LENGTH "Y Length:%Lymm"
+#define UI_TEXT_Z_LENGTH "Z Length:%Lzmm"
 #define UI_TEXT_EXT_TEMP_ABS "T\002Ext.ABS:%T1\002C"
 #define UI_TEXT_EXT_TEMP_PLA "T\002Ext.PLA:%T2\002C"
 #define UI_TEXT_BED_TEMP_ABS "T\002Bed ABS:%T3\002C"

@@ -215,6 +215,9 @@
 #define UI_ACTION_EXT_TEMP_PLA				1143
 #define UI_ACTION_BED_TEMP_ABS				1144
 #define UI_ACTION_BED_TEMP_PLA				1145
+#define UI_ACTION_X_LENGTH					1146
+#define UI_ACTION_Y_LENGTH					1147
+#define UI_ACTION_Z_LENGTH					1148
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001

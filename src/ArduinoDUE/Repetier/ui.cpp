@@ -1181,6 +1181,11 @@ void UIDisplay::parse(const char *txt,bool ram)
             break;
         case 'O': // ops related stuff
             break;
+         case 'L':
+			 if(c2=='x') addFloat(Printer::xLength,4,0);
+			 else if(c2=='y') addFloat(Printer::yLength,4,0);
+			 else if(c2=='z') addFloat(Printer::zLength,4,0);
+         break;
         case 'l':
             if(c2=='a') addInt(lastAction,4);
 #if defined(CASE_LIGHTS_PIN) && CASE_LIGHTS_PIN>=0
@@ -2792,6 +2797,15 @@ case UI_ACTION_BED_TEMP_PLA :
         INCREMENT_MIN_MAX(Extruder::current->tempControl.pidMax,1,1,255);
         break;
 #endif
+	case UI_ACTION_X_LENGTH:
+			INCREMENT_MIN_MAX(Printer::xLength,1,0,250);
+		break;
+	case UI_ACTION_Y_LENGTH:
+			INCREMENT_MIN_MAX(Printer::yLength,1,0,250);
+		break;
+	case UI_ACTION_Z_LENGTH:
+			INCREMENT_MIN_MAX(Printer::zLength,1,0,250);
+		break;
     case UI_ACTION_X_OFFSET:
         INCREMENT_MIN_MAX(Extruder::current->xOffset,1,-99999,99999);
         Extruder::selectExtruderById(Extruder::current->id);
