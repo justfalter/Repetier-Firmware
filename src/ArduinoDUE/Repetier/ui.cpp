@@ -3347,6 +3347,8 @@ void UIDisplay::executeAction(int action)
 			}
 		else if (status==STATUS_CANCEL)
 			{
+			while (Printer::isMenuMode(MENU_MODE_PRINTING))Commands::checkForPeriodicalActions();
+			UI_STATUS(UI_TEXT_CANCELED);
 			menuLevel=0;
 			}
 		refreshPage();
@@ -3779,6 +3781,8 @@ void UIDisplay::executeAction(int action)
 			}
 		else if (status==STATUS_CANCEL)
 			{
+			while (Printer::isMenuMode(MENU_MODE_PRINTING))Commands::checkForPeriodicalActions();
+			UI_STATUS(UI_TEXT_CANCELED);
 			menuLevel=0;
 			}
 		refreshPage();
@@ -4047,11 +4051,13 @@ void UIDisplay::executeAction(int action)
 			}
 		else if (status==STATUS_FAIL)
 			{
+			while (Printer::isMenuMode(MENU_MODE_PRINTING))Commands::checkForPeriodicalActions();
 			UI_STATUS(UI_TEXT_Z_PROBE_FAILED);
 			menuLevel=0;
 			}
 		else if (status==STATUS_CANCEL)
 			{
+			while (Printer::isMenuMode(MENU_MODE_PRINTING))Commands::checkForPeriodicalActions();
 			UI_STATUS(UI_TEXT_CANCELED);
 			menuLevel=0;
 			}
@@ -4355,6 +4361,7 @@ void UIDisplay::executeAction(int action)
 			}
 		else if (status==STATUS_CANCEL)
 			{
+			while (Printer::isMenuMode(MENU_MODE_PRINTING))Commands::checkForPeriodicalActions();
 			UI_STATUS(UI_TEXT_CANCELED);
 			menuLevel=0;
 			}

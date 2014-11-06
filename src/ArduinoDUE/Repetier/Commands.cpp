@@ -81,6 +81,7 @@ void Commands::checkForPeriodicalActions()
 		{
 		Printer::setMenuMode(MENU_MODE_PRINTING,false);
 		UI_STATUS_UPD(UI_TEXT_IDLE);
+		delay_flag_change=0;
 		}
 		else delay_flag_change++;
 		}
