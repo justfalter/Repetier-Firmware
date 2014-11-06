@@ -77,7 +77,11 @@ void Commands::checkForPeriodicalActions()
     
     if (!PrintLine::hasLines() &&  Printer::isMenuMode(MENU_MODE_PRINTING)) 
 		{
-		if (delay_flag_change>5) Printer::setMenuMode(MENU_MODE_PRINTING,false);
+		if (delay_flag_change>5) 
+		{
+		Printer::setMenuMode(MENU_MODE_PRINTING,false);
+		UI_STATUS_UPD(UI_TEXT_IDLE);
+		}
 		else delay_flag_change++;
 		}
 	else delay_flag_change=0;
