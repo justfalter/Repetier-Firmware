@@ -24,7 +24,7 @@
 const int sensitive_pins[] PROGMEM = SENSITIVE_PINS; // Sensitive pin list for M42
 int Commands::lowestRAMValue = MAX_RAM;
 int Commands::lowestRAMValueSend = MAX_RAM;
-
+uint8_t Commands::delay_flag_change=0;
 void Commands::commandLoop()
 {
     while(true)
@@ -74,6 +74,13 @@ void Commands::checkForPeriodicalActions()
             writeMonitor();
         counter250ms=5;
     }
+    
+    if (!PrintLine::hasLines() &&  Printer::isMenuMode(MENU_MODE_PRINTING)) 
+		{
+		if (delay_flag_change>5) Printer::setMenuMode(MENU_MODE_PRINTING,false);
+		else delay_flag_change++;
+		}
+	else delay_flag_change=0;
     UI_SLOW;
     //check if emergency stop button is pressed 
     if(uid.lastButtonAction==UI_ACTION_OK_NEXT_BACK)Commands::emergencyStop();

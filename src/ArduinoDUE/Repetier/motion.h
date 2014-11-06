@@ -613,8 +613,8 @@ public:
 #endif
         HAL::forbidInterrupts();
         --linesCount;
-        if(!linesCount)
-            Printer::setMenuMode(MENU_MODE_PRINTING,false);
+       // if(!linesCount)
+       //     Printer::setMenuMode(MENU_MODE_PRINTING,false);
     }
     static inline void pushLine()
     {

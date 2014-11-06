@@ -27,6 +27,7 @@
 class Commands
 {
 public:
+	static uint8_t delay_flag_change;
     static void commandLoop();
     static void checkForPeriodicalActions();
     static void executeGCode(GCode *com);
