@@ -52,7 +52,7 @@ for basic installation just change :
 
 ***
 ##Known Issues
-* Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), one solution is there : https://github.com/repetier/Repetier-Firmware/wiki/Installation
+* Printer freeze when unplug from repetier host if no clean de-connection (hot unplug / computer go to stand by ...), one solution is there : https://github.com/luc-github/Repetier-Firmware/issues/43
 and [Check issue list](https://github.com/luc-github/Repetier-Firmware/issues)
 	
 ***
