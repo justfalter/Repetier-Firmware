@@ -45,7 +45,7 @@
 #define VERSION_MAJOR "  1"
 #define VERSION_MINOR_YEAR "14"
 #define VERSION_MINOR_MONTH "11"
-#define VERSION_MINOR_DAY "3"
+#define VERSION_MINOR_DAY "10"
 #define VERSION_BUILD "1"
 
 // ################ END MANUAL SETTINGS ##########################

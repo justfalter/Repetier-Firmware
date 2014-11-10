@@ -761,6 +761,7 @@ void EEPROM::init()
     {
         HAL::eprSetByte(EPR_MAGIC_BYTE,EEPROM_MODE); // Make datachange permanent
         initalizeUncached();
+        restoreEEPROMSettingsFromConfiguration();
         storeDataIntoEEPROM(storedcheck!=check);
     }
 #endif
