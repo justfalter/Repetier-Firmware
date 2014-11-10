@@ -22,7 +22,35 @@
 */
 
 #include "Repetier.h"
-
+//internal usage of update value
+void EEPROM:: update(long P,uint8_t T,long S,float X)
+{
+#if EEPROM_MODE!=0
+    if(T>=0 &&T<=3 && P>0 && P<=2048) //SDEEPROM_SIZE =2048 // Minimum size used by Eeprom.cpp
+    switch(T)
+        {
+        case EPR_TYPE_BYTE:
+            HAL::eprSetByte(P,(uint8_t)S);
+            break;
+        case EPR_TYPE_INT:
+           HAL::eprSetInt16(P,(int)S);
+            break;
+        case EPR_TYPE_LONG:
+            HAL::eprSetInt32(P,(int32_t)S);
+            break;
+        case EPR_TYPE_FLOAT:
+           HAL::eprSetFloat(P,X);
+            break;
+        }
+    uint8_t newcheck = computeChecksum();
+    if(newcheck != HAL::eprGetByte(EPR_INTEGRITY_BYTE))
+        HAL::eprSetByte(EPR_INTEGRITY_BYTE,newcheck);
+    readDataFromEEPROM();
+    Extruder::selectExtruderById(Extruder::current->id);
+#else
+    Com::printErrorF(Com::tNoEEPROMSupport);
+#endif
+}
 void EEPROM::update(GCode *com)
 {
 #if EEPROM_MODE!=0

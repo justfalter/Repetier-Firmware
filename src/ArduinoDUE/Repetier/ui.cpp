@@ -3151,16 +3151,14 @@ void UIDisplay::executeAction(int action)
 		if (display_mode&ADVANCED_MODE)display_mode=EASY_MODE;
 		else display_mode=ADVANCED_MODE;
 		//save directly to eeprom
-		HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
-		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+         EEPROM:: update(EPR_DISPLAY_MODE,EPR_TYPE_BYTE,UIDisplay::display_mode,0);
     break;
             
 	#if FEATURE_BEEPER
 	case UI_ACTION_SOUND:
 	HAL::enablesound=!HAL::enablesound;
 	//save directly to eeprom
-	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
-	HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+    EEPROM:: update(EPR_SOUND_ON,EPR_TYPE_BYTE,HAL::enablesound,0);
 	UI_STATUS(UI_TEXT_SOUND_ONOF);
 	break;
 	#endif
@@ -3168,8 +3166,7 @@ void UIDisplay::executeAction(int action)
 	case UI_ACTION_KEEP_LIGHT_ON:
 		EEPROM::bkeeplighton=!EEPROM::bkeeplighton;
 		//save directly to eeprom
-		HAL::eprSetByte(EPR_KEEP_LIGHT_ON,EEPROM::bkeeplighton);
-		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+		EEPROM:: update(EPR_KEEP_LIGHT_ON,EPR_TYPE_BYTE,EEPROM::bkeeplighton,0);
 		UI_STATUS(UI_TEXT_KEEP_LIGHT_ON);
 	break;
 	case UI_ACTION_TOGGLE_POWERSAVE:
@@ -3178,16 +3175,16 @@ void UIDisplay::executeAction(int action)
 		else if (EEPROM::timepowersaving==(1000 * 60 * 5)) EEPROM::timepowersaving = 1000*60*15;// move to 15 min
 		else if (EEPROM::timepowersaving==(1000 * 60 * 15)) EEPROM::timepowersaving = 1000*60*30;// move to 30 min
 		else EEPROM::timepowersaving = 0;// move to off
+        //reset counter
 		if (EEPROM::timepowersaving>0)UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+        //save directly to eeprom 1 by one as each setting is reloaded by reading eeprom
+        EEPROM:: update(EPR_POWERSAVE_AFTER_TIME,EPR_TYPE_LONG,EEPROM::timepowersaving,0);
 		//apply to stepper
 		stepperInactiveTime=EEPROM::timepowersaving;
+        EEPROM:: update(EPR_STEPPER_INACTIVE_TIME,EPR_TYPE_LONG,stepperInactiveTime,0);
 		//apply to inactivity timer
 		maxInactiveTime=EEPROM::timepowersaving;
-		//save directly to eeprom
-		HAL::eprSetInt32(EPR_POWERSAVE_AFTER_TIME,EEPROM::timepowersaving);
-		HAL::eprSetInt32(EPR_MAX_INACTIVE_TIME,maxInactiveTime);
-		HAL::eprSetInt32(EPR_STEPPER_INACTIVE_TIME,stepperInactiveTime);
-		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+        EEPROM:: update(EPR_MAX_INACTIVE_TIME,EPR_TYPE_LONG,maxInactiveTime,0);
         UI_STATUS(UI_TEXT_POWER_SAVE);
 	break;
 #endif
@@ -3195,8 +3192,7 @@ void UIDisplay::executeAction(int action)
 	 case UI_ACTION_SENSOR_ONOFF:
 		 EEPROM::busesensor=!EEPROM::busesensor;
 		 //save directly to eeprom
-		HAL::eprSetByte(EPR_SENSOR_ON,EEPROM::busesensor);
-		HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+        EEPROM:: update(EPR_SENSOR_ON,EPR_TYPE_BYTE,EEPROM::busesensor,0);
 		UI_STATUS(UI_TEXT_SENSOR_ONOFF);
 	 break;
 #endif
@@ -3208,8 +3204,7 @@ void UIDisplay::executeAction(int action)
 			else
 			EEPROM::buselight=false;
 			//save directly to eeprom
-			HAL::eprSetByte(EPR_LIGHT_ON,EEPROM::buselight);
-			HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+            EEPROM:: update(EPR_LIGHT_ON,EPR_TYPE_BYTE,EEPROM::buselight,0);
             UI_STATUS(UI_TEXT_LIGHTS_ONOFF);
             break;
 #endif
@@ -3977,8 +3972,7 @@ void UIDisplay::executeAction(int action)
 			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_SAVE,UI_TEXT_ZMIN))
 				{
 				//save to eeprom
-				HAL::eprSetFloat(EPR_Z_HOME_OFFSET,Printer::zMin);
-				HAL::eprSetByte(EPR_INTEGRITY_BYTE,EEPROM::computeChecksum());
+                EEPROM:: update(EPR_Z_HOME_OFFSET,EPR_TYPE_FLOAT,0,Printer::zMin);
 				}
 			else{
 				//back to original value

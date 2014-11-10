@@ -156,6 +156,12 @@ have problems with other modules using the eeprom */
 #define Z_PROBE_BED_DISTANCE 5.0
 #endif
 
+#define EPR_TYPE_BYTE			0
+#define EPR_TYPE_INT			1
+#define EPR_TYPE_LONG		2
+#define EPR_TYPE_FLOAT		3
+
+
 class EEPROM
 {
 #if EEPROM_MODE!=0
@@ -184,6 +190,7 @@ public:
     static void restoreEEPROMSettingsFromConfiguration();
     static void writeSettings();
     static void update(GCode *com);
+    static void update(long P,uint8_t T,long S,float X);
     static void updatePrinterUsage();
 
     static inline float zProbeSpeed() {
