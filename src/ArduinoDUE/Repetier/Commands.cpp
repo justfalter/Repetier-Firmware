@@ -1564,7 +1564,7 @@ void Commands::executeGCode(GCode *com)
     }
 	if (com->hasE() && !Printer:: isMenuMode(MENU_MODE_SD_PAUSED))
 		{
-			Com::printFLN("Current Extruder ID: ",Extruder::current->id);
+			//Com::printFLN("Current Extruder ID: ",Extruder::current->id);
 			if ((Extruder::current->id)==0)//check correct extruder sensor 
 					{
 						#if defined(FIL_SENSOR1_PIN)
