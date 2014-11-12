@@ -45,19 +45,19 @@
 #define VERSION_MAJOR "  1"
 #define VERSION_MINOR_YEAR "14"
 #define VERSION_MINOR_MONTH "11"
-#define VERSION_MINOR_DAY "10"
+#define VERSION_MINOR_DAY "12"
 #define VERSION_BUILD "1"
 
 // ################ END MANUAL SETTINGS ##########################
 
 #define ENDSTOP_X_BACK_ON_HOME 0  //Moved here to be sure to be included in X_MAX_LENGTH
-#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
 #define ENDSTOP_Z_BACK_ON_HOME 0  //Moved here to be sure to be included in Z_MAX_LENGTH
 
 #if DAVINCI==1
 #define NUM_EXTRUDER 1
 #define EXT0_INVERSE 0
 #define NUM_FAN 1
+#define ENDSTOP_Y_BACK_ON_HOME 0  //Moved here to be sure to be included in Y_MAX_LENGTH
 #define X_MAX_LENGTH 237 - ENDSTOP_X_BACK_ON_HOME
 #define Y_MAX_LENGTH 217 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
@@ -69,6 +69,7 @@
 #define NUM_EXTRUDER 2
 #define EXT0_INVERSE 1
 #define NUM_FAN 1 
+#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
 #define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
 #define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
@@ -81,6 +82,7 @@
 #define NUM_EXTRUDER 2
 #define EXT0_INVERSE 1
 #define NUM_FAN 2 
+#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
 #define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
 #define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
