@@ -3383,7 +3383,10 @@ void UIDisplay::executeAction(int action)
 		refreshPage();
 		//need to home if not
 		if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
-        else Extruder::selectExtruderById(0); //just select E0
+        else 
+            {//put proper position in case position has been manualy changed no need to home Z as cannot be manualy changed and in case of something on plate it could be catastrophic
+                Printer::homeAxis(true,true,false);
+            }
         UI_STATUS(UI_TEXT_PREPARING);
 		while (process_it)
 		{
