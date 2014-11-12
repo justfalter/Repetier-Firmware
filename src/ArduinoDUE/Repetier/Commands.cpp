@@ -622,20 +622,48 @@ void Commands::executeGCode(GCode *com)
 #if FEATURE_Z_PROBE
         case 29: // 3 points, build average
         {
+            float zMin_save=Printer::zMin ;
+            if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
+             //to avoid hit on plates low down bed a little
+            if (Printer::currentPosition[Z_AXIS] < Printer::zMin+5) Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
             GCode::executeFString(Com::tZProbeStartScript);
             bool oldAutolevel = Printer::isAutolevelActive();
             Printer::setAutolevelActive(false);
             float sum = 0,last,oldFeedrate = Printer::feedrate;
             Printer::moveTo(EEPROM::zProbeX1(),EEPROM::zProbeY1(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             sum = Printer::runZProbe(true,false,Z_PROBE_REPETITIONS,false);
-            if(sum<0) break;
+            if(sum<0) 
+              {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                 //to avoid hit on plates low down bed a little
+                Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             Printer::moveTo(EEPROM::zProbeX2(),EEPROM::zProbeY2(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             last = Printer::runZProbe(false,false);
-            if(last<0) break;
+            if(last<0) 
+             {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                 //to avoid hit on plates low down bed a little
+                Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             sum+= last;
             Printer::moveTo(EEPROM::zProbeX3(),EEPROM::zProbeY3(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             last = Printer::runZProbe(false,true);
-            if(last<0) break;
+            if(last<0)  
+                {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                 //to avoid hit on plates low down bed a little
+                Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             sum+= last;
             sum *= 0.33333333333333;
             Com::printFLN(Com::tZProbeAverage,sum);
@@ -670,11 +698,17 @@ void Commands::executeGCode(GCode *com)
         {
             uint8_t p = (com->hasP() ? (uint8_t)com->P : 3);
             bool oldAutolevel = Printer::isAutolevelActive();
+            if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
+            //to avoid hit on plates low down bed a little
+            if (Printer::currentPosition[Z_AXIS] < Printer::zMin+5) Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
             Printer::setAutolevelActive(false);
             Printer::runZProbe(p & 1,p & 2);
             Printer::setAutolevelActive(oldAutolevel);
             Printer::updateCurrentPosition(p & 1);
             printCurrentPosition();
+            if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+            //to avoid hit on plates
+            Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
         }
         break;
         case 31:  // G31 display hall sensor output
@@ -685,6 +719,10 @@ void Commands::executeGCode(GCode *com)
 #if FEATURE_AUTOLEVEL
         case 32: // G32 Auto-Bed leveling
         {
+            float zMin_save=Printer::zMin;
+            if(!Printer::isHomed()) Printer::homeAxis(true,true,true);
+             //to avoid hit on plates low down bed a little
+            if (Printer::currentPosition[Z_AXIS] < Printer::zMin+5) Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
             GCode::executeFString(Com::tZProbeStartScript);
             //bool iterate = com->hasP() && com->P>0;
             Printer::coordinateOffset[0] = Printer::coordinateOffset[1] = Printer::coordinateOffset[2] = 0;
@@ -692,13 +730,37 @@ void Commands::executeGCode(GCode *com)
             float h1,h2,h3,hc,oldFeedrate = Printer::feedrate;
             Printer::moveTo(EEPROM::zProbeX1(),EEPROM::zProbeY1(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             h1 = Printer::runZProbe(true,false,Z_PROBE_REPETITIONS,false);
-            if(h1<0) break;
+            if(h1<0) 
+                {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                 if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                  //to avoid hit on plates low down bed a little
+                 Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             Printer::moveTo(EEPROM::zProbeX2(),EEPROM::zProbeY2(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             h2 = Printer::runZProbe(false,false);
-            if(h2<0) break;
+            if(h2<0)
+              {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                 if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                  //to avoid hit on plates low down bed a little
+                 Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             Printer::moveTo(EEPROM::zProbeX3(),EEPROM::zProbeY3(),IGNORE_COORDINATE,IGNORE_COORDINATE,EEPROM::zProbeXYSpeed());
             h3 = Printer::runZProbe(false,true);
-            if(h3<0) break;
+            if(h3<0)
+              {
+                Printer::zMin =  zMin_save;
+                Printer::setAutolevelActive(true);
+                 if (Printer::realZPosition()<-200)Printer::homeAxis(false,false,true);
+                  //to avoid hit on plates low down bed a little
+                 Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                break;
+                }
             Printer::buildTransformationMatrix(h1,h2,h3);
             //-(Rxx*Ryz*y-Rxz*Ryx*y+(Rxz*Ryy-Rxy*Ryz)*x)/(Rxy*Ryx-Rxx*Ryy)
             // z = z-deviation from origin due to bed transformation
