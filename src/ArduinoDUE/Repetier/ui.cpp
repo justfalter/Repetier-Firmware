@@ -2678,14 +2678,20 @@ case UI_ACTION_BED_TEMP_PLA :
     case UI_ACTION_STEPPER_INACTIVE:
         stepperInactiveTime -= stepperInactiveTime % 1000;
         INCREMENT_MIN_MAX(stepperInactiveTime,60000UL,0,10080000UL);
+        //save directly to eeprom 
+        EEPROM:: update(EPR_STEPPER_INACTIVE_TIME,EPR_TYPE_LONG,stepperInactiveTime,0);
         break;
     case UI_ACTION_MAX_INACTIVE:
         maxInactiveTime -= maxInactiveTime % 1000;
         INCREMENT_MIN_MAX(maxInactiveTime,60000UL,0,10080000UL);
+        //save directly to eeprom 
+         EEPROM:: update(EPR_MAX_INACTIVE_TIME,EPR_TYPE_LONG,maxInactiveTime,0);
         break;
       case UI_ACTION_LIGHT_OFF_AFTER:
         EEPROM::timepowersaving -= EEPROM::timepowersaving % 1000;
         INCREMENT_MIN_MAX(EEPROM::timepowersaving,60000UL,0,10080000UL);
+         //save directly to eeprom 
+        EEPROM:: update(EPR_POWERSAVE_AFTER_TIME,EPR_TYPE_LONG,EEPROM::timepowersaving,0);
         break;
      
     case UI_ACTION_PRINT_ACCEL_X:
