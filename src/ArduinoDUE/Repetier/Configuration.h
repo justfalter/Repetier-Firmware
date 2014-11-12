@@ -40,6 +40,7 @@
 
 #define DAVINCI 1 // "1" For DAVINCI 1.0, "2" For DAVINCI 2.0 with 1 FAN, "3" For DAVINCI 2.0 with 2 FAN
 #define REPURPOSE_FAN_TO_COOL_EXTRUSIONS 0 //Setting this to 1 will repurpose the main Extruder cooling fan to be controlled VIA M106/M107
+                                                                                            //Warning: for DaVinci 1.0 need to add a permanent fan with power supply to cool extruder
 #define UI_LANGUAGE 0 // 0 English - 7 French (others are not up to date)
 #define MOTHERBOARD 999
 #define VERSION_MAJOR "  1"
@@ -104,12 +105,14 @@
 //#define COMPAT_PRE1
 
 //This is the logic that controls the cooling fan pin assignments.
-#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1 && DAVINCI>=2
-  #define FAN_PIN ORIG_FAN_PIN
-  #define FEATURE_FAN_CONTROL 1 
-    #if DAVINCI==2
+#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1 
+    #define FAN_PIN ORIG_FAN_PIN
+    #define FEATURE_FAN_CONTROL 1 
+    #if DAVINCI>=2
       #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
       #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
+    #else //DaVinci 1.0
+        #define EXT0_EXTRUDER_COOLER_PIN -1 //Warning need to add a permanent fan with power supply to cool extruder
     #endif
 #else
   #define FAN_PIN -1
