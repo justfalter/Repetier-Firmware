@@ -451,6 +451,27 @@ void Commands::executeGCode(GCode *com)
         }
     }
 #endif
+//periodical command from repetier should not be taken in account  for wake up
+    if(!((com->hasM() &&  com->M ==105) || Printer::isMenuMode(MENU_MODE_SD_PRINTING)))   // Process M Code
+    {
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+#if UI_AUTOLIGHTOFF_AFTER!=0
+        if (EEPROM::timepowersaving>0 && EEPROM::bkeeplighton )
+            {
+            UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+            #if CASE_LIGHTS_PIN > 0
+            if (!(READ(CASE_LIGHTS_PIN)) && EEPROM::buselight)
+                {
+                TOGGLE(CASE_LIGHTS_PIN);
+                }
+            #endif
+            #if defined(UI_BACKLIGHT_PIN)
+            if (!(READ(UI_BACKLIGHT_PIN))) WRITE(UI_BACKLIGHT_PIN, HIGH);
+            #endif
+            }
+#endif
+    }
+    
     if(com->hasG())
     {
         switch(com->G)
@@ -599,6 +620,7 @@ void Commands::executeGCode(GCode *com)
             {
                 GCode::readFromSerial();
                 Commands::checkForPeriodicalActions();
+                Printer::setMenuMode(MENU_MODE_PRINTING,true);
             }
             break;
         case 20: // Units to inches
@@ -1071,6 +1093,7 @@ void Commands::executeGCode(GCode *com)
             millis_t currentTime;
             do
             {
+                Printer::setMenuMode(MENU_MODE_PRINTING,true);
                 currentTime = HAL::timeInMilliseconds();
                 if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
                 {
@@ -1126,6 +1149,7 @@ void Commands::executeGCode(GCode *com)
                     printTemperatures();
                     codenum = HAL::timeInMilliseconds();
                 }
+                 Printer::setMenuMode(MENU_MODE_PRINTING,true);
                 Commands::checkForPeriodicalActions();
             }
 #endif
@@ -1140,6 +1164,7 @@ void Commands::executeGCode(GCode *com)
                 codenum = HAL::timeInMilliseconds();
                 while(!allReached) {
                     allReached = true;
+                    Printer::setMenuMode(MENU_MODE_PRINTING,true);
                     if( (HAL::timeInMilliseconds()-codenum) > 1000 )   //Print Temp Reading every 1 second while heating up.
                     {
                         printTemperatures();
@@ -1261,6 +1286,7 @@ void Commands::executeGCode(GCode *com)
                     debugWaitLoop = 2;
 #endif
                 while(wait-HAL::timeInMilliseconds() < 100000) {
+                    Printer::setMenuMode(MENU_MODE_PRINTING,true);
                     Printer::defaultLoopActions();
                 }
                 if(com->hasX())
@@ -1640,7 +1666,16 @@ void Commands::executeGCode(GCode *com)
 						#endif
 					}
 		}
-  
+//periodical command from repetier should not be taken in account  for wake up
+    if(!((com->hasM() &&  com->M ==105) || Printer::isMenuMode(MENU_MODE_SD_PRINTING)))   // Process M Code
+    {
+#if UI_AUTOLIGHTOFF_AFTER!=0
+        if (EEPROM::timepowersaving>0 && EEPROM::bkeeplighton )
+            {//reset timer if any wait command was processing
+            UIDisplay::ui_autolightoff_time=HAL::timeInMilliseconds()+EEPROM::timepowersaving;
+            }
+#endif
+    }
 }
 void Commands::emergencyStop()
 {
