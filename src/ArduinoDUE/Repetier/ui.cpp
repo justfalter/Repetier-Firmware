@@ -2496,7 +2496,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
     break;
 	}
    
-     case UI_ACTION_Z_1:
+    case UI_ACTION_Z_1:
     case UI_ACTION_Z_10:
     case UI_ACTION_Z_100:
     {
@@ -2504,6 +2504,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
 		int istep=1;
 		if (action==UI_ACTION_Z_10)istep=10;
 		if (action==UI_ACTION_Z_100)istep=100;
+        increment=-increment; //upside down increment to allow keys to follow  Z movement, Up Key make Z going up, down key make Z going down
 		if (!Printer::isZHomed())//ask for home to secure movement
 		{
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_HOME_Z,UI_TEXT_WARNING_POS_Z_UNKNOWN,UI_CONFIRMATION_TYPE_YES_NO,true))
@@ -2529,6 +2530,7 @@ void UIDisplay::nextPreviousAction(int8_t next)
 		int istep=1;
 		if (action==UI_ACTION_E_10)istep=10;
 		if (action==UI_ACTION_E_100)istep=100;
+        increment=-increment; //upside down increment to allow keys to follow  filament movement, Up Key make filament going up, down key make filament going down
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
 		//check temperature
 		if(Extruder::current->tempControl.currentTemperatureC<=MIN_EXTRUDER_TEMP)
