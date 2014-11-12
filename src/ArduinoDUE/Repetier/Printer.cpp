@@ -872,7 +872,6 @@ SET_INPUT(FIL_SENSOR2_PIN);
     EEPROM::initBaudrate();
     HAL::serialSetBaudrate(baudrate);
     Com::printFLN(Com::tStart);
-    UI_INITIALIZE;
     HAL::showStartReason();
     Extruder::initExtruder();
 #if SDSUPPORT
@@ -886,6 +885,7 @@ SET_INPUT(FIL_SENSOR2_PIN);
     Commands::checkFreeMemory();
     Commands::writeLowestFreeRAM();
     HAL::setupTimer();
+    UI_INITIALIZE;
 #if NONLINEAR_SYSTEM
     transformCartesianStepsToDeltaSteps(Printer::currentPositionSteps, Printer::currentDeltaPositionSteps);
 #if DELTA_HOME_ON_POWER
