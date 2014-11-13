@@ -3401,11 +3401,14 @@ void UIDisplay::executeAction(int action)
 			#if DAVINCI==1 //be sure we cannot hit cleaner on 1.0
             if(Printer::currentPosition[Y_AXIS]<=20)
 				{
-				Printer::moveToReal(0,0,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);//go 0,0 or xMin,yMin ?
-				Printer::moveToReal(0,20,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+				Printer::moveToReal(Printer::xMin,Printer::yMin,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[X_AXIS]);//go 0,0 or xMin,yMin ?
+				 PrintLine::moveRelativeDistanceInStepsReal(0,Printer::axisStepsPerMM[Y_AXIS]*20,0,0,Printer::homingFeedrate[Y_AXIS],true);
 				}
 			#endif
-			Printer::moveToReal(Printer::xLength/2,Printer::yLength-20,150,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+            Commands::waitUntilEndOfAllMoves();
+            PrintLine::moveRelativeDistanceInStepsReal(0,0,Printer::axisStepsPerMM[Z_AXIS]*10,0,Printer::homingFeedrate[Z_AXIS],true);
+			Printer::moveToReal(Printer::xLength/2,Printer::yLength-20,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::maxFeedrate[X_AXIS]);
+            Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,150,IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS]);
 			Commands::waitUntilEndOfAllMoves();
 			step =STEP_CLEAN_DRIPBOX_WAIT_FOR_OK;
 			playsound(3000,240);
@@ -3430,7 +3433,7 @@ void UIDisplay::executeAction(int action)
 				playsound(3000,240);
 		        menuLevel=0;
 		        refreshPage();
-				Printer::homeAxis(true,true,false);
+				Printer::homeAxis(true,true,true);
 				}
 			//there is no step that user can cancel but keep it if function become more complex
 			 /*if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
