@@ -527,11 +527,10 @@ void initializeLCD()
     SET_OUTPUT(UI_DISPLAY_RW_PIN);
 #endif
     SET_OUTPUT(UI_DISPLAY_ENABLE_PIN);
-
+    delayMicroseconds(150000); 
     // Now we pull both RS and R/W low to begin commands
     WRITE(UI_DISPLAY_RS_PIN, LOW);
     WRITE(UI_DISPLAY_ENABLE_PIN, LOW);
-     HAL::delayMilliseconds(40);
     //put the LCD into 4 bit mode
     // this is according to the hitachi HD44780 datasheet
     // figure 24, pg 46
@@ -541,27 +540,27 @@ void initializeLCD()
     // interface 4 pins are dangling unconnected and the values
     // on them don't matter for these instructions.
      WRITE(UI_DISPLAY_RS_PIN, LOW);
-    HAL::delayMilliseconds(40);
+     delayMicroseconds(6500); // wait min 4.1ms
     lcdWriteNibble(0x03);
-   HAL::delayMilliseconds(40); // I have one LCD for which 4500 here was not long enough.
+    delayMicroseconds(16500); // wait min 4.1ms
     // second try
     lcdWriteNibble(0x03);
-   HAL::delayMilliseconds(40); // wait
+    delayMicroseconds(16500); // wait min 4.1ms
     // third go!
     lcdWriteNibble(0x03);
-    HAL::delayMilliseconds(40);
+    delayMicroseconds(14150);
     // finally, set to 4-bit interface
     lcdWriteNibble(0x02);
-    HAL::delayMilliseconds(40);
+     delayMicroseconds(14500);  // wait more than 4.1ms
     // finally, set # lines, font size, etc.
     lcdCommand(LCD_4BIT | LCD_2LINE | LCD_5X7);
-	HAL::delayMilliseconds(40);
+	 delayMicroseconds(14500);  // wait more than 4.1ms
     lcdCommand(LCD_CLEAR);					//-	Clear Screen
-    HAL::delayMilliseconds(40); // clear is slow operation
+     delayMicroseconds(14500);
     lcdCommand(LCD_INCREASE | LCD_DISPLAYSHIFTOFF);	//-	Entrymode (Display Shift: off, Increment Address Counter)
-    HAL::delayMilliseconds(40);
+     delayMicroseconds(14500);
     lcdCommand(LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKINGOFF);	//-	Display on
-    HAL::delayMilliseconds(40);
+    delayMicroseconds(14500);
     uid.lastSwitch = uid.lastRefresh = HAL::timeInMilliseconds();
     uid.createChar(1,character_back);
     uid.createChar(2,character_degree);
@@ -627,10 +626,16 @@ void UIDisplay::printRow(uint8_t r,char *txt,char *txt2,uint8_t changeAtCol)
 
 #if UI_DISPLAY_TYPE==4
 // Use LiquidCrystal library instead
+//need this http://forum.arduino.cc/index.php?PHPSESSID=adupu0n51525jq619jp9tmk6t0&topic=63038.msg829540#msg829540
 #include <LiquidCrystal.h>
-
+#if UI_DISPLAY_RW_PIN> -1
 LiquidCrystal lcd(UI_DISPLAY_RS_PIN, UI_DISPLAY_RW_PIN,UI_DISPLAY_ENABLE_PIN,UI_DISPLAY_D4_PIN,UI_DISPLAY_D5_PIN,UI_DISPLAY_D6_PIN,UI_DISPLAY_D7_PIN);
+#else
+LiquidCrystal lcd(UI_DISPLAY_RS_PIN,UI_DISPLAY_ENABLE_PIN,UI_DISPLAY_D4_PIN,UI_DISPLAY_D5_PIN,UI_DISPLAY_D6_PIN,UI_DISPLAY_D7_PIN);
+#endif
 
+#define UI_COLS 16
+#define UI_ROWS 4
 void UIDisplay::createChar(uint8_t location,const uint8_t charmap[])
 {
     location &= 0x7; // we only have 8 locations 0-7
@@ -687,6 +692,13 @@ void initializeLCD()
     uid.createChar(2,character_degree);
     uid.createChar(3,character_selected);
     uid.createChar(4,character_unselected);
+    uid.createChar(5,character_temperature);
+    uid.createChar(6,character_folder);
+    uid.createChar(7,character_bed);
+#if defined(UI_BACKLIGHT_PIN)
+    SET_OUTPUT(UI_BACKLIGHT_PIN);
+    WRITE(UI_BACKLIGHT_PIN, HIGH);
+#endif
 }
 // ------------------ End LiquidCrystal library as LCD driver
 #endif // UI_DISPLAY_TYPE==4
@@ -842,7 +854,6 @@ void UIDisplay::initialize()
     HAL::i2cWrite(UI_DISPLAY_I2C_PULLUP >> 8);
     HAL::i2cStop();
 #endif
-
 #endif
     flags = 0;
     menuLevel = 0;
