@@ -552,8 +552,13 @@ void initializeLCD()
     // finally, set to 4-bit interface
     lcdWriteNibble(0x02);
      delayMicroseconds(14500);  // wait more than 4.1ms
+      // finally, set to 4-bit interface
+    lcdWriteNibble(0x02);
+     delayMicroseconds(14500);  // wait more than 4.1ms
     // finally, set # lines, font size, etc.
     lcdCommand(LCD_4BIT | LCD_2LINE | LCD_5X7);
+	 delayMicroseconds(14500);  // wait more than 4.1ms
+      lcdCommand(LCD_4BIT | LCD_2LINE | LCD_5X7);
 	 delayMicroseconds(14500);  // wait more than 4.1ms
     lcdCommand(LCD_CLEAR);					//-	Clear Screen
      delayMicroseconds(14500);
