@@ -352,6 +352,7 @@
 #define GCODE_BUFFER_SIZE 2
 #define ACK_WITH_LINENUMBER
 #define WAITING_IDENTIFIER "wait"
+#define RESET_IDENTIFIER "start"
 #define ECHO_ON_EXECUTE
 #define EEPROM_MODE 1
 

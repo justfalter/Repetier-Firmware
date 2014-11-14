@@ -612,7 +612,7 @@ public:
         nlFlag = false;
 #endif
         HAL::forbidInterrupts();
-        --linesCount;
+       if (linesCount>0) --linesCount;
        // if(!linesCount)
        //     Printer::setMenuMode(MENU_MODE_PRINTING,false);
     }

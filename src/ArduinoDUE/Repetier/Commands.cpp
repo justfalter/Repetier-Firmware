@@ -25,6 +25,7 @@ const int sensitive_pins[] PROGMEM = SENSITIVE_PINS; // Sensitive pin list for M
 int Commands::lowestRAMValue = MAX_RAM;
 int Commands::lowestRAMValueSend = MAX_RAM;
 uint8_t Commands::delay_flag_change=0;
+uint8_t Commands::delay_flag_change2=0;
 void Commands::commandLoop()
 {
     while(true)
@@ -74,6 +75,18 @@ void Commands::checkForPeriodicalActions()
             writeMonitor();
         counter250ms=5;
     }
+   
+    if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED)  && Printer::isMenuMode(MENU_MODE_STOP_DONE) )
+        {
+            if (delay_flag_change2>10) 
+                {
+                Printer::setMenuMode(MENU_MODE_STOP_REQUESTED,false);
+                UI_STATUS_UPD(UI_TEXT_IDLE);
+                delay_flag_change2=0;
+                }
+            else delay_flag_change2++;
+        }
+    else delay_flag_change2=0;
     
     if (!PrintLine::hasLines() &&  Printer::isMenuMode(MENU_MODE_PRINTING)) 
 		{
@@ -89,6 +102,7 @@ void Commands::checkForPeriodicalActions()
     UI_SLOW;
     //check if emergency stop button is pressed 
     if(uid.lastButtonAction==UI_ACTION_OK_NEXT_BACK)Commands::emergencyStop();
+              
 }
 
 /** \brief Waits until movement cache is empty.

@@ -143,6 +143,7 @@ void PrintLine::moveRelativeDistanceInStepsReal(long x,long y,long z,long e,floa
 void PrintLine::queueCartesianMove(uint8_t check_endstops,uint8_t pathOptimize)
 {
 	Printer::setMenuMode(MENU_MODE_PRINTING,true);
+    if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))return;
     Printer::unsetAllSteppersDisabled();
     waitForXFreeLines(1);
     uint8_t newPath=insertWaitMovesIfNeeded(pathOptimize, 0);
@@ -2035,6 +2036,11 @@ int lastblk=-1;
 long cur_errupd;
 long PrintLine::bresenhamStep() // version for cartesian printer
 {
+        if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))
+            {
+            while(linesCount)removeCurrentLineForbidInterrupt();
+            return 100;
+            }
 #if CPU_ARCH==ARCH_ARM
     if(!PrintLine::nlFlag)
 #else

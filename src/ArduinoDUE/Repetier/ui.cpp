@@ -4517,10 +4517,36 @@ void UIDisplay::executeAction(int action)
             sd.continuePrint();
             break;
         case UI_ACTION_SD_STOP:
-            sd.stopPrint();
-            Commands::waitUntilEndOfAllMoves();
+            {
+             playsound(400,400);
+             //reset connect with host if any
+            Com::printFLN(Com::tReset);
+            //we are printing from sdcard or from host ?
+			if(!Printer::isMenuMode(MENU_MODE_SD_PAUSED) || sd.sdmode )sd.stopPrint();
+			else Com::printFLN(PSTR("Host Print stopped by user."));
+			menuLevel=0;
+			menuPos[0]=0;
+			refreshPage();
+             Printer::setMenuMode(MENU_MODE_STOP_REQUESTED,true);
+             Printer::setMenuMode(MENU_MODE_STOP_DONE,false);
+             Printer::setMenuMode(MENU_MODE_SD_PAUSED,false);
+           	 //to be sure no moving  by dummy movement
+              Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[X_AXIS]);
+             GCode::bufferReadIndex=0; ///< Read position in gcode_buffer.
+             GCode::bufferWriteIndex=0; ///< Write position in gcode_buffer.
+             GCode::commandsReceivingWritePosition=0; ///< Writing position in gcode_transbuffer
+             GCode::lastLineNumber=0; ///< Last line number received.
+             GCode::bufferLength=0; ///< Number of commands stored in gcode_buffer
+             PrintLine::nlFlag = false;
+             PrintLine::linesCount=0;
+             PrintLine::linesWritePos = 0;            ///< Position where we write the next cached line move.
+             PrintLine::linesPos = 0;                 ///< Position for executing line movement
+             PrintLine::lines[0].block();
            	executeAction(UI_ACTION_COOLDOWN);
+            Printer::setMenuMode(MENU_MODE_STOP_DONE,true);
+            UI_STATUS(UI_TEXT_CANCELED);
             break;
+        }
         case UI_ACTION_SD_UNMOUNT:
             sd.unmount();
             break;

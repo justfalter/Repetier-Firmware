@@ -25,6 +25,7 @@
 class Com
 {
     public:
+FSTRINGVAR(tReset)
 FSTRINGVAR(tTempExtABS)
 FSTRINGVAR(tTempExtPLA)
 FSTRINGVAR(tTempBedABS)
@@ -89,9 +90,9 @@ FSTRINGVAR(tSpaceRaw)
 FSTRINGVAR(tSpaceAt)
 FSTRINGVAR(tSpaceBAtColon)
 FSTRINGVAR(tColon)
-FSTRINGVAR(tSpeedMultiply);
-FSTRINGVAR(tFlowMultiply);
-FSTRINGVAR(tFanspeed);
+FSTRINGVAR(tSpeedMultiply)
+FSTRINGVAR(tFlowMultiply)
+FSTRINGVAR(tFanspeed)
 FSTRINGVAR(tPrintedFilament)
 FSTRINGVAR(tPrintingTime)
 FSTRINGVAR(tSpacem)
