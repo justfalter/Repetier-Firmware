@@ -87,7 +87,11 @@ void Commands::checkForPeriodicalActions()
             else delay_flag_change2++;
         }
     else delay_flag_change2=0;
-    
+    if ( Printer::isMenuMode(MENU_MODE_GCODE_PROCESSING))
+        {
+        delay_flag_change=0;
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+        }
     if (!PrintLine::hasLines() &&  Printer::isMenuMode(MENU_MODE_PRINTING)) 
 		{
 		if (delay_flag_change>5) 
@@ -468,6 +472,7 @@ void Commands::executeGCode(GCode *com)
 //periodical command from repetier should not be taken in account  for wake up
     if(!((com->hasM() &&  com->M ==105) || Printer::isMenuMode(MENU_MODE_SD_PRINTING)))   // Process M Code
     {
+        Printer::setMenuMode(MENU_MODE_GCODE_PROCESSING,true);
         Printer::setMenuMode(MENU_MODE_PRINTING,true);
 #if UI_AUTOLIGHTOFF_AFTER!=0
         if (EEPROM::timepowersaving>0 && EEPROM::bkeeplighton )
@@ -634,6 +639,7 @@ void Commands::executeGCode(GCode *com)
             {
                 GCode::readFromSerial();
                 Commands::checkForPeriodicalActions();
+                if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))break;
                 Printer::setMenuMode(MENU_MODE_PRINTING,true);
             }
             break;
@@ -1115,6 +1121,7 @@ void Commands::executeGCode(GCode *com)
                     printedTime = currentTime;
                 }
                 Commands::checkForPeriodicalActions();
+                if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))break;
                 //gcode_read_serial();
 #if RETRACT_DURING_HEATUP
                 if (actExtruder == Extruder::current && actExtruder->waitRetractUnits > 0 && !retracted && dirRising && actExtruder->tempControl.currentTemperatureC > actExtruder->waitRetractTemperature)
@@ -1165,6 +1172,7 @@ void Commands::executeGCode(GCode *com)
                 }
                  Printer::setMenuMode(MENU_MODE_PRINTING,true);
                 Commands::checkForPeriodicalActions();
+                if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))break;
             }
 #endif
 #endif
@@ -1185,6 +1193,7 @@ void Commands::executeGCode(GCode *com)
                         codenum = HAL::timeInMilliseconds();
                     }
                     Commands::checkForPeriodicalActions();
+                    if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED))break;
                     for(uint8_t h=0;h<NUM_TEMPERATURE_LOOPS;h++) {
                         TemperatureController *act = tempController[h];
                         if(act->targetTemperatureC>30 && fabs(act->targetTemperatureC-act->currentTemperatureC)>1)
@@ -1690,6 +1699,7 @@ void Commands::executeGCode(GCode *com)
             }
 #endif
     }
+Printer::setMenuMode(MENU_MODE_GCODE_PROCESSING,false);
 }
 void Commands::emergencyStop()
 {

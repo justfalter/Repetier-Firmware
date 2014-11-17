@@ -262,6 +262,7 @@ usage or for seraching for memory induced errors. Switch it off for production, 
 #define MENU_MODE_PRINTING 16
 #define MENU_MODE_STOP_REQUESTED 32
 #define MENU_MODE_STOP_DONE  64
+#define MENU_MODE_GCODE_PROCESSING  128
 
 #include "HAL.h"
 #include "gcode.h"
