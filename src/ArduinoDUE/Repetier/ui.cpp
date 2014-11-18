@@ -2914,6 +2914,8 @@ delay(500);
 //main loop
 while (process_it)
 	{
+    Printer::setMenuMode(MENU_MODE_PRINTING,true);
+    Commands::delay_flag_change=0;
 	//process critical actions
 	Commands::checkForPeriodicalActions();
 	//be sure button is pressed and not same one 
@@ -3225,6 +3227,14 @@ void UIDisplay::executeAction(int action)
 		bool btmp_autoreturn=benable_autoreturn; //save current value
 		benable_autoreturn=false;//desactivate no need to test if active or not
 #endif
+        //save current target temp
+        float extrudertarget1=extruder[0].tempControl.targetTemperatureC;
+        #if NUM_EXTRUDER>1
+        float extrudertarget2=extruder[1].tempControl.targetTemperatureC;
+        #endif
+        #if HAVE_HEATED_BED==true
+        float bedtarget=heatedBedController.targetTemperatureC;
+        #endif
 		int status=STATUS_OK;
 		int tmpmenu=menuLevel;
 		int tmpmenupos=menuPos[menuLevel];
@@ -3236,6 +3246,8 @@ void UIDisplay::executeAction(int action)
 		step=STEP_HEATING;
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
         if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
@@ -3246,10 +3258,12 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case  STEP_HEATING:
-            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
-			#if NUM_EXTRUDER>1
+            if (extruder[0].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+           Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
+		   #if NUM_EXTRUDER>1
+           if (extruder[1].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
             Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
-			#endif
+		   #endif
 			step =  STEP_WAIT_FOR_TEMPERATURE;
 		 break;
 		 case STEP_WAIT_FOR_TEMPERATURE:
@@ -3301,7 +3315,6 @@ void UIDisplay::executeAction(int action)
 				playsound(5000,240);
 				playsound(3000,240);
 				Printer::homeAxis(true,true,false);
-				UI_STATUS(UI_TEXT_COOLDOWN);
 				}
 			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
 				{
@@ -3336,10 +3349,10 @@ void UIDisplay::executeAction(int action)
 			#endif
 			}
 		}
-		//cool down
-		Extruder::setTemperatureForExtruder(0,0);
+		//cool down if necessary
+		Extruder::setTemperatureForExtruder(extrudertarget1,0);
 		#if NUM_EXTRUDER>1
-        Extruder::setTemperatureForExtruder(0,1);
+        Extruder::setTemperatureForExtruder(extrudertarget2,1);
 		#endif
 		if(status==STATUS_OK)
 			{
@@ -3392,6 +3405,8 @@ void UIDisplay::executeAction(int action)
         UI_STATUS(UI_TEXT_PREPARING);
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
 		 switch(step)
@@ -3505,6 +3520,8 @@ void UIDisplay::executeAction(int action)
 		previousaction=0;
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		if (previousaction!=lastButtonAction)
 			{
@@ -3589,6 +3606,8 @@ void UIDisplay::executeAction(int action)
 		#endif
 		tmpextruderid=Extruder::current->id;
 		Extruder::selectExtruderById(extruderid,false);
+         //save current target temp
+        float extrudertarget=extruder[extruderid].tempControl.targetTemperatureC;
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
 		UI_STATUS(UI_TEXT_HEATING);
@@ -3596,32 +3615,11 @@ void UIDisplay::executeAction(int action)
 		pushMenu(&ui_menu_heatextruder_page,true);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
-		if(!Printer:: isMenuMode(MENU_MODE_SD_PAUSED))
-			{//we heat only if not printing
-			step=STEP_EXT_HEATING;
-			}
-		else
-			{	//we are in menu pause but is temp ok ?
-				if(Extruder::current->tempControl.currentTemperatureC<=MIN_EXTRUDER_TEMP)
-					{
-					process_it=true;
-					menuLevel=0;
-					refreshPage();
-					UI_STATUS(UI_TEXT_EXTRUDER_COLD);
-					return;
-					}
-			else
-				{//temperature is ok so lets proceed
-				step = STEP_EXT_ASK_FOR_FILAMENT;
-				playsound(3000,240);
-				playsound(4000,240);
-				playsound(5000,240);
-				UI_STATUS(UI_TEXT_WAIT_FILAMENT);
-				}
-			counter=0;	
-			}
+		step=STEP_EXT_HEATING;
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
         if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
@@ -3629,10 +3627,13 @@ void UIDisplay::executeAction(int action)
             Commands::printTemperatures();
             printedTime = currentTime;
            }
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		 switch(step)
 		 {
 		 case STEP_EXT_HEATING:
-            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,extruderid);
+           if (extruder[extruderid].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+                   Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,extruderid);
 			step =  STEP_EXT_WAIT_FOR_TEMPERATURE;
 		 break;
 		 case STEP_EXT_WAIT_FOR_TEMPERATURE:
@@ -3691,7 +3692,6 @@ void UIDisplay::executeAction(int action)
 							if(EEPROM::busesensor &&READ(FIL_SENSOR1_PIN))
 								{
 								process_it=false;
-								UI_STATUS(UI_TEXT_COOLDOWN);
 								}
 						#endif
 					}
@@ -3701,7 +3701,6 @@ void UIDisplay::executeAction(int action)
 							if(EEPROM::busesensor &&READ(FIL_SENSOR2_PIN))
 								{
 								process_it=false;
-								UI_STATUS(UI_TEXT_COOLDOWN);
 								}
 						#endif
 					}
@@ -3778,9 +3777,10 @@ void UIDisplay::executeAction(int action)
 			#endif
 			}
 		}
-		//cool down
-		if(!Printer:: isMenuMode(MENU_MODE_SD_PAUSED))Extruder::setTemperatureForExtruder(0,extruderid);
-		Extruder::selectExtruderById(tmpextruderid,false);
+		
+		//cool down if necessary
+		Extruder::setTemperatureForExtruder(extrudertarget,extruderid);
+        Extruder::selectExtruderById(tmpextruderid,false);
 		if(status==STATUS_OK)
 			{
 			UI_STATUS(UI_TEXT_PRINTER_READY);
@@ -3817,21 +3817,31 @@ void UIDisplay::executeAction(int action)
 		int tmpmenu=menuLevel;
 		int tmpmenupos=menuPos[menuLevel];
 		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
+        //save current target temp
+        float extrudertarget1=extruder[0].tempControl.targetTemperatureC;
+        #if NUM_EXTRUDER>1
+        float extrudertarget2=extruder[1].tempControl.targetTemperatureC;
+        #endif
+        #if HAVE_HEATED_BED==true
+        float bedtarget=heatedBedController.targetTemperatureC;
+        #endif
 		#if ENABLE_CLEAN_NOZZLE==1
 		//ask for user if he wants to clean nozzle and plate
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_CLEAN1,UI_TEXT_CLEAN2))
 					{
+                    //heat extruders first to keep them hot
+                    if (extruder[0].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+                   Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
+                   #if NUM_EXTRUDER>1
+                   if (extruder[1].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+                    Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
+                   #endif
 					executeAction(UI_ACTION_CLEAN_NOZZLE);
 					}
 			
 		 #endif
 		 if(menuLevel>0) menuLevel--;
 		 pushMenu(&ui_menu_autolevel_page,true);
-		//Home first
-		Printer::homeAxis(true,true,true);
-		//then put bed +10mm
-		Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+10,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
-        Commands::waitUntilEndOfAllMoves();
 		UI_STATUS(UI_TEXT_HEATING);
 		process_it=true;
 		printedTime = HAL::timeInMilliseconds();
@@ -3845,8 +3855,11 @@ void UIDisplay::executeAction(int action)
 		float distance;
 		int status=STATUS_OK;
 		float currentzMin = Printer::zMin;
+ 
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
         if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
@@ -3857,11 +3870,14 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case STEP_AUTOLEVEL_HEATING:
+            if (extruder[0].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 		   #if NUM_EXTRUDER>1
+           if (extruder[1].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
             Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 		   #endif
 		   #if HAVE_HEATED_BED==true
+           if (heatedBedController.targetTemperatureC<EEPROM::ftemp_bed_abs)
             Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_abs);
 		   #endif
 		   step =  STEP_AUTOLEVEL_WAIT_FOR_TEMPERATURE;
@@ -3887,6 +3903,11 @@ void UIDisplay::executeAction(int action)
 			#endif
 		 break;
 		 case STEP_ZPROBE_SCRIPT:
+            //Home first
+            Printer::homeAxis(true,true,true);
+            //then put bed +10mm
+            Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+10,IGNORE_COORDINATE,Printer::homingFeedrate[0]);
+            Commands::waitUntilEndOfAllMoves();
 		 	//Startup script
 			GCode::executeFString(Com::tZProbeStartScript);
 			step = STEP_AUTOLEVEL_START;
@@ -3992,7 +4013,19 @@ void UIDisplay::executeAction(int action)
 				//back to original value
 				Printer::zMin=currentzMin;
 				}
-			process_it=false;	
+            if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_REDO_ACTION,UI_TEXT_AUTOLEVEL))
+					{
+                    if(menuLevel>0) menuLevel--;
+					 pushMenu(&ui_menu_autolevel_page,true);
+                    xypoint=1;
+                    z = 0;
+                    currentzMin = Printer::zMin;
+                    Printer::setAutolevelActive(true);
+                    Printer::updateDerivedParameter();
+                    Printer::updateCurrentPosition(true);
+                    step=STEP_ZPROBE_SCRIPT;
+                    }
+            else 	process_it=false;	
 			break;
 		 }
 		 //check what key is pressed
@@ -4035,13 +4068,13 @@ void UIDisplay::executeAction(int action)
 			#endif
 			}
 		}
-		//cool down
-		Extruder::setTemperatureForExtruder(0,0);
+        //cool down if necessary
+		Extruder::setTemperatureForExtruder(extrudertarget1,0);
 		#if NUM_EXTRUDER>1
-        Extruder::setTemperatureForExtruder(0,1);
+        Extruder::setTemperatureForExtruder(extrudertarget2,1);
 		#endif
 		#if HAVE_HEATED_BED==true
-          Extruder::setHeatedBedTemperature(0);
+          Extruder::setHeatedBedTemperature(bedtarget);
 		#endif
 		Printer::setAutolevelActive(true);
 		Printer::updateDerivedParameter();
@@ -4094,10 +4127,25 @@ void UIDisplay::executeAction(int action)
 		int tmpmenu=menuLevel;
 		int tmpmenupos=menuPos[menuLevel];
 		UIMenu *tmpmen = (UIMenu*)menu[menuLevel];
+        //save current target temp
+        float extrudertarget1=extruder[0].tempControl.targetTemperatureC;
+        #if NUM_EXTRUDER>1
+        float extrudertarget2=extruder[1].tempControl.targetTemperatureC;
+        #endif
+        #if HAVE_HEATED_BED==true
+        float bedtarget=heatedBedController.targetTemperatureC;
+        #endif
 		#if ENABLE_CLEAN_NOZZLE==1
 		//ask for user if he wants to clean nozzle and plate
 			if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_CLEAN1,UI_TEXT_CLEAN2))
 					{
+                      //heat extruders first to keep them hot
+                    if (extruder[0].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+                   Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
+                   #if NUM_EXTRUDER>1
+                   if (extruder[1].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
+                    Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
+                   #endif
 					executeAction(UI_ACTION_CLEAN_NOZZLE);
 					}
 		 #endif
@@ -4116,6 +4164,8 @@ void UIDisplay::executeAction(int action)
 		
 		while (process_it)
 		{
+        Printer::setMenuMode(MENU_MODE_PRINTING,true);
+		Commands::delay_flag_change=0;
 		Commands::checkForPeriodicalActions();
 		currentTime = HAL::timeInMilliseconds();
         if( (currentTime - printedTime) > 1000 )   //Print Temp Reading every 1 second while heating up.
@@ -4126,11 +4176,14 @@ void UIDisplay::executeAction(int action)
 		 switch(step)
 		 {
 		 case STEP_MANUAL_LEVEL_HEATING:
+           if (extruder[0].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
            Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,0);
 		   #if NUM_EXTRUDER>1
+           if (extruder[1].tempControl.targetTemperatureC<EEPROM::ftemp_ext_abs)
             Extruder::setTemperatureForExtruder(EEPROM::ftemp_ext_abs,1);
 		   #endif
 		   #if HAVE_HEATED_BED==true
+           if (heatedBedController.targetTemperatureC<EEPROM::ftemp_bed_abs)
             Extruder::setHeatedBedTemperature(EEPROM::ftemp_bed_abs);
 		   #endif
 		   step =  STEP_MANUAL_LEVEL_WAIT_FOR_TEMPERATURE;
@@ -4296,12 +4349,21 @@ void UIDisplay::executeAction(int action)
 			}
 			else if ((lastButtonAction==UI_ACTION_OK) &&(step==STEP_MANUAL_LEVEL_PAGE10))
 			{
-				 if(menuLevel>0) menuLevel--;
-				playsound(5000,240);
+                playsound(5000,240);
 				playsound(3000,240);
-				pushMenu(&ui_menu_manual_level_heat_page,true);
-				Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+10,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
-				process_it=false;
+                if (confirmationDialog(UI_TEXT_DO_YOU ,UI_TEXT_REDO_ACTION,UI_TEXT_MANUAL_LEVEL))
+					{
+                    if(menuLevel>0) menuLevel--;
+					pushMenu(&ui_menu_manual_level_heat_page,true);
+                    step=STEP_MANUAL_LEVEL_POINT_1;
+                    }
+                else
+                    {
+                     if(menuLevel>0) menuLevel--;
+                    pushMenu(&ui_menu_manual_level_heat_page,true);
+                    Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::zMin+10,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]);
+                    process_it=false;
+                    }
 			}
 			else if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
 				{
@@ -4350,13 +4412,13 @@ void UIDisplay::executeAction(int action)
 				}
 			#endif
 			}
-		//cool down
-		Extruder::setTemperatureForExtruder(0,0);
+		//cool down if necessary
+		Extruder::setTemperatureForExtruder(extrudertarget1,0);
 		#if NUM_EXTRUDER>1
-        Extruder::setTemperatureForExtruder(0,1);
+        Extruder::setTemperatureForExtruder(extrudertarget2,1);
 		#endif
 		#if HAVE_HEATED_BED==true
-          Extruder::setHeatedBedTemperature(0);
+          Extruder::setHeatedBedTemperature(bedtarget);
 		#endif
 		//home again
 		Printer::homeAxis(true,true,true);

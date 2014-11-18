@@ -103,7 +103,7 @@
 	#define UI_TEXT_EXTR_XOFF         "Xoffst:%Xx"
 	#define UI_TEXT_EXTR_YOFF         "Yoffst:%Xy"
 #endif
-
+#define UI_TEXT_REDO_ACTION "Do it again ?"
 #define UI_TEXT_X_LENGTH "X Length:%Lxmm"
 #define UI_TEXT_Y_LENGTH "Y Length:%Lymm"
 #define UI_TEXT_Z_LENGTH "Z Length:%Lzmm"
