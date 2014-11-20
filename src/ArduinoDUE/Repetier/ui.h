@@ -218,6 +218,7 @@
 #define UI_ACTION_X_LENGTH					1146
 #define UI_ACTION_Y_LENGTH					1147
 #define UI_ACTION_Z_LENGTH					1148
+#define UI_ACTION_VERSION					1149
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001
@@ -1151,9 +1152,7 @@ void ui_check_slow_keys(int &action) {}
 #include "uimenu.h"
 #endif
 
-#define UI_VERSION_STRING2 "Repetier " REPETIER_VERSION "Mod"
-
-#define UI_VERSION_STRING  VERSION_MAJOR "." VERSION_MINOR_YEAR "-" VERSION_MINOR_MONTH "-" VERSION_MINOR_DAY "_" VERSION_BUILD "." DAVINCI_TYPE
+#define UI_VERSION_STRING "Repetier " REPETIER_VERSION "Mod"
 
 #ifdef UI_HAS_I2C_KEYS
 #define COMPILE_I2C_DRIVER
