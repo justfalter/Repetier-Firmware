@@ -74,7 +74,7 @@
 #define Z_PROBE_X1 -7
 #define Z_PROBE_Y1 -10
 #define Z_PROBE_X2 -7
-#define Z_PROBE_Y2 206
+#define Z_PROBE_Y2 205
 #define Z_PROBE_X3 179
 #define Z_PROBE_Y3 206
 //Manual bed leveling
