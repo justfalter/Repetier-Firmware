@@ -60,34 +60,81 @@
 #define NUM_EXTRUDER 1
 #define EXT0_INVERSE 0
 #define NUM_FAN 1
+#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+//home positions
+#define X_MIN_POS -33
+#define Y_MIN_POS -12
+#define Z_MIN_POS 0
 #define ENDSTOP_Y_BACK_ON_HOME 0  //Moved here to be sure to be included in Y_MAX_LENGTH
+//Maximum dimensions
 #define X_MAX_LENGTH 237 - ENDSTOP_X_BACK_ON_HOME
 #define Y_MAX_LENGTH 217 - ENDSTOP_Y_BACK_ON_HOME
-#define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
+#define Z_MAX_LENGTH 202 - ENDSTOP_Z_BACK_ON_HOME
+//Z probe positions (Auto Level)
+#define Z_PROBE_X1 -7
+#define Z_PROBE_Y1 -10
+#define Z_PROBE_X2 -7
+#define Z_PROBE_Y2 206
+#define Z_PROBE_X3 179
+#define Z_PROBE_Y3 206
+//Manual bed leveling
+#define MANUAL_LEVEL_X1 100
+#define MANUAL_LEVEL_Y1 190
+#define MANUAL_LEVEL_X2 100
+#define MANUAL_LEVEL_Y2 10
+#define MANUAL_LEVEL_X3 10
+#define MANUAL_LEVEL_Y3  100
+#define MANUAL_LEVEL_X4  190
+#define MANUAL_LEVEL_Y4  100
+
+//Davinci 1.0
 #define UI_PRINTER_NAME    "  Da Vinci 1.0"
 #define DAVINCI_TYPE "1"
+
+#else //for Davinci 2.0 SF and DF
+//home positions
+#define X_MIN_POS 0
+#define Y_MIN_POS 0
+#define Z_MIN_POS 0
+#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
+//Maximum dimensions
+#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
+#define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
+#define Z_MAX_LENGTH 202 - ENDSTOP_Z_BACK_ON_HOME
+//Z probe positions (Auto Level)
+#define Z_PROBE_X1 36
+#define Z_PROBE_Y1 -7
+#define Z_PROBE_X2 36
+#define Z_PROBE_Y2 203
+#define Z_PROBE_X3 171
+#define Z_PROBE_Y3 203
+//Manual bed leveling
+#define MANUAL_LEVEL_X1 100
+#define MANUAL_LEVEL_Y1  180
+#define MANUAL_LEVEL_X2 100
+#define MANUAL_LEVEL_Y2 10
+#define MANUAL_LEVEL_X3 50
+#define MANUAL_LEVEL_Y3 95
+#define MANUAL_LEVEL_X4  150
+#define MANUAL_LEVEL_Y4  95
 #endif
 
+//Davinci 2.0 single fan but 2 extruders
 #if DAVINCI==2
 #define NUM_EXTRUDER 2
 #define EXT0_INVERSE 1
-#define NUM_FAN 1 
-#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
-#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
-#define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
+#define NUM_FAN 1
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
 #define DAVINCI_TYPE "2"
 #endif
 
+//Davinci 2.0 double fans and 2 extruders
 #if DAVINCI==3
 #define NUM_EXTRUDER 2
 #define EXT0_INVERSE 1
-#define NUM_FAN 2 
-#define ENDSTOP_Y_BACK_ON_HOME 7  //Moved here to be sure to be included in Y_MAX_LENGTH
-#define X_MAX_LENGTH 199 - ENDSTOP_X_BACK_ON_HOME
-#define Y_MAX_LENGTH 211 - ENDSTOP_Y_BACK_ON_HOME
+#define NUM_FAN 2
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
 #define UI_PRINTER_NAME    "  Da Vinci 2.0"
@@ -107,9 +154,9 @@
 //#define COMPAT_PRE1
 
 //This is the logic that controls the cooling fan pin assignments.
-#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1 
+#if REPURPOSE_FAN_TO_COOL_EXTRUSIONS==1
     #define FAN_PIN ORIG_FAN_PIN
-    #define FEATURE_FAN_CONTROL 1 
+    #define FEATURE_FAN_CONTROL 1
     #if DAVINCI>=2
       #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
       #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
@@ -118,7 +165,7 @@
     #endif
 #else
   #define FAN_PIN -1
-  #define FEATURE_FAN_CONTROL 0    
+  #define FEATURE_FAN_CONTROL 0
 #endif
 
 #define HIDE_BINARY_ON_SD 1
@@ -198,9 +245,9 @@
 #define TEMP_HYSTERESIS 0
 #define EXTRUDE_MAXLENGTH 160
 #define NUM_TEMPS_USERTHERMISTOR0 23
-#define USER_THERMISTORTABLE0 {{111,2240},{132,2120},{165,2000},{201,1920},{248,1800},{309,1720},{389,1640},{485,1560},{596,1440},{714,1360},{894,1280},{1083,1160},{1312,1080},{1539,960},{1786,880},{2006,760},{2208,640},{2382,560},{2503,440},{2602,360},{2679,264},{2729,160},{2740,-160}} 
+#define USER_THERMISTORTABLE0 {{111,2240},{132,2120},{165,2000},{201,1920},{248,1800},{309,1720},{389,1640},{485,1560},{596,1440},{714,1360},{894,1280},{1083,1160},{1312,1080},{1539,960},{1786,880},{2006,760},{2208,640},{2382,560},{2503,440},{2602,360},{2679,264},{2729,160},{2740,-160}}
 #define NUM_TEMPS_USERTHERMISTOR1 24
-#define USER_THERMISTORTABLE1 {{2003,1040},{2058,1000},{2161,960},{2253,920},{2337,880},{2450,840},{2549,800},{2637,760},{2715,720},{2786,680},{2907,640},{3008,600},{3093,560},{3165,520},{3247,480},{3316,440},{3374,400},{3447,360},{3506,320},{3548,280},{3610,240},{3664,200},{3708,160},{3723,-160}} 
+#define USER_THERMISTORTABLE1 {{2003,1040},{2058,1000},{2161,960},{2253,920},{2337,880},{2450,840},{2549,800},{2637,760},{2715,720},{2786,680},{2907,640},{3008,600},{3093,560},{3165,520},{3247,480},{3316,440},{3374,400},{3447,360},{3506,320},{3548,280},{3610,240},{3664,200},{3708,160},{3723,-160}}
 #define NUM_TEMPS_USERTHERMISTOR2 0
 #define USER_THERMISTORTABLE2 {}
 #define GENERIC_THERM_VREF 5
@@ -279,10 +326,7 @@
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
-#define Z_MAX_LENGTH 202 - ENDSTOP_Z_BACK_ON_HOME
-#define X_MIN_POS 0
-#define Y_MIN_POS 0
-#define Z_MIN_POS 0
+
 
 // ##########################################################################################
 // ##                           Movement settings                                          ##
@@ -390,40 +434,6 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_FINISHED_SCRIPT ""
 #define FEATURE_AUTOLEVEL 1
 
-#if DAVINCI == 1
-#define Z_PROBE_X1 21 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y1 9 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X2 21 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y2 217 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X3 206 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y3 217 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-
-#define MANUAL_LEVEL_X1	((X_MAX_LENGTH) /2) +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define MANUAL_LEVEL_Y1	 Y_MAX_LENGTH-10+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define MANUAL_LEVEL_X2	((X_MAX_LENGTH)/2) +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define MANUAL_LEVEL_Y2	10+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME 
-#define MANUAL_LEVEL_X3	 10+X_MIN_POS 
-#define MANUAL_LEVEL_Y3	 ((Y_MAX_LENGTH)/2)+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define MANUAL_LEVEL_X4	 X_MAX_LENGTH-10 +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define MANUAL_LEVEL_Y4	 ((Y_MAX_LENGTH)/2)+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#else
-#define Z_PROBE_X1 36 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y1 0 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X2 36 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y2 210 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define Z_PROBE_X3 171 + X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define Z_PROBE_Y3 210 + Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-
-#define MANUAL_LEVEL_X1	((X_MAX_LENGTH) /2) +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define MANUAL_LEVEL_Y1	 Y_MAX_LENGTH-15+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define MANUAL_LEVEL_X2	((X_MAX_LENGTH)/2) +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME
-#define MANUAL_LEVEL_Y2	15+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME 
-#define MANUAL_LEVEL_X3	 15+X_MIN_POS +36 
-#define MANUAL_LEVEL_Y3	 ((Y_MAX_LENGTH)/2)+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#define MANUAL_LEVEL_X4	 X_MAX_LENGTH-15 +X_MIN_POS - ENDSTOP_X_BACK_ON_HOME -36
-#define MANUAL_LEVEL_Y4	 ((Y_MAX_LENGTH)/2)+Y_MIN_POS - ENDSTOP_Y_BACK_ON_HOME
-#endif
-
 #ifndef SDSUPPORT  // Some boards have sd support on board. These define the values already in pins.h
 #define SDSUPPORT 1
 #define SDCARDDETECT SDCARDDETECT
@@ -446,7 +456,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
   #if DAVINCI==1 //cleaner of Davinci 1.0 is not in same position of 2.0
     #define CLEAN_X 20
     #define CLEAN_Y 20
-  #endif 
+  #endif
   #if DAVINCI>=2
     #define CLEAN_X 0
     #define CLEAN_Y 30
@@ -466,7 +476,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define CASE_SENSOR_DEFAULT_ON 1
 #define CASE_SOUND_DEFAULT_ON 1
 //default mode is advanced
-#define CASE_DISPLAY_MODE_DEFAULT 1 
+#define CASE_DISPLAY_MODE_DEFAULT 1
 #define UI_START_SCREEN_DELAY 2000
 /**
 Beeper sound definitions for short beeps during key actions
@@ -530,7 +540,7 @@ Values must be in range 1..255
             "waitRetractTemp": 150,
             "waitRetractUnits": 0,
             "waitRetract": 0,
-            "stepsPerMM": 96,
+            "stepsPerMM": 99,
             "coolerPin": "ORIG_FAN_PIN",
             "coolerSpeed": 255,
             "selectCommands": "",
@@ -570,7 +580,7 @@ Values must be in range 1..255
             "waitRetractTemp": 150,
             "waitRetractUnits": 0,
             "waitRetract": 0,
-            "stepsPerMM": 96,
+            "stepsPerMM": 99,
             "coolerPin": "ORIG_FAN_PIN",
             "coolerSpeed": 255,
             "selectCommands": "",
