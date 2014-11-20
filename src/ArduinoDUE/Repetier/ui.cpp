@@ -58,7 +58,7 @@ HAL::delayMilliseconds(duration);
 HAL::noTone(BEEPER_PIN);
 #endif
 }
-
+float Z_probe[3];
 void beep(uint8_t duration,uint8_t count)
 {
 #if FEATURE_BEEPER
@@ -1455,6 +1455,27 @@ void UIDisplay::parse(const char *txt,bool ram)
 					addStringP(ui_text_on);//if not defined by preset
 					}
       	    #endif 
+            break;
+        case 'Z':
+            if(c2=='1' || c2=='2' || c2=='3')
+                    {
+                        int p = c2- '0';
+                        p--;
+                        if (Z_probe[p] == -1000)
+                            {
+                                addStringP("  --.--- mm");
+                            }
+                        else
+                             if (Z_probe[p] == -2000)
+                            {
+                                addStringP(UI_TEXT_FAILED);
+                            }
+                        else 
+                            {
+                                addFloat(Z_probe[p]-10 ,4,3);
+                                addStringP(" mm");
+                            }
+                    }
             break;
 		case 'z':
 			if(c2=='m')
@@ -3807,6 +3828,9 @@ void UIDisplay::executeAction(int action)
 		}
 		case UI_ACTION_AUTOLEVEL:
 		{
+        Z_probe[0]=-1000;
+        Z_probe[1]=-1000;
+        Z_probe[2]=-1000;
 	    //be sure no issue
 		if(reportTempsensorError() or Printer::debugDryrun()) break;
 //to be sure no return menu
@@ -3916,6 +3940,11 @@ void UIDisplay::executeAction(int action)
 			Printer::coordinateOffset[0] = Printer::coordinateOffset[1] = Printer::coordinateOffset[2] = 0;
 			Printer::setAutolevelActive(false); // iterate
 			step = STEP_AUTOLEVEL_MOVE;
+            Z_probe[0]=-1000;
+            Z_probe[1]=-1000;
+            Z_probe[2]=-1000;
+            if(menuLevel>0) menuLevel--;
+		    pushMenu(&ui_menu_autolevel_results_page,true);
 			break;
 			
 		case STEP_AUTOLEVEL_MOVE:
@@ -3943,10 +3972,12 @@ void UIDisplay::executeAction(int action)
 				{
 				Com::printErrorFLN(Com::tZProbeFailed);
 				UI_STATUS(UI_TEXT_Z_PROBE_FAILED);
+                 Z_probe[xypoint-1]=-2000;
                 process_it=false;
 				Printer::setZProbingActive(false);
+                status=STATUS_FAIL;
+                uid.refreshPage();
 				PrintLine::moveRelativeDistanceInSteps(0,0,10*Printer::axisStepsPerMM[Z_AXIS],0,Printer::homingFeedrate[0],true,false);
-				status=STATUS_FAIL;
 				playsound(3000,240);
 				playsound(5000,240);
 				playsound(3000,240);
@@ -3960,6 +3991,7 @@ void UIDisplay::executeAction(int action)
 			Com::printF(Com::tSpaceXColon,Printer::realXPosition());
 			Com::printFLN(Com::tSpaceYColon,Printer::realYPosition());
 			uid.setStatusP(Com::tHitZProbe);
+             Z_probe[xypoint-1]=distance;
 			uid.refreshPage();
 			// Go back to start position
 			PrintLine::moveRelativeDistanceInSteps(0,0,lastCorrection-Printer::currentPositionSteps[Z_AXIS],0,EEPROM::zProbeSpeed(),true,false);
@@ -3996,11 +4028,17 @@ void UIDisplay::executeAction(int action)
 				Printer::zMin = 0;
 #endif
 				step = STEP_AUTOLEVEL_RESULTS;
+                playsound(3000,240);
+				playsound(4000,240);
+				playsound(5000,240);
+                UI_STATUS(UI_TEXT_WAIT_OK);
 				}
 			break;
 			}
-					
-		 case STEP_AUTOLEVEL_RESULTS:
+        case STEP_AUTOLEVEL_RESULTS:
+        //just wait Ok is pushed
+        break;
+		 case STEP_AUTOLEVEL_SAVE_RESULTS:
 				playsound(3000,240);
 				playsound(4000,240);
 				playsound(5000,240);
@@ -4033,6 +4071,10 @@ void UIDisplay::executeAction(int action)
 			{
 			previousaction=lastButtonAction;
 			if(previousaction!=0)BEEP_SHORT;
+             if (lastButtonAction==UI_ACTION_OK  && step==STEP_AUTOLEVEL_RESULTS)
+                {
+                    step=STEP_AUTOLEVEL_SAVE_RESULTS;
+                }
 			 if (lastButtonAction==UI_ACTION_BACK)//this means user want to cancel current action
 				{
 				if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_CANCEL_ACTION,UI_TEXT_AUTOLEVEL))

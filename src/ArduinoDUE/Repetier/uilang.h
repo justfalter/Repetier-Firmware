@@ -128,6 +128,8 @@
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_9 "Ajust the back","and left knobs","until paper just","slides."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_10 "Check that paper","just slides","between nozzle","and plate."
 
+#define UI_TEXT_WAIT_OK       "Ok to continue"
+#define UI_TEXT_FAILED          "Failed"
 #define UI_TEXT_PLEASE_WAIT        "Please wait"
 #define UI_TEXT_MANUAL_LEVEL        "Manual leveling"
 #define UI_TEXT_WARNING		"Warning!"
