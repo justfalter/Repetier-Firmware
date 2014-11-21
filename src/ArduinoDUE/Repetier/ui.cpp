@@ -1105,6 +1105,9 @@ void UIDisplay::parse(const char *txt,bool ram)
             else if(c2=='J') addFloat(Printer::maxZJerk,3,1);
 #endif
             break;
+        case 'A':
+            if(c2=='m') addStringP(Printer:: isAutolevelActive()?ui_text_on:ui_text_off);
+        break;
         case 'B':
         if(c2=='1') //heat PLA
                 {
@@ -3902,6 +3905,11 @@ void UIDisplay::executeAction(int action)
  #endif
         break;
 		}
+#if FEATURE_AUTOLEVEL
+        case UI_ACTION_AUTOLEVEL_ON :
+            Printer::setAutolevelActive(!Printer:: isAutolevelActive());
+            EEPROM:: update(EPR_AUTOLEVEL_ACTIVE,EPR_TYPE_BYTE,Printer:: isAutolevelActive(),0);
+        break;
 		case UI_ACTION_AUTOLEVEL:
 		{
         Z_probe[0]=-1000;
@@ -4243,7 +4251,7 @@ void UIDisplay::executeAction(int action)
 		refreshPage();
 		break;
 		}
-		
+#endif
 		
 		case UI_ACTION_MANUAL_LEVEL:
 		{
