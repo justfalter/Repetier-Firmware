@@ -582,12 +582,22 @@ UI_MENU_ACTIONCOMMAND(ui_menu_sound,UI_TEXT_SOUND_ONOF,UI_ACTION_SOUND,ALL_MODE)
 
 //filament sensor
 #if defined(FIL_SENSOR1_PIN)
-UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_SENSOR_ONOFF,UI_ACTION_SENSOR_ONOFF,ALL_MODE);
+UI_MENU_ACTIONCOMMAND(ui_menu_sensoronoff,UI_TEXT_FIL_SENSOR_ONOFF,UI_ACTION_FILAMENT_SENSOR_ONOFF,ALL_MODE);
 #define UI_SENSOR_ONOFF_ENTRY ,&ui_menu_sensoronoff
 #define UI_SENSOR_ONOFF_COUNT 1
 #else
 #define UI_SENSOR_ONOFF_ENTRY 
 #define UI_SENSOR_ONOFF_COUNT 0
+#endif
+
+//top sensor
+#if defined(TOP_SENSOR_PIN)
+UI_MENU_ACTIONCOMMAND(ui_menu_top_sensoronoff,UI_TEXT_TOP_SENSOR_ONOFF,UI_ACTION_TOP_SENSOR_ONOFF,ALL_MODE);
+#define UI_TOP_SENSOR_ONOFF_ENTRY ,&ui_menu_top_sensoronoff
+#define UI_TOP_SENSOR_ONOFF_COUNT 1
+#else
+#define UI_TOP_SENSOR_ONOFF_ENTRY 
+#define UI_TOP_SENSOR_ONOFF_COUNT 0
 #endif
 
 //powersave easy entry
@@ -786,8 +796,8 @@ UI_MENU(ui_menu_positions_size_seetings,UI_MENU_POSITIONS_SIZE_SETTINGS,3+UI_MEN
 
 UI_MENU_SUBMENU(ui_menu_positions_size_settings_entry, UI_TEXT_POSITION,ui_menu_positions_size_seetings,ADVANCED_MODE);
 
-#define UI_MENU_SETTINGS  {UI_MENU_ADDCONDBACK &ui_menu_display_mode,&ui_menu_quick_speedmultiply, &ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY ,&ui_menu_powersave_menu_entry MENU_PSON_ENTRY,&ui_menu_general_baud,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr,&ui_menu_positions_size_settings_entry,&ui_menu_version UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
-UI_MENU(ui_menu_settings,UI_MENU_SETTINGS,10+UI_TOGGLE_LIGHT_COUNT+UI_SOUND_COUNT+UI_SENSOR_ONOFF_COUNT+UI_POWER_SAVE_COUNT+MENU_PSON_COUNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+UI_MENU_BACKCNT);
+#define UI_MENU_SETTINGS  {UI_MENU_ADDCONDBACK &ui_menu_display_mode,&ui_menu_quick_speedmultiply, &ui_menu_quick_flowmultiply UI_TOOGLE_LIGHT_ENTRY UI_SOUND_ENTRY UI_SENSOR_ONOFF_ENTRY UI_TOP_SENSOR_ONOFF_ENTRY UI_POWER_SAVE_ENTRY ,&ui_menu_powersave_menu_entry MENU_PSON_ENTRY,&ui_menu_general_baud,&ui_menu_conf_accel,&ui_menu_conf_feed,&ui_menu_conf_extr,&ui_menu_positions_size_settings_entry,&ui_menu_version UI_MENU_EEPROM_COND UI_MENU_DELTA_COND UI_MENU_SL_COND}
+UI_MENU(ui_menu_settings,UI_MENU_SETTINGS,10+UI_TOGGLE_LIGHT_COUNT+UI_SOUND_COUNT+UI_SENSOR_ONOFF_COUNT+UI_TOP_SENSOR_ONOFF_COUNT+UI_POWER_SAVE_COUNT+MENU_PSON_COUNT+UI_MENU_EEPROM_CNT+UI_MENU_DELTA_CNT+UI_MENU_SL_CNT+UI_MENU_BACKCNT);
 UI_MENU_SUBMENU(ui_menu_settings_entry, UI_TEXT_SETTINGS, ui_menu_settings,ALL_MODE);
 
 // **** Fan menu

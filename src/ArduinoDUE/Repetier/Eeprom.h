@@ -111,7 +111,7 @@ have problems with other modules using the eeprom */
 #define EPR_SOUND_ON 947
 #define EPR_POWERSAVE_AFTER_TIME 948
 #define EPR_DISPLAY_MODE 952
-#define EPR_SENSOR_ON 953
+#define EPR_FIL_SENSOR_ON 953
 #define EPR_KEEP_LIGHT_ON 954
 #define EPR_MANUAL_LEVEL_X1 955
 #define EPR_MANUAL_LEVEL_Y1 959
@@ -125,6 +125,7 @@ have problems with other modules using the eeprom */
 #define EPR_TEMP_EXT_ABS 		 995
 #define EPR_TEMP_BED_PLA		 999
 #define EPR_TEMP_BED_ABS		1003
+#define EPR_TOP_SENSOR_ON     1007
 
 #define EEPROM_EXTRUDER_OFFSET 200
 // bytes per extruder needed, leave some space for future development
@@ -179,6 +180,7 @@ public:
     static void initBaudrate();
     static bool buselight; 
     static bool busesensor;
+    static bool btopsensor;
     static bool bkeeplighton;
     static float ftemp_ext_pla;
     static float ftemp_ext_abs;

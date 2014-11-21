@@ -26,6 +26,7 @@ int Commands::lowestRAMValue = MAX_RAM;
 int Commands::lowestRAMValueSend = MAX_RAM;
 uint8_t Commands::delay_flag_change=0;
 uint8_t Commands::delay_flag_change2=0;
+uint8_t Commands::countersensor=0;
 void Commands::commandLoop()
 {
     while(true)
@@ -75,6 +76,24 @@ void Commands::checkForPeriodicalActions()
             writeMonitor();
         counter250ms=5;
     }
+   
+   #if defined(TOP_SENSOR_PIN)
+	 if(EEPROM::btopsensor)
+        {
+           if(!READ(TOP_SENSOR_PIN))
+            {
+                countersensor++;
+                if (countersensor>25)
+                    {
+                    playsound(1000,140);
+                    playsound(3000,240);
+                    UI_STATUS_UPD(UI_TEXT_TOP_COVER_OPEN);
+                    countersensor=0;
+                    }
+            }
+            else countersensor=0;
+        }
+#endif
    
     if (Printer::isMenuMode(MENU_MODE_STOP_REQUESTED)  && Printer::isMenuMode(MENU_MODE_STOP_DONE) )
         {

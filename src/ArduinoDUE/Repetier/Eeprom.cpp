@@ -89,7 +89,8 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
     EEPROM::bkeeplighton = bool(CASE_KEEP_LIGHT_DEFAULT_ON);
     UIDisplay::display_mode=CASE_DISPLAY_MODE_DEFAULT;
     HAL::enablesound = bool(CASE_SOUND_DEFAULT_ON);
-    EEPROM::busesensor = bool(CASE_SENSOR_DEFAULT_ON);
+    EEPROM::busesensor = bool(CASE_FILAMENT_SENSOR_DEFAULT_ON);
+    EEPROM::btopsensor = bool(CASE_TOP_SENSOR_DEFAULT_ON);
     EEPROM::ftemp_ext_pla=UI_SET_PRESET_EXTRUDER_TEMP_PLA;
     EEPROM::ftemp_ext_abs=UI_SET_PRESET_EXTRUDER_TEMP_ABS;
     EEPROM::ftemp_bed_pla=UI_SET_PRESET_HEATED_BED_TEMP_PLA;
@@ -339,6 +340,7 @@ void EEPROM::restoreEEPROMSettingsFromConfiguration()
 }
 bool EEPROM::buselight=false;
 bool EEPROM::busesensor=false;
+bool EEPROM::btopsensor=false;
 bool EEPROM::bkeeplighton=true;
 float EEPROM::ftemp_ext_pla=UI_SET_PRESET_EXTRUDER_TEMP_PLA;
 float EEPROM::ftemp_ext_abs=UI_SET_PRESET_EXTRUDER_TEMP_ABS;
@@ -409,7 +411,10 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
     
     HAL::eprSetByte(EPR_DISPLAY_MODE,UIDisplay::display_mode);
 #if defined(FIL_SENSOR1_PIN)
-	 HAL::eprSetByte(EPR_SENSOR_ON,EEPROM::busesensor);
+	 HAL::eprSetByte(EPR_FIL_SENSOR_ON,EEPROM::busesensor);
+#endif
+#if defined(TOP_SENSOR_PIN)
+	 HAL::eprSetByte(EPR_TOP_SENSOR_ON,EEPROM::btopsensor);
 #endif
 #if FEATURE_BEEPER
 	HAL::eprSetByte(EPR_SOUND_ON,HAL::enablesound);
@@ -602,7 +607,10 @@ void EEPROM::readDataFromEEPROM()
         WRITE(CASE_LIGHTS_PIN, byte(EEPROM::buselight));
 	#endif // CASE_LIGHTS_PIN
 #if defined(FIL_SENSOR1_PIN)
-	EEPROM::busesensor=HAL::eprGetByte(EPR_SENSOR_ON);
+	EEPROM::busesensor=HAL::eprGetByte(EPR_FIL_SENSOR_ON);
+#endif
+#if defined(TOP_SENSOR_PIN)
+	EEPROM::btopsensor=HAL::eprGetByte(EPR_TOP_SENSOR_ON);
 #endif
 #if FEATURE_BEEPER
 	HAL::enablesound=HAL::eprGetByte(EPR_SOUND_ON);
@@ -833,7 +841,10 @@ void EEPROM::writeSettings()
     writeByte(EPR_LIGHT_ON,Com::tLightOn);
     writeByte(EPR_KEEP_LIGHT_ON,Com::tKeepLightOn);
  #if defined(FIL_SENSOR1_PIN)
-	  writeByte(EPR_SENSOR_ON,Com::tSensorOn);
+	  writeByte(EPR_FIL_SENSOR_ON,Com::tSensorOn);
+#endif
+#if defined(TOP_SENSOR_PIN)
+	  writeByte(EPR_TOP_SENSOR_ON,Com::tTopsensorOn);
 #endif
 #if FEATURE_BEEPER
     writeByte(EPR_SOUND_ON,Com::tSoundOn);

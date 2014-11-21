@@ -50,7 +50,7 @@
 #define PS_ON_PIN		-1
 #define ORIG_FAN_PIN		25
 #define ORIG_FAN2_PIN		4	
-
+#define TOP_SENSOR_PIN      6
 
 #define SDSS			55
 #define MOSI_PIN		43

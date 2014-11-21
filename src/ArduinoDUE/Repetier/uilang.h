@@ -85,7 +85,7 @@
 #if NUM_EXTRUDER == 1
 	#define UI_TEXT_LOAD_FILAMENT "Load Filament"
 	#define UI_TEXT_UNLOAD_FILAMENT "Unload Filament"
-	#define UI_TEXT_SENSOR_ONOFF "Fil.Sensor: %sf"
+	#define UI_TEXT_FIL_SENSOR_ONOFF "Fil.Sensor: %sf"
 	#define UI_TEXT_CLEANING_DRIPBOX 	 "Cleaning Dripbox"
 	#define UI_TEXT_CLEAN_DRIPBOX 	 "Clean Dripbox"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Dripbox"
@@ -96,7 +96,7 @@
 	#define UI_TEXT_UNLOAD_RIGHT_FILAMENT "Unload Right \005"
 	#define UI_TEXT_LOAD_LEFT_FILAMENT "Load Left \005"
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT "Unload Left \005"
-	#define UI_TEXT_SENSOR_ONOFF "Fil.Sensors:%sf"
+	#define UI_TEXT_FIL_SENSOR_ONOFF "Fil.Sensors:%sf"
 	#define UI_TEXT_CLEAN_DRIPBOX 	 "Clean Dripboxes"
 	#define UI_TEXT_CLEANING_DRIPBOX 	 "Cleaning Dripboxes"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Dripboxes"
@@ -128,6 +128,8 @@
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_9 "Ajust the back","and left knobs","until paper just","slides."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_10 "Check that paper","just slides","between nozzle","and plate."
 
+#define UI_TEXT_TOP_COVER_OPEN "Top cover open!"
+#define UI_TEXT_TOP_SENSOR_ONOFF "Top Sensor: %st"
 #define UI_TEXT_VERSION_MENU "System Version"
 #define UI_TEXT_COOLDOWN_MENU         "Cooldown      %B3"
 #define UI_TEXT_WAIT_OK       "Ok to continue"
@@ -1301,7 +1303,7 @@
 #if NUM_EXTRUDER == 1
 	#define UI_TEXT_LOAD_FILAMENT   "Inser. Filament"
 	#define UI_TEXT_UNLOAD_FILAMENT "Retir. Filament"
-	#define UI_TEXT_SENSOR_ONOFF    "Detect.Fil.:%sf"
+	#define UI_TEXT_FIL_SENSOR_ONOFF    "Detect.Fil.:%sf"
 	#define UI_TEXT_CLEAN_DRIPBOX_2  "Nettoyer le"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Reservoir"
 #else
@@ -1309,7 +1311,7 @@
 	#define UI_TEXT_UNLOAD_RIGHT_FILAMENT "Retirer \005Droit "
 	#define UI_TEXT_LOAD_LEFT_FILAMENT    "Inserer \005Gauche"
 	#define UI_TEXT_UNLOAD_LEFT_FILAMENT  "Retirer \005Gauche"
-	#define UI_TEXT_SENSOR_ONOFF          "Detect.Fil.:%sf"
+	#define UI_TEXT_FIL_SENSOR_ONOFF          "Detect.Fil.:%sf"
 	#define UI_TEXT_CLEAN_DRIPBOX_2  "Nettoyer les"
 	#define UI_TEXT_CLEAN_DRIPBOX_3  "Reservoirs"
 #endif

@@ -473,7 +473,8 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define CASE_LIGHT_DEFAULT_ON 1
 #define UI_PRINTER_COMPANY "By XYZ Printing"
 #define CASE_KEEP_LIGHT_DEFAULT_ON 1
-#define CASE_SENSOR_DEFAULT_ON 1
+#define CASE_FILAMENT_SENSOR_DEFAULT_ON 1
+#define CASE_TOP_SENSOR_DEFAULT_ON 1
 #define CASE_SOUND_DEFAULT_ON 1
 //default mode is advanced
 #define CASE_DISPLAY_MODE_DEFAULT 1

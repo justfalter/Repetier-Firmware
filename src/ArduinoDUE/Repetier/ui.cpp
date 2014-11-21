@@ -1439,7 +1439,10 @@ void UIDisplay::parse(const char *txt,bool ram)
 		    if(c2=='o')addStringP(HAL::enablesound?ui_text_on:ui_text_off);        // sound on/off
 			#endif
 			#if defined(FIL_SENSOR1_PIN)
-			  if(c2=='f')addStringP(EEPROM::busesensor?ui_text_on:ui_text_off);        // sensors on/off
+			  if(c2=='f')addStringP(EEPROM::busesensor?ui_text_on:ui_text_off);        //filament sensors on/off
+			#endif
+            #if defined(TOP_SENSOR_PIN)
+			  if(c2=='t')addStringP(EEPROM::btopsensor?ui_text_on:ui_text_off);        //top sensors on/off
 			#endif
             if(c2=='x')
             {
@@ -3285,11 +3288,19 @@ void UIDisplay::executeAction(int action)
 	break;
 #endif
  #if defined(FIL_SENSOR1_PIN)
-	 case UI_ACTION_SENSOR_ONOFF:
+	 case UI_ACTION_FILAMENT_SENSOR_ONOFF:
 		 EEPROM::busesensor=!EEPROM::busesensor;
 		 //save directly to eeprom
-        EEPROM:: update(EPR_SENSOR_ON,EPR_TYPE_BYTE,EEPROM::busesensor,0);
-		UI_STATUS(UI_TEXT_SENSOR_ONOFF);
+        EEPROM:: update(EPR_FIL_SENSOR_ON,EPR_TYPE_BYTE,EEPROM::busesensor,0);
+		UI_STATUS(UI_TEXT_FIL_SENSOR_ONOFF);
+	 break;
+#endif
+ #if defined(TOP_SENSOR_PIN)
+	 case UI_ACTION_TOP_SENSOR_ONOFF:
+		 EEPROM::btopsensor=!EEPROM::btopsensor;
+		 //save directly to eeprom
+        EEPROM:: update(EPR_TOP_SENSOR_ON,EPR_TYPE_BYTE,EEPROM::btopsensor,0);
+		UI_STATUS(UI_TEXT_TOP_SENSOR_ONOFF);
 	 break;
 #endif
 #if CASE_LIGHTS_PIN > 0
