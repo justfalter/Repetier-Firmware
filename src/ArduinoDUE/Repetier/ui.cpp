@@ -1239,6 +1239,11 @@ void UIDisplay::parse(const char *txt,bool ram)
             else if(c2=='Y') addFloat(Printer::homingFeedrate[1],5,0);
             else if(c2=='Z') addFloat(Printer::homingFeedrate[2],5,0);
             break;
+        case 'H':
+                if(c2=='x') addFloat(Printer::xMin,4,2);
+                else if(c2=='y') addFloat(Printer::yMin,4,2);
+                else if(c2=='z') addFloat(Printer::zMin,4,2);
+                break;
         case 'i':
             if(c2=='s') addLong(stepperInactiveTime/1000,4);
             else if(c2=='p') addLong(maxInactiveTime/1000,4);
@@ -2900,14 +2905,29 @@ case UI_ACTION_BED_TEMP_PLA :
         break;
 #endif
 	case UI_ACTION_X_LENGTH:
-			INCREMENT_MIN_MAX(Printer::xLength,1,0,250);
-		break;
+                Printer::xLength = roundf(Printer::xLength );
+                INCREMENT_MIN_MAX(Printer::xLength,1,0,250);
+                break;
 	case UI_ACTION_Y_LENGTH:
-			INCREMENT_MIN_MAX(Printer::yLength,1,0,250);
-		break;
+                Printer::yLength = roundf(Printer::yLength );
+                INCREMENT_MIN_MAX(Printer::yLength,1,0,250);
+                break;
 	case UI_ACTION_Z_LENGTH:
-			INCREMENT_MIN_MAX(Printer::zLength,1,0,250);
-		break;
+                Printer::zLength = roundf(Printer::zLength );
+                INCREMENT_MIN_MAX(Printer::zLength,1,0,250);
+                break;
+    case UI_ACTION_X_MIN:
+		         Printer::xMin = roundf(Printer::xMin *10)/10;
+                INCREMENT_MIN_MAX(Printer::xMin,0.1,-200,250);
+                  break;
+    case UI_ACTION_Y_MIN:
+                Printer::yMin = roundf(Printer::yMin *10)/10;
+                INCREMENT_MIN_MAX(Printer::yMin,0.1,-200,250);
+                 break;
+    case UI_ACTION_Z_MIN:
+                Printer::zMin = roundf(Printer::zMin *10)/10;
+                INCREMENT_MIN_MAX( Printer::zMin,0.1,-200,250);
+               break;
     case UI_ACTION_X_OFFSET:
         INCREMENT_MIN_MAX(Extruder::current->xOffset,1,-99999,99999);
         Extruder::selectExtruderById(Extruder::current->id);

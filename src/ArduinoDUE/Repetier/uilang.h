@@ -128,6 +128,9 @@
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_9 "Ajust the back","and left knobs","until paper just","slides."
 #define UI_TEXT_MANUAL_BED_LEVEL_PAGE_10 "Check that paper","just slides","between nozzle","and plate."
 
+#define UI_TEXT_X_MIN_SETTING "Xmin: %Hxmm"
+#define UI_TEXT_Y_MIN_SETTING "Ymin: %Hymm"
+#define UI_TEXT_Z_MIN_SETTING "Zmin: %Hzmm"
 #define UI_TEXT_AUTOLEVEL_SETTING "Auto Level: %Am"
 #define UI_TEXT_TOP_COVER_OPEN "Top cover open!"
 #define UI_TEXT_TOP_SENSOR_ONOFF "Top Sensor: %st"

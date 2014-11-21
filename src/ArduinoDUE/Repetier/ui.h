@@ -222,6 +222,9 @@
 #define UI_ACTION_TOP_SENSOR_ONOFF 1150
 #define UI_ACTION_AUTOLEVEL_ON          1151
 #define UI_ACTION_Z_0_1                          1152
+#define UI_ACTION_X_MIN                          1153
+#define UI_ACTION_Y_MIN                          1154
+#define UI_ACTION_Z_MIN                          1155
 
 #define UI_ACTION_MENU_XPOS             4000
 #define UI_ACTION_MENU_YPOS             4001
