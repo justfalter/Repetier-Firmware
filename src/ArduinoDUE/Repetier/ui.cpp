@@ -4120,8 +4120,20 @@ void UIDisplay::executeAction(int action)
 				playsound(5000,240);
 			if (confirmationDialog(UI_TEXT_PLEASE_CONFIRM ,UI_TEXT_SAVE,UI_TEXT_ZMIN))
 				{
+                //save matrix to memory as individual save to eeprom erase all
+                float tmpmatrix[9];
+                for(uint8_t ti=0; ti<9; ti++)tmpmatrix[ti]=Printer::autolevelTransformation[ti];
 				//save to eeprom
                 EEPROM:: update(EPR_Z_HOME_OFFSET,EPR_TYPE_FLOAT,0,Printer::zMin);
+                //Set autolevel to false for saving
+                 EEPROM:: update(EPR_AUTOLEVEL_ACTIVE,EPR_TYPE_BYTE,0,0);
+                 Printer::setAutolevelActive(false);
+                //save Matrix
+                 for(uint8_t ti=0; ti<9; ti++)EEPROM:: update(EPR_AUTOLEVEL_MATRIX + (((int)ti) << 2),EPR_TYPE_FLOAT,0,tmpmatrix[ti]); 
+                 //Set autolevel to true
+                 EEPROM:: update(EPR_AUTOLEVEL_ACTIVE,EPR_TYPE_BYTE,1,0);
+                 Printer::setAutolevelActive(true);
+                 for(uint8_t ti=0; ti<9; ti++)Printer::autolevelTransformation[ti]=tmpmatrix[ti];
 				}
 			else{
 				//back to original value
