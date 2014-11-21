@@ -2585,12 +2585,14 @@ void UIDisplay::nextPreviousAction(int8_t next)
     break;
 	}
    
+    case UI_ACTION_Z_0_1:
     case UI_ACTION_Z_1:
     case UI_ACTION_Z_10:
     case UI_ACTION_Z_100:
     {
 		float tmp_pos=Printer::currentPosition[Z_AXIS];
-		int istep=1;
+		float istep=0.1;
+        if (action==UI_ACTION_Z_1)istep=1;
 		if (action==UI_ACTION_Z_10)istep=10;
 		if (action==UI_ACTION_Z_100)istep=100;
         increment=-increment; //upside down increment to allow keys to follow  Z movement, Up Key make Z going up, down key make Z going down

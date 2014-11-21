@@ -467,12 +467,13 @@ UI_MENU_ACTIONCOMMAND(ui_menu_y_pos,"Y: %x1mm ",UI_ACTION_DUMMY,ALL_MODE)
 UI_MENU_WITH_STATUS(ui_menu_pos_y_value,UI_MENU_Y_POS_VALUE,4+UI_MENU_BACKCNT);
 UI_MENU_SUBMENU(ui_menu_Y_pos, UI_TEXT_Y_POSITION, ui_menu_pos_y_value,ALL_MODE);
 //position Z
+UI_MENU_CHANGEACTION(ui_menu_z_0_1,"0.1mm",UI_ACTION_Z_0_1,ALL_MODE);
 UI_MENU_CHANGEACTION(ui_menu_z_1,"  1mm",UI_ACTION_Z_1,ALL_MODE);
 UI_MENU_CHANGEACTION(ui_menu_z_10," 10mm",UI_ACTION_Z_10,ALL_MODE);
 UI_MENU_CHANGEACTION(ui_menu_z_100,"100mm",UI_ACTION_Z_100,ALL_MODE);
 UI_MENU_ACTIONCOMMAND(ui_menu_z_pos,"Z: %x2mm ",UI_ACTION_DUMMY,ALL_MODE)
-#define UI_MENU_Z_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_z_1,&ui_menu_z_10,&ui_menu_z_100,&ui_menu_z_pos}
-UI_MENU_WITH_STATUS(ui_menu_pos_z_value,UI_MENU_Z_POS_VALUE,4+UI_MENU_BACKCNT);
+#define UI_MENU_Z_POS_VALUE  {UI_MENU_ADDCONDBACK &ui_menu_z_0_1,&ui_menu_z_1,&ui_menu_z_10,&ui_menu_z_100,&ui_menu_z_pos}
+UI_MENU_WITH_STATUS(ui_menu_pos_z_value,UI_MENU_Z_POS_VALUE,5+UI_MENU_BACKCNT);
 UI_MENU_SUBMENU(ui_menu_Z_pos, UI_TEXT_Z_POSITION, ui_menu_pos_z_value,ALL_MODE);
 //baby stepping
 #if FEATURE_BABYSTEPPING
