@@ -505,7 +505,7 @@ void lcdWriteByte(uint8_t c,uint8_t rs)
 #if CPU_ARCH == ARCH_AVR
     __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 #else
-    HAL::delayMicroseconds(1);
+    HAL::delayMicroseconds(100);
 #endif
 }
 void initializeLCD()
