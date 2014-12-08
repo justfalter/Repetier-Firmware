@@ -469,7 +469,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define UI_KEY_REDUCE_REPEAT 50
 #define UI_KEY_MIN_REPEAT 50
 #define FEATURE_BEEPER 1
-#define CASE_LIGHTS_PIN 85
+#define CASE_LIGHTS_PIN LIGHT_PIN
 #define CASE_LIGHT_DEFAULT_ON 1
 #define UI_PRINTER_COMPANY "By XYZ Printing"
 #define CASE_KEEP_LIGHT_DEFAULT_ON 1

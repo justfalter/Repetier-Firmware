@@ -45,8 +45,8 @@
 #define ORIG_E0_ENABLE_PIN     128
 
 #endif
-
-#define LED_PIN			129
+#define LIGHT_PIN       85
+#define LED_PIN			-1
 #define PS_ON_PIN		-1
 #define ORIG_FAN_PIN		25
 #define ORIG_FAN2_PIN		4	
