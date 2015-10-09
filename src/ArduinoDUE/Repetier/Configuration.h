@@ -161,7 +161,11 @@
       #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
       #define EXT1_EXTRUDER_COOLER_PIN ORIG_FAN2_PIN
     #else //DaVinci 1.0
-        #define EXT0_EXTRUDER_COOLER_PIN -1 //Warning need to add a permanent fan with power supply to cool extruder
+        //#define EXT0_EXTRUDER_COOLER_PIN -1 //Warning need to add a permanent fan with power supply to cool extruder
+        // MPR: repurpose filament sensor pin to drive extruder cooler.
+        //#define EXT0_EXTRUDER_COOLER_PIN FIL_SENSOR1_PIN 
+        #define EXT0_EXTRUDER_COOLER_PIN 24
+        #undef FIL_SENSOR1_PIN
     #endif
 #else
   #define FAN_PIN -1
