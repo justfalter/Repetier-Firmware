@@ -58,7 +58,7 @@
 
 #if DAVINCI==1
 #define NUM_EXTRUDER 1
-#define EXT0_INVERSE 1
+#define EXT0_INVERSE 0
 #define NUM_FAN 1
 #define EXT0_EXTRUDER_COOLER_PIN ORIG_FAN_PIN
 //home positions
